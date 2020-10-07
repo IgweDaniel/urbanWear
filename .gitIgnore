@@ -1,0 +1,11 @@
+.vscode
+
+node_modules/
+migrations/
+
+**/.env
+.env
+
+/node_modules
+
+/build
