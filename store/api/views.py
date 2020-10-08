@@ -1,6 +1,6 @@
 from rest_framework import generics
 from rest_framework import serializers
-from store.models import OrderItem, Product, ProductSize, Order, Address, OrderItem
+from store.models import Coupon, OrderItem, Product, ProductSize, Order, Address, OrderItem
 from .serializers import ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.views import APIView
@@ -153,7 +153,23 @@ class OrderListUpdate(APIView):
         return Response(OrderSerializer(orders, many=True).data, status=HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
-        pass
+        coupon_code = request.data.get('coupon', None)
+        if not coupon_code:
+            return Response({"message": "Invalid input"}, status=HTTP_400_BAD_REQUEST)
+        coupon = Coupon.objects.all().filter(code__exact=coupon_code)
+        if not coupon.exists():
+            return Response({'message': "invalid coupon"}, status=HTTP_404_NOT_FOUND)
+        coupon = coupon[0]
+        if coupon.used:
+            return Response({'message': "expired coupon"}, status=HTTP_404_NOT_FOUND)
+        activeorder = Order.objects.get_or_create(
+            user=request.user, ordered=False)[0]
+        activeorder.coupon = coupon
+        coupon.used = True
+        coupon.save()
+        activeorder.save()
+        return Response({'message': "Coupon Applied"}, status=HTTP_200_OK)
+
 
 class TrackOrder(generics.RetrieveAPIView):
     permission_classes = []
@@ -168,10 +184,6 @@ class DeleteOrderItem(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwnerPermission]
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
-
-
-# class ApplyCoupon(generics.CreateAPIView):
-#     pass
 
 
 class Checkout(generics.ListCreateAPIView):

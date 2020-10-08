@@ -14,12 +14,9 @@ urlpatterns = [
 
     path('orderitem/<pk>', DeleteOrderItem.as_view(), name='delete-order-item'),
 
-    # path('coupon/', ApplyCoupon.as_view(), name='apply-coupon'),
-    # Apply coupon in patch request to order
-    path('payment/', Checkout.as_view(), name='apply-coupon'),
-
-    # apply coupon
     # Payments <List and  pay>
+    path('payment/', Checkout.as_view(), name='checkout'),
+
 
     path('addresses/', UserAddressCreation.as_view(), name='address-create'),
     path('addresses/<pk>/', UserAddress.as_view(), name='address-detail'),

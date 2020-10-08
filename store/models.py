@@ -38,7 +38,7 @@ class ProductSize(models.Model):
     label = models.CharField(choices=SIZE_CHOICES, max_length=20)
 
     def __str__(self):
-        return f"{self.label} <kkk>"
+        return f"{self.label}"
 
 
 class Product(models.Model):
@@ -65,13 +65,17 @@ class ProductImage(models.Model):
         Product, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField()
 
+    def __str__(self):
+        return f"Image ( {self.image.url} ) attached to {self.product.name} {self.product.category.name}"
+
 
 class Coupon(models.Model):
-    code = models.CharField(max_length=15)
+    code = models.CharField(max_length=15, unique=True)
     amount = models.FloatField(default=0)
+    used = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.code} subtracts {self.amount}"
+        return f"{self.code} subtracts ${self.amount}"
 
 
 class Address(models.Model):
@@ -122,7 +126,7 @@ class Order(models.Model):
             total += item.sub_total()
         if self.coupon:
             total -= self.coupon.amount
-        return total
+        return 0 if total <= 0 else total
 
 
 class OrderItem(models.Model):
@@ -139,4 +143,4 @@ class OrderItem(models.Model):
         return self.product.final_price() * self.quantity
 
     def __str__(self):
-        return f"{self.quantity} {self.size.label}  {self.product.name} ({self.product.category.name})-${self.sub_total()}"
+        return f"{self.quantity} [{self.size.get_label_display()}]  {self.product.name} ({self.product.category.name})-${self.sub_total()}"

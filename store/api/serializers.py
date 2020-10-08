@@ -1,3 +1,4 @@
+from copy import Error
 from rest_framework import serializers
 from store.models import Product, ProductImage, ProductSize, Address, Order, OrderItem
 
@@ -74,7 +75,6 @@ class OrderUpdateSerializer(serializers.Serializer):
     def validate_size(self, data):
         size = ProductSize.objects.all().filter(label=data)
         if not size.exists():
-            print("error")
             raise serializers.ValidationError("Valid Size Required")
         return size[0]
 
@@ -83,15 +83,8 @@ class OrderUpdateSerializer(serializers.Serializer):
             product = Product.objects.get(pk=data)
             return product
         except Product.DoesNotExist:
-            print("error")
-            raise serializers.ValidationError("Invalid Product")
-
-    # def validate_quantity(self, data):
-    #     try:
-    #         int(data)
-    #     except TypeError:
-    #         print(data)
-    #     return data
+            raise serializers.ValidationError(
+                detail={'msg': "Invalid Product"})
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
