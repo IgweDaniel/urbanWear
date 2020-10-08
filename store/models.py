@@ -11,7 +11,7 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
 
     def __str__(self):
-        return f"{self.username} <{self.email}> "
+        return f"{self.email} "
 
 
 class Category(models.Model):
@@ -38,7 +38,7 @@ class ProductSize(models.Model):
     label = models.CharField(choices=SIZE_CHOICES, max_length=20)
 
     def __str__(self):
-        return f"{self.label}"
+        return f"{self.label} <kkk>"
 
 
 class Product(models.Model):
@@ -53,7 +53,7 @@ class Product(models.Model):
     sizes = models.ManyToManyField(ProductSize)
 
     def __str__(self):
-        return f"{self.name} in category {self.category} costing ${self.price}"
+        return f"{self.name} ({self.category})-${self.final_price()}"
 
     def final_price(self):
         discount_price = self.price - self.price * self.discount
@@ -92,17 +92,8 @@ class Address(models.Model):
     class Meta:
         verbose_name_plural = "Addresses"
 
-
-class OrderItem(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    size = models.ForeignKey(
-        ProductSize, on_delete=models.CASCADE)
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
-
     def __str__(self):
-        return f"OrderItem for {self.user.email} with product {self.product.name} and qty {self.quantity}"
+        return f"Address {self.street} for user {self.user.email} "
 
 
 class Order(models.Model):
@@ -110,7 +101,6 @@ class Order(models.Model):
     coupon = models.ForeignKey(
         Coupon, on_delete=models.SET_NULL, blank=True, null=True)
 
-    items = models.ManyToManyField(OrderItem, related_name='parent')
     shipping_address = models.ForeignKey(
         'Address', related_name='shipping_address', on_delete=models.SET_NULL, blank=True, null=True)
     billing_address = models.ForeignKey(
@@ -123,11 +113,30 @@ class Order(models.Model):
     delivered = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Order for {self.user.email}  and total {self.calc_total_price()}"
+        order__status = "PENDING delivery" if self.ordered else "ACTIVE"
+        return f"{order__status} order for {self.user.email}  worth ${self.calc_total_price()}"
 
     def calc_total_price(self):
         total = 0
         for item in self.items.all():
-            total + item.product.final_price()
+            total += item.sub_total()
         if self.coupon:
             total -= self.coupon.amount
+        return total
+
+
+class OrderItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    size = models.ForeignKey(
+        ProductSize, on_delete=models.CASCADE)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name='items')
+
+    def sub_total(self):
+        return self.product.final_price() * self.quantity
+
+    def __str__(self):
+        return f"{self.quantity} {self.size.label}  {self.product.name} ({self.product.category.name})-${self.sub_total()}"

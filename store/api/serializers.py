@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from store.models import Product, ProductImage, ProductSize, Address, Order, OrderItem
 
 
@@ -65,10 +64,41 @@ class AddressSerializer(serializers.ModelSerializer):
         fields = ['street', 'apartment', 'zip_code', 'country', 'address_type']
 
 
+# size = ProductSizeSerializer()
+
+class OrderUpdateSerializer(serializers.Serializer):
+    size = serializers.CharField(max_length=6)
+    product = serializers.IntegerField()
+    quantity = serializers.IntegerField()
+
+    def validate_size(self, data):
+        size = ProductSize.objects.all().filter(label=data)
+        if not size.exists():
+            print("error")
+            raise serializers.ValidationError("Valid Size Required")
+        return size[0]
+
+    def validate_product(self, data):
+        try:
+            product = Product.objects.get(pk=data)
+            return product
+        except Product.DoesNotExist:
+            print("error")
+            raise serializers.ValidationError("Invalid Product")
+
+    # def validate_quantity(self, data):
+    #     try:
+    #         int(data)
+    #     except TypeError:
+    #         print(data)
+    #     return data
+
+
 class OrderItemSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
-    product = ProductSerializer()
-    size = ProductSizeSerializer()
+    product = serializers.SerializerMethodField()
+    size = serializers.SerializerMethodField()
+    read_only_fields = ['total']
 
     class Meta:
         model = OrderItem
@@ -76,16 +106,36 @@ class OrderItemSerializer(serializers.ModelSerializer):
                   'quantity', 'size', 'total']
 
     def get_total(self, obj):
-        return obj.product.final_price() * obj.quantity
+        return obj.sub_total()
+
+    def get_product(self, obj):
+        product = obj.product
+        return {
+            "id": product.id,
+            "name": product.name,
+            "price": product.price,
+            "final_price": product.final_price(),
+            "category": product.category.name
+
+        }
+
+    def get_size(self, obj):
+        return obj.size.label
 
 
 class OrderSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
+    items = serializers.SerializerMethodField()
+    shipping_address = AddressSerializer()
+    billing_address = AddressSerializer()
 
     class Meta:
         model = Order
         fields = ['coupon', 'shipping_address', 'billing_address',
-                  'start_date', 'ordered_date', 'delivered', 'ordered']
+                  'start_date', 'ordered_date', 'delivered', 'ordered', 'total', 'items']
 
     def get_total(self, obj):
         return obj.calc_total_price()
+
+    def get_items(self, obj):
+        return OrderItemSerializer(obj.items.all(), many=True).data
