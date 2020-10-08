@@ -9,3 +9,5 @@ migrations/
 /node_modules
 
 /build
+/media
+media/
