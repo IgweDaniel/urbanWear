@@ -130,7 +130,7 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     size = models.ForeignKey(
         ProductSize, on_delete=models.CASCADE)
     product = models.ForeignKey(

@@ -1,6 +1,7 @@
 from copy import Error
 from rest_framework import serializers
 from store.models import Product, ProductImage, ProductSize, Address, Order, OrderItem
+from django.core.exceptions import ValidationError
 
 
 class ProductImageSerialiser(serializers.ModelSerializer):
@@ -16,17 +17,6 @@ class ProductImageSerialiser(serializers.ModelSerializer):
 
     def get_alt(self, obj):
         return obj.product.name
-
-
-class ProductSizeSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-
-    class Meta:
-        model = ProductSize
-        fields = ['name', 'label']
-
-    def get_name(self, obj):
-        return obj.get_label_display()
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -49,7 +39,11 @@ class ProductSerializer(serializers.ModelSerializer):
         return ProductImageSerialiser(obj.images.all(), many=True).data
 
     def get_sizes(self, obj):
-        return ProductSizeSerializer(obj.sizes.all(), many=True).data
+        sizes = []
+        for size in obj.sizes.all():
+            sizes.append(size.label)
+
+        return sizes
 
     def get_category(self, obj):
         return {
@@ -66,6 +60,7 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 # size = ProductSizeSerializer()
+
 
 class OrderUpdateSerializer(serializers.Serializer):
     size = serializers.CharField(max_length=6)
@@ -84,7 +79,7 @@ class OrderUpdateSerializer(serializers.Serializer):
             return product
         except Product.DoesNotExist:
             raise serializers.ValidationError(
-                detail={'msg': "Invalid Product"})
+                "Invalid Product")
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -96,7 +91,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = ['size', 'product',
-                  'quantity', 'size', 'total']
+                  'quantity', 'size', 'total', 'id']
 
     def get_total(self, obj):
         return obj.sub_total()

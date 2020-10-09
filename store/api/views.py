@@ -1,6 +1,6 @@
+
 from rest_framework import generics
-from rest_framework import serializers
-from store.models import Coupon, OrderItem, Product, ProductSize, Order, Address, OrderItem
+from store.models import Coupon, Product, ProductSize, Order, Address, OrderItem
 from .serializers import ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.views import APIView
@@ -59,8 +59,7 @@ class OrderListUpdate(APIView):
 
     def post(self, request, *args, **kwargs):
         serializer = OrderUpdateSerializer(data=request.data)
-
-        if not serializer.is_valid():
+        if not serializer.is_valid(raise_exception=True):
             return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
         data = serializer.validated_data
         size = data.get('size')
@@ -73,21 +72,16 @@ class OrderListUpdate(APIView):
         size = size[0]
 
         # Find Active Order or Create One
-        active_order = Order.objects.filter(
-            user=request.user, ordered=False)
+        active_order = Order.objects.get_or_create(
+            user=request.user, ordered=False)[0]
 
-        if not active_order.exists():
-            active_order = Order.objects.create(user=request.user)
-        else:
-            active_order = active_order[0]
-
-            # Check for OrderItem
+        # Check for OrderItem
         order_item = active_order.items.all().filter(
             product=product).filter(size__label=size.label)
 
         if not order_item.exists():
             order_item = active_order.items.create(
-                user=request.user, size=size, product=product, quantity=0)
+                size=size, product=product, quantity=0)
         else:
             order_item = order_item[0]
 
@@ -105,11 +99,11 @@ class OrderListUpdate(APIView):
         items = request.data.get('items', None)
         serializer = OrderUpdateSerializer(data=items, many=True)
 
-        if not serializer.is_valid():
+        if not serializer.is_valid(raise_exception=True):
             return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
 
         items = serializer.validated_data
-        active_order = Order.objects.filter(
+        active_order = Order.objects.get_or_create(
             user=request.user, ordered=False)[0]
 
         for item in items:
@@ -135,18 +129,15 @@ class OrderListUpdate(APIView):
             order_item.size = size
             order_item.save()
 
-        return Response(OrderItemSerializer(active_order.items.all(), many=True).data, status=HTTP_200_OK)
+        return Response(OrderSerializer(active_order).data, status=HTTP_200_OK)
 
     def get(self, request, *args, **kwargs):
         status = request.query_params.get("status", None)
 
         if status == "active":
-            cart = Order.objects.filter(
-                user=request.user, ordered=False)
-            if cart.exists():
-                return Response(OrderSerializer(cart[0]).data, status=HTTP_200_OK)
-            else:
-                return Response({"message": "You don't have an active cart"}, status=HTTP_400_BAD_REQUEST)
+            cart = Order.objects.get_or_create(
+                user=request.user, ordered=False)[0]
+            return Response(OrderSerializer(cart).data, status=HTTP_200_OK)
 
         orders = Order.objects.filter(
             user=request.user, ordered=True)
@@ -181,9 +172,14 @@ class TrackOrder(generics.RetrieveAPIView):
 
 
 class DeleteOrderItem(generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated, IsOwnerPermission]
-    queryset = OrderItem.objects.all()
+    permission_classes = [IsAuthenticated]
     serializer_class = OrderItemSerializer
+
+    def get_queryset(self):
+        cart = Order.objects.get_or_create(
+            user=self.request.user, ordered=False)[0]
+        queryset = cart.items.all()
+        return queryset
 
 
 class Checkout(generics.ListCreateAPIView):
