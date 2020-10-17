@@ -1,7 +1,5 @@
-from copy import Error
 from rest_framework import serializers
-from store.models import Product, ProductImage, ProductSize, Address, Order, OrderItem
-from django.core.exceptions import ValidationError
+from store.models import Payment, Product, ProductImage, ProductSize, Address, Order, OrderItem
 
 
 class ProductImageSerialiser(serializers.ModelSerializer):
@@ -59,9 +57,6 @@ class AddressSerializer(serializers.ModelSerializer):
         fields = ['street', 'apartment', 'zip_code', 'country', 'address_type']
 
 
-# size = ProductSizeSerializer()
-
-
 class OrderUpdateSerializer(serializers.Serializer):
     size = serializers.CharField(max_length=6)
     product = serializers.IntegerField()
@@ -111,19 +106,33 @@ class OrderItemSerializer(serializers.ModelSerializer):
         return obj.size.label
 
 
+class PaymentSerializer(serializers.ModelSerializer):
+    read_only_fields = ['amount', 'timestamp']
+
+    class Meta:
+        model = Payment
+        fields = ['amount', 'timestamp']
+
+
 class OrderSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
     items = serializers.SerializerMethodField()
     shipping_address = AddressSerializer()
     billing_address = AddressSerializer()
+    items = serializers.SerializerMethodField()
+    payment = PaymentSerializer()
+    coupon = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = ['coupon', 'shipping_address', 'billing_address',
-                  'start_date', 'ordered_date', 'delivered', 'ordered', 'total', 'items']
+                  'start_date', 'ordered_date', 'delivered', 'ordered', 'total', 'items', 'payment']
 
     def get_total(self, obj):
         return obj.calc_total_price()
+
+    def get_coupon(self, obj):
+        return obj.coupon.amount if obj.coupon else None
 
     def get_items(self, obj):
         return OrderItemSerializer(obj.items.all(), many=True).data

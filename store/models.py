@@ -100,6 +100,17 @@ class Address(models.Model):
         return f"Address {self.street} for user {self.user.email} "
 
 
+class Payment(models.Model):
+    stripe_charge_id = models.CharField(max_length=50)
+    user = models.ForeignKey(User,
+                             on_delete=models.SET_NULL, blank=True, null=True)
+    amount = models.FloatField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.email} paid {self.amount}"
+
+
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     coupon = models.ForeignKey(
@@ -112,7 +123,8 @@ class Order(models.Model):
 
     start_date = models.DateTimeField(auto_now_add=True)
     ordered_date = models.DateTimeField(null=True, blank=True)
-
+    payment = models.ForeignKey(
+        Payment, on_delete=models.SET_NULL, blank=True, null=True)
     ordered = models.BooleanField(default=False)
     delivered = models.BooleanField(default=False)
 
@@ -130,7 +142,6 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     size = models.ForeignKey(
         ProductSize, on_delete=models.CASCADE)
     product = models.ForeignKey(
