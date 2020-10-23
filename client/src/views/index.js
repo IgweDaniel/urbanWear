@@ -1,7 +1,9 @@
 import Checkout from "./Checkout";
 import Cart from "./Cart";
 import Home from "./Home";
-import Shop from "./Store";
+import Shop from "./Shop";
+
+import ProductDetail from "./ProductDetail";
 
 const routes = [
   {
@@ -17,8 +19,12 @@ const routes = [
     component: Cart,
   },
   {
-    path: "/shop",
+    path: "/shop/",
     component: Shop,
+  },
+  {
+    path: "/product/:slug",
+    component: ProductDetail,
   },
 ];
 

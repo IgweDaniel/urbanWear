@@ -61,7 +61,15 @@ const Header = styled.header`
     margin-left: 10px;
   }
   .nav .actions li.cart {
+    --size: 50px;
     position: relative;
+    background: rgba(0, 0, 0, 0.2);
+    width: var(--size);
+    height: var(--size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
   }
   .nav .actions li.cart .label {
     position: absolute;
@@ -83,11 +91,8 @@ const Header = styled.header`
   }
 `;
 
-export default () => {
-  const [openCart, setOpenCart] = useState(false);
-
-  const closeQuickCart = () => setOpenCart(false);
-
+const ICON_SIZE = 20;
+export default ({ openCart }) => {
   return (
     <>
       <Modal isOpen={openCart} position="right" close={closeQuickCart}>
@@ -126,8 +131,8 @@ export default () => {
               </li>
               <li className="cart">
                 <span className="label">{0}</span>
-                <button onClick={() => setOpenCart(!openCart)}>
-                  <BagIcon />
+                <button onClick={openCart}>
+                  <BagIcon width={ICON_SIZE} height={ICON_SIZE} />
                 </button>
               </li>
             </ul>
