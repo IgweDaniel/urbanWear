@@ -3,9 +3,25 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { products } from "../data";
 import Page from "./Page";
-import { Spinner, QuantityInput } from "../components";
+import { Spinner, QuantityInput, Tabs, ProductCarousel } from "../components";
 
-const ProductMeta = styled.div``;
+const Image = styled.div`
+  height: 100%;
+  width: 100%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+
+  @media (min-width: 768px) {
+    background-image: ${({ url }) => `url(${url})`};
+    cursor: zoom-in;
+    img {
+      transition: opacity 0.5s;
+    }
+    &:hover img {
+      opacity: 0;
+    }
+  }
+`;
 
 const ProductDetail = styled.div`
   margin: 100px 0;
@@ -21,8 +37,9 @@ const ProductDetail = styled.div`
     width: 100%;
   }
   .productdetail__images {
-    height: 500px;
+    height: 400px;
   }
+
   .productdetail__images img {
     height: 100%;
     width: 100%;
@@ -58,13 +75,17 @@ const ProductDetail = styled.div`
     margin: 5px 0;
     height: 30px;
     text-transform: uppercase;
-    border: 1px solid rgb(238, 238, 238);
+    border: 1px solid #ccc;
     font-weight: bold;
     display: flex;
     align-items: center;
     cursor: pointer;
     justify-content: center;
     user-select: none;
+  }
+  .product__sizes .size:hover {
+    background: #303030;
+    color: #fff;
   }
   .product__sizes .size.active {
     color: #fff;
@@ -89,10 +110,45 @@ const ProductDetail = styled.div`
   .product__action .button {
     flex: 1;
   }
+  .meta-info {
+    border: 1px solid #777;
+  }
+  .meta-info .info {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #777;
+    justify-content: center;
+  }
+
+  .meta-info .info:last-of-type {
+    border-bottom: none;
+  }
+  .meta-info .info span {
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+  }
+  .meta-info .info span:first-of-type {
+    border-right: 1px solid #777;
+    font-weight: bold;
+  }
+  @media (min-width: 300px) {
+    .productdetail__images {
+      height: 500px;
+    }
+  }
+  @media (min-width: 520px) {
+    .productdetail__images {
+      height: 600px;
+    }
+  }
 
   @media (min-width: 768px) {
     .productdetail__info {
-      height: 400px;
+      height: 500px;
       flex-direction: row;
     }
     .productdetail__images,
@@ -108,12 +164,15 @@ const ProductDetail = styled.div`
       padding: 0 30px;
     }
     .product__sizes .size {
-      flex-basis: 100px;
+      flex-basis: 70px;
     }
   }
   @media (min-width: 1024px) {
     .productdetail__info {
-      height: 500px;
+      height: 600px;
+    }
+    .product__sizes .size {
+      flex-basis: 100px;
     }
   }
 `;
@@ -126,15 +185,18 @@ export default () => {
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
-    console.log(slug);
+    let currProduct = products.find(
+      (product) => product.name === slug.replaceAll("-", " ")
+    );
+
     let timeout = setTimeout(() => {
-      setProduct(products[1]);
-    }, 1000);
+      setProduct(currProduct);
+    }, 3000);
     return () => clearTimeout(timeout);
   }, [slug]);
 
   useEffect(() => {
-    if (product != null) {
+    if (product !== null) {
       setStatus("done");
     }
   }, [product]);
@@ -148,9 +210,22 @@ export default () => {
     console.log(cartItem);
   }
 
+  function zoom(e) {
+    var zoomer = e.currentTarget;
+    const x = (e.pageX / zoomer.offsetWidth) * 100;
+    const y = ((e.pageY - 100) / zoomer.offsetHeight) * 100;
+    zoomer.style.backgroundPosition = x + "% " + y + "%";
+  }
+
   if (status === "loading") {
     return (
-      <div style={{ marginTop: 200 }}>
+      <div
+        style={{
+          marginTop: 200,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <Spinner />
       </div>
     );
@@ -161,12 +236,25 @@ export default () => {
       </Page>
     );
   }
+
   return (
     <Page>
       <ProductDetail>
         <div className="productdetail__info">
           <div className="productdetail__images">
-            <img src={product.images[0]} alt="" />
+            <ProductCarousel>
+              {product.images.map((image, i) => (
+                <Image
+                  thumb={image}
+                  className="image-wrap"
+                  key={i}
+                  onMouseMove={zoom}
+                  url={image.replace("700", "1300")}
+                >
+                  <img src={image} key={i} alt={`${product.name}-${i}`} />
+                </Image>
+              ))}
+            </ProductCarousel>
           </div>
           <div className="productdetail__content">
             <h1 className="product__name">{product.name}</h1>
@@ -177,7 +265,7 @@ export default () => {
                 </span>
               )}
               <span className="final-price">
-                {product.discount && "Now"}$
+                {product.discount ? "Now" : "Buy for"}$
                 <span className="figure">{product.final_price}</span>
               </span>
             </p>
@@ -209,9 +297,22 @@ export default () => {
           </div>
         </div>
 
-        <ProductMeta>
-          <p>Hello world</p>
-        </ProductMeta>
+        <Tabs>
+          <div label="Description">{product.desc}</div>
+          <div label="additional info">
+            <div className="meta-info">
+              <div className="info">
+                <span className="key">Weight</span>
+                <span className="value">60kg</span>
+              </div>
+              <div className="info">
+                <span className="key">Material</span>
+                <span className="value">100% cotton</span>
+              </div>
+            </div>
+          </div>
+          <div label="reviews">mamam</div>
+        </Tabs>
       </ProductDetail>
     </Page>
   );

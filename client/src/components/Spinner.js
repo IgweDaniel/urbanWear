@@ -3,36 +3,64 @@ import styled from "styled-components";
 const Spinner = styled.div`
   width: 40px;
   height: 40px;
-  background-color: #333;
+  position: relative;
+  text-align: center;
 
-  margin: 100px auto;
-  -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
-  animation: sk-rotateplane 1.2s infinite ease-in-out;
+  -webkit-animation: sk-rotate 2s infinite linear;
+  animation: sk-rotate 2s infinite linear;
 
-  @-webkit-keyframes sk-rotateplane {
-    0% {
-      -webkit-transform: perspective(120px);
-    }
-    50% {
-      -webkit-transform: perspective(120px) rotateY(180deg);
-    }
+  .dot1,
+  .dot2 {
+    width: 60%;
+    height: 60%;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    background-color: #333;
+    border-radius: 100%;
+
+    -webkit-animation: sk-bounce 2s infinite ease-in-out;
+    animation: sk-bounce 2s infinite ease-in-out;
+  }
+
+  .dot2 {
+    top: auto;
+    bottom: 0;
+    -webkit-animation-delay: -1s;
+    animation-delay: -1s;
+  }
+
+  @-webkit-keyframes sk-rotate {
     100% {
-      -webkit-transform: perspective(120px) rotateY(180deg) rotateX(180deg);
+      -webkit-transform: rotate(360deg);
+    }
+  }
+  @keyframes sk-rotate {
+    100% {
+      transform: rotate(360deg);
+      -webkit-transform: rotate(360deg);
     }
   }
 
-  @keyframes sk-rotateplane {
-    0% {
-      transform: perspective(120px) rotateX(0deg) rotateY(0deg);
-      -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+  @-webkit-keyframes sk-bounce {
+    0%,
+    100% {
+      -webkit-transform: scale(0);
     }
     50% {
-      transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
-      -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+      -webkit-transform: scale(1);
     }
+  }
+
+  @keyframes sk-bounce {
+    0%,
     100% {
-      transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
-      -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+      transform: scale(0);
+      -webkit-transform: scale(0);
+    }
+    50% {
+      transform: scale(1);
+      -webkit-transform: scale(1);
     }
   }
 `;
@@ -133,7 +161,10 @@ export default ({ variant, size }) => {
           ))}
         </ActionLoader>
       ) : (
-        <Spinner />
+        <Spinner>
+          <div className="dot1"></div>
+          <div className="dot2"></div>
+        </Spinner>
       )}
     </>
   );

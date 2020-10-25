@@ -39,48 +39,38 @@ const Backdrop = styled.div`
 
 export default ({ isOpen, close, position = "center", children }) => {
   const backdrop = useRef(null);
-  const tl = useRef(new TimelineLite());
+  const tl = useRef(new TimelineLite({ paused: true }));
   const modal = useRef(null);
   const content = useRef(null);
-
-  let settings = { to: { y: 0 }, from: { y: 100 } };
+  const coords = useRef([{ y: 100 }, { y: 0 }]);
 
   if (position === "left") {
-    settings.from = { x: -200 };
-    settings.to = { x: 0 };
+    coords.current = [{ x: -200 }, { x: 0 }];
   } else if (position === "right") {
-    settings.from = { x: 200 };
-    settings.to = { x: 0 };
+    coords.current = [{ x: 200 }, { x: 0 }];
   }
 
   useEffect(() => {
-    if (isOpen === true) {
-      tl.current
-        .to(modal.current, { display: "flex", duration: 0 })
-        .to(backdrop.current, {
-          opacity: 0.5,
-          duration: 0.1,
-        })
-        .fromTo(
-          content.current,
-          {
-            ...settings.from,
-            opacity: 0,
-          },
-          { opacity: 1, ...settings.to, duration: 0.2 }
-        );
-    } else {
-      tl.current.reverse().then(() => {
-        tl.current = new TimelineLite();
-      });
-    }
+    tl.current
+      .to(modal.current, { display: "flex", duration: 0 })
+      .to(backdrop.current, { opacity: 0.5, duration: 0.1 })
+      .fromTo(
+        content.current,
+        { ...coords.current[0], opacity: 0 },
+        { opacity: 1, ...coords.current[1], duration: 0.2 }
+      )
+      .reverse();
+  }, []);
+
+  useEffect(() => {
+    tl.current.reversed(!isOpen);
   }, [isOpen]);
 
   return (
     <Modal ref={modal} position={position}>
       <Backdrop ref={backdrop} onClick={close} />
       <div className="modal__content" ref={content}>
-        {children}
+        {isOpen && children}
       </div>
     </Modal>
   );

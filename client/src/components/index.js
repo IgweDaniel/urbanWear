@@ -5,6 +5,9 @@ import Product from "./Product";
 import ProductFilter from "./ProductFilter";
 import Spinner from "./Spinner";
 import QuantityInput from "./QuantityInput";
+import ProductCarousel from "./ProductCarousel";
+
+import Tabs from "./Tabs";
 export {
   Header,
   Modal,
@@ -13,4 +16,6 @@ export {
   ProductFilter,
   Spinner,
   QuantityInput,
+  Tabs,
+  ProductCarousel,
 };

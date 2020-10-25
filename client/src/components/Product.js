@@ -109,7 +109,7 @@ export default (props) => {
   const { id, images, price, discount, final_price, category, name } = props;
   const product_images =
     images.length < 2 ? images.push(images[0]) : images.slice(0, 2);
-  const productlink = `/product/${name.replace(" ", "-")}`;
+  const productlink = `/product/${name.replaceAll(" ", "-")}`;
   const [status, setStatus] = useState("done");
 
   let timeout = null;

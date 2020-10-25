@@ -61,7 +61,8 @@ export default createGlobalStyle`
       font-weight:bold;
       font-size:0.8rem;
       text-transform:uppercase;
-      font-variant:small-caps
+      font-variant:small-caps;
+      border-radius:5px;
     }
 
 

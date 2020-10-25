@@ -66,10 +66,14 @@ const Header = styled.header`
     background: rgba(0, 0, 0, 0.2);
     width: var(--size);
     height: var(--size);
+    border-radius: 50%;
+  }
+  .nav .actions li.cart button {
+    height: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
   }
   .nav .actions li.cart .label {
     position: absolute;

@@ -22,17 +22,19 @@ function App() {
     <Router>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <Header />
-        <Page>
-          {routes.map(({ path, component }) => (
-            <Route
-              path={path}
-              exact
-              component={component}
-              key={path.replace("/", "")}
-            />
-          ))}
-        </Page>
+        <Header openCart={toggleCartState} />
+        <Modal isOpen={openCart} position="right" close={toggleCartState}>
+          <QuickCart closeQuickCart={toggleCartState} />
+        </Modal>
+
+        {routes.map(({ path, component }) => (
+          <Route
+            path={path}
+            exact
+            component={component}
+            key={path.replace("/", "")}
+          />
+        ))}
       </ThemeProvider>
     </Router>
   );
