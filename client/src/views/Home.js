@@ -162,7 +162,6 @@ const Home = styled.div`
     section .content .item .item__content .item__details {
       bottom: -20px;
       left: -40px;
-      transform: translateY(50%);
     }
     section .content .item .item__content {
       height: 350px;

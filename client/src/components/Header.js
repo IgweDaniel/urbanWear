@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { ReactComponent as BagIcon } from "../assets/svg/bag.svg";
 // import { ReactComponent as MenuIcon } from "../assets/svg/menu-button.svg";
 
@@ -91,6 +91,9 @@ const Header = styled.header`
     .nav .links {
       width: 60%;
     }
+    .nav .actions {
+      width: 20%;
+    }
     .nav .links {
       display: flex;
     }
@@ -105,7 +108,9 @@ export default ({ openCart }) => {
         <div className="header__content">
           <nav className="nav">
             <div className="logo">
-              <img src={require("../assets/logo.webp")} alt="logo" />
+              <Link to="/">
+                <img src={require("../assets/logo.webp")} alt="logo" />
+              </Link>
             </div>
             <ul className="links">
               <li>

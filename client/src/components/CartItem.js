@@ -157,7 +157,7 @@ export default ({ product, quantity, size }) => {
               value={itemQty}
               onChange={(e) => setItemQty(e.target.value)}
             >
-              {[...Array(6)].map((_, i) => (
+              {[...Array(10)].map((_, i) => (
                 <option value={i + 1}>{i + 1}</option>
               ))}
             </select>

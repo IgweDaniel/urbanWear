@@ -28,6 +28,7 @@ const Image = styled.div`
   @media (min-width: 768px) {
     background-image: ${({ url }) => `url(${url})`};
     cursor: zoom-in;
+    cursor: crosshair;
 
     &:hover img {
       opacity: 0;
@@ -206,7 +207,7 @@ const ProductDetail = styled.div`
 `;
 
 const ViewBox = styled.div`
-  height: var(--vh);
+  height: 80vh;
   width: 200px;
   position: relative;
   .close {
@@ -230,6 +231,7 @@ const ViewBox = styled.div`
     width: 400px;
   }
   @media (min-width: 768px) {
+    height: var(--vh);
     width: 600px;
   }
   @media (min-width: 1024px) {
@@ -243,7 +245,7 @@ export default () => {
   const [product, setProduct] = useState(null);
   const [chosenSize, setChosenSize] = useState(null);
   const [qty, setQty] = useState(1);
-  const [viewBox, setViewBox] = useState(false);
+  const [viewBox, setViewBox] = useState({ open: false, startIndex: 1 });
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
@@ -263,8 +265,12 @@ export default () => {
     }
   }, [product]);
 
-  function toggleViewBox() {
-    setViewBox(!viewBox);
+  function toggleViewBox(i = null) {
+    if (viewBox.open) {
+      setViewBox({ open: false, startIndex: 1 });
+    } else {
+      setViewBox({ open: true, startIndex: i ? i : viewBox.startIndex });
+    }
   }
 
   function addToCart() {
@@ -305,12 +311,15 @@ export default () => {
 
   return (
     <>
-      <Modal isOpen={viewBox} close={toggleViewBox}>
+      <Modal isOpen={viewBox.open} close={toggleViewBox}>
         <ViewBox>
           <button className="close" onClick={toggleViewBox}>
             <TiTimes size={20} />
           </button>
-          <ProductCarousel>
+          <ProductCarousel
+            renderThumbs={false}
+            initialIndex={viewBox.startIndex}
+          >
             {product.images.map((image, i) => (
               <Image
                 thumb={image}
@@ -331,7 +340,7 @@ export default () => {
               <ProductCarousel>
                 {product.images.map((image, i) => (
                   <Image
-                    onClick={toggleViewBox}
+                    onClick={() => toggleViewBox(i + 1)}
                     thumb={image}
                     className="image-wrap"
                     key={i}

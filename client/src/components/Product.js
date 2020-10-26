@@ -19,6 +19,7 @@ const Product = styled.div`
     perspective: 600px;
     cursor: pointer;
     transition: transform 0.5s ease-in-out;
+    transition: transform 0.5s linear;
     transform-style: preserve-3d;
   }
 

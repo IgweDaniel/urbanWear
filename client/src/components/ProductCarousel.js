@@ -75,15 +75,15 @@ const ProductCarousel = styled.div`
   }
 `;
 
-export default ({ children }) => {
+export default ({ children, renderThumbs = true, initialIndex = 1 }) => {
   const slider = useRef(null);
   const itemWidth = useRef(1);
   const allowShift = useRef(true);
   const posX1 = useRef(0);
   const posX2 = useRef(0);
   const posInitial = useRef(0);
-  const index = useRef(1);
-  const threshold = 100;
+  const index = useRef(initialIndex);
+  const threshold = 50;
 
   function shiftSlide(dir, action) {
     slider.current.classList.add("shifting");
@@ -187,16 +187,18 @@ export default ({ children }) => {
           <div style={{ width: "100%", flexShrink: 0 }}>{children[0]}</div>
         </section>
       </div>
-      <div className="thumbs">
-        {children.map((child, i) => (
-          <div
-            className={`thumb`}
-            key={i}
-            onClick={() => setIndex(i + 1)}
-            style={{ backgroundImage: `url(${child.props.thumb})` }}
-          ></div>
-        ))}
-      </div>
+      {renderThumbs && (
+        <div className="thumbs">
+          {children.map((child, i) => (
+            <div
+              className={`thumb`}
+              key={i}
+              onClick={() => setIndex(i + 1)}
+              style={{ backgroundImage: `url(${child.props.thumb})` }}
+            ></div>
+          ))}
+        </div>
+      )}
     </ProductCarousel>
   );
 };

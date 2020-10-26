@@ -46,7 +46,7 @@ export const products = [
     images: [
       "https://images.topman.com/i/TopMan/TM71G37BBLE_M_1.jpg?$w700$&fmt=webp&qlt=80",
       "https://images.topman.com/i/TopMan/TM71G37BBLE_F_1.jpg?$w700$&fmt=webp&qlt=80",
-      // "https://images.topman.com/i/TopMan/TM83L12VGRY_D_1.jpg?$w700$&fmt=webp&qlt=80",
+      "https://images.topman.com/i/TopMan/TM71G37BBLE_B_1.jpg?$w700$&fmt=webp&qlt=80",
     ],
     price: 10.0,
     discount: 0.5,
