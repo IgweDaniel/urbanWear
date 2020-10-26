@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as BinIcon } from "../assets/svg/bin.svg";
 import { sizes } from "../data";
+// import Select from "react-dropdown-select";
 const ItemInfo = styled.div`
   height: 150px;
   display: flex;
@@ -64,8 +65,9 @@ const UpdateItem = styled.div`
   }
   select {
     width: 100%;
-    height: 32px;
-    border: 1px solid #000;
+    height: 36px;
+    border: 1px solid #ccc;
+    background: transparent;
     outline: none;
     font-weight: bold;
   }
@@ -135,6 +137,19 @@ export default ({ product, quantity, size }) => {
       </ItemInfo>
       {editMode && (
         <UpdateItem>
+          {/* <div className="input">
+            <Select
+              multi={false}
+              values={[{ value: itemQty, label: itemQty }]}
+              options={[...Array(6)].map((_, i) => ({
+                label: i + 1,
+                value: i + 1,
+              }))}
+              onChange={(values) => {
+                console.log({ values });
+              }}
+            />
+          </div> */}
           <div className="input">
             <select
               name="quantity"

@@ -123,6 +123,7 @@ export default ({ children }) => {
   function initializeSlider() {
     slider.current.classList.remove("shifting");
     const { width } = slider.current.firstElementChild.getBoundingClientRect();
+
     itemWidth.current = width;
     slider.current.style.left = `-${itemWidth.current * index.current}px`;
   }
@@ -152,7 +153,9 @@ export default ({ children }) => {
     }
   }
   useEffect(() => {
-    initializeSlider();
+    setTimeout(() => {
+      initializeSlider();
+    });
     window.addEventListener("resize", initializeSlider);
     return () => window.removeEventListener("resize", initializeSlider);
   }, []);

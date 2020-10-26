@@ -1,17 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { ReactComponent as BagIcon } from "../assets/svg/bag.svg";
-import { ReactComponent as MenuIcon } from "../assets/svg/menu-button.svg";
-import Modal from "./Modal";
-import QuickCart from "./QuickCart";
+// import { ReactComponent as MenuIcon } from "../assets/svg/menu-button.svg";
 
 const Header = styled.header`
   position: fixed;
   top: 0;
   z-index: 4000;
   width: 100%;
-  height: 60px;
+  height: 70px;
   background: transparent;
 
   .header__content {
@@ -36,7 +34,7 @@ const Header = styled.header`
   }
 
   .nav .logo {
-    width: 20%;
+    width: 50%;
   }
   .nav .logo img {
     --logo-size: 40px;
@@ -50,9 +48,10 @@ const Header = styled.header`
     font-variant: small-caps;
     font-weight: bold;
     justify-content: center;
+    display: none;
   }
   .nav .actions {
-    width: 20%;
+    width: 50%;
     justify-content: flex-end;
   }
   .nav .actions li,
@@ -60,16 +59,14 @@ const Header = styled.header`
     margin-left: 10px;
   }
   .nav .actions li.cart {
-    --size: 50px;
     position: relative;
+  }
+  .nav .actions li.cart button {
+    --size: 50px;
+    border-radius: 50%;
     background: rgba(0, 0, 0, 0.2);
     width: var(--size);
     height: var(--size);
-    border-radius: 50%;
-  }
-  .nav .actions li.cart button {
-    height: 100%;
-    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -87,7 +84,13 @@ const Header = styled.header`
     text-decoration: line-through;
   }
   @media (min-width: 969px) {
-    height: 70px;
+    height: 90px;
+    .nav .logo {
+      width: 20%;
+    }
+    .nav .links {
+      width: 60%;
+    }
     .nav .links {
       display: flex;
     }
@@ -98,9 +101,6 @@ const ICON_SIZE = 20;
 export default ({ openCart }) => {
   return (
     <>
-      {/* <Modal isOpen={openCart} position="right" close={closeQuickCart}>
-        <QuickCart closeQuickCart={closeQuickCart} />
-      </Modal> */}
       <Header>
         <div className="header__content">
           <nav className="nav">

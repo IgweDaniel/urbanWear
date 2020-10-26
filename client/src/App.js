@@ -17,19 +17,15 @@ const Body = styled.div`
   width: 100%;
 `;
 
-const Page = styled.div`
-  margin-top: 60px;
-  @media (min-width: 969px) {
-    margin-top: 70px;
-  }
-`;
 function App() {
   const [openCart, setOpenCart] = useState(false);
 
   const toggleCartState = () => setOpenCart(!openCart);
-  function updateBrowserHeight() {
+  function updateBrowserDimensions() {
     let vh = window.innerHeight;
+    // let vw = window.innerHeight;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
+    // document.documentElement.style.setProperty("--vw", `${vw}px`);
   }
   function updateNavBar(e) {
     const page = e.currentTarget;
@@ -37,10 +33,10 @@ function App() {
     else page.classList.remove("hasScrolled");
   }
   useEffect(() => {
-    updateBrowserHeight();
-    window.addEventListener("resize", updateBrowserHeight);
+    updateBrowserDimensions();
+    window.addEventListener("resize", updateBrowserDimensions);
     return () => {
-      window.removeEventListener("resize", updateBrowserHeight);
+      window.removeEventListener("resize", updateBrowserDimensions);
     };
   }, []);
 

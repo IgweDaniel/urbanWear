@@ -7,7 +7,7 @@ const Page = styled.div`
   &:before {
     content: "";
     background-color: #fff;
-    height: 60px;
+    height: 70px;
     width: 90%;
     z-index: 2000;
     display: block;

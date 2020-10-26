@@ -100,13 +100,13 @@ const Home = styled.div`
   section .content .item .item__content:hover {
     /* transform: scale(0.9); */
   }
-  section .content .item .item__content .item__details {
+  section .content .item .contentitem__details {
     position: absolute;
   }
-  section .content .item .item__content .name {
+  section .content .item .name {
     font-size: 2rem;
   }
-  section .content .item .item__content .price {
+  section .content .item .price {
     font-size: 1.5rem;
   }
   section .content .item img {
@@ -141,21 +141,19 @@ const Home = styled.div`
   @media (min-width: 1200px) {
     margin-top: 0px;
     --height: calc(100vh - 0px);
-    /* margin-top: 80px;
-    --height: calc(100vh - 80px); */
     overflow: hidden;
     section .content .cover {
       display: block;
     }
 
-    section .item__content {
+    /* section .item__content {
     }
     section .item__content img {
     }
     section.active .item__content img {
     }
     section.active .item__content {
-    }
+    } */
 
     section .content .item .item__content .name {
       font-size: 1.6rem;
@@ -170,7 +168,6 @@ const Home = styled.div`
       height: 350px;
       width: 300px;
       top: -20px;
-      /* left: 10%; */
     }
   }
 `;

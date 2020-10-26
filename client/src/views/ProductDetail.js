@@ -3,7 +3,15 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { products, sizes } from "../data";
 import Page from "./Page";
-import { Spinner, QuantityInput, Tabs, ProductCarousel } from "../components";
+
+import { TiTimes } from "react-icons/ti";
+import {
+  Spinner,
+  QuantityInput,
+  Tabs,
+  ProductCarousel,
+  Modal,
+} from "../components";
 
 const Image = styled.div`
   height: 100%;
@@ -197,11 +205,45 @@ const ProductDetail = styled.div`
   }
 `;
 
+const ViewBox = styled.div`
+  height: var(--vh);
+  width: 200px;
+  position: relative;
+  .close {
+    position: absolute;
+    background: #fff;
+    display: block;
+    --size: 40px;
+    height: var(--size);
+    width: var(--size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+  }
+  @media (min-width: 320px) {
+    width: 300px;
+  }
+  @media (min-width: 400px) {
+    width: 400px;
+  }
+  @media (min-width: 768px) {
+    width: 600px;
+  }
+  @media (min-width: 1024px) {
+    width: 600px;
+    /* width: 75vw; */
+  }
+`;
+
 export default () => {
   let { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [chosenSize, setChosenSize] = useState(null);
   const [qty, setQty] = useState(1);
+  const [viewBox, setViewBox] = useState(false);
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
@@ -220,6 +262,10 @@ export default () => {
       setStatus("done");
     }
   }, [product]);
+
+  function toggleViewBox() {
+    setViewBox(!viewBox);
+  }
 
   function addToCart() {
     let cartItem = {
@@ -258,87 +304,109 @@ export default () => {
   }
 
   return (
-    <Page>
-      <ProductDetail>
-        <div className="productdetail__info">
-          <div className="productdetail__images">
-            <ProductCarousel>
-              {product.images.map((image, i) => (
-                <Image
-                  thumb={image}
-                  className="image-wrap"
-                  key={i}
-                  onMouseMove={zoom}
-                  url={image.replace("700", "1300")}
-                >
-                  <img src={image} key={i} alt={`${product.name}-${i}`} />
-                </Image>
-              ))}
-            </ProductCarousel>
-          </div>
-          <div className="productdetail__content">
-            <h1 className="product__name">{product.name}</h1>
-            <p className="product__price">
-              {product.discount && (
-                <span className="actual-price">
-                  was $<span className="figure">{product.price}</span>
-                </span>
-              )}
-              <span className="final-price">
-                {product.discount ? "Now" : "Buy for"}$
-                <span className="figure">{product.final_price}</span>
-              </span>
-            </p>
-            <ul className="product__sizes">
-              {sizes.map((size, i) => (
-                <li
-                  role="button"
-                  key={i}
-                  className={`size  ${chosenSize === size ? "active" : ""}`}
-                >
-                  <button
-                    onClick={() => setChosenSize(size)}
-                    disabled={!product.sizes.includes(size)}
+    <>
+      <Modal isOpen={viewBox} close={toggleViewBox}>
+        <ViewBox>
+          <button className="close" onClick={toggleViewBox}>
+            <TiTimes size={20} />
+          </button>
+          <ProductCarousel>
+            {product.images.map((image, i) => (
+              <Image
+                thumb={image}
+                key={i}
+                onMouseMove={zoom}
+                url={image.replace("700", "1300")}
+              >
+                <img src={image} key={i} alt={`${product.name}-${i}`} />
+              </Image>
+            ))}
+          </ProductCarousel>
+        </ViewBox>
+      </Modal>
+      <Page>
+        <ProductDetail>
+          <div className="productdetail__info">
+            <div className="productdetail__images">
+              <ProductCarousel>
+                {product.images.map((image, i) => (
+                  <Image
+                    onClick={toggleViewBox}
+                    thumb={image}
+                    className="image-wrap"
+                    key={i}
+                    onMouseMove={zoom}
+                    url={image.replace("700", "1300")}
                   >
-                    {size}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <div className="product__action">
-              <div className="qty">
-                <QuantityInput
-                  value={qty}
-                  min={1}
-                  max={10}
-                  onChange={(val) => setQty(val)}
-                />
-              </div>
+                    <img src={image} key={i} alt={`${product.name}-${i}`} />
+                  </Image>
+                ))}
+              </ProductCarousel>
+            </div>
+            <div className="productdetail__content">
+              <h1 className="product__name">{product.name}</h1>
+              <p className="product__price">
+                {product.discount && (
+                  <span className="actual-price">
+                    was $<span className="figure">{product.price}</span>
+                  </span>
+                )}
+                <span className="final-price">
+                  {product.discount ? "Now" : "Buy for"}$
+                  <span className="figure">{product.final_price}</span>
+                </span>
+              </p>
+              <ul className="product__sizes">
+                {sizes.map((size, i) => (
+                  <li
+                    role="button"
+                    key={i}
+                    className={`size  ${chosenSize === size ? "active" : ""}`}
+                  >
+                    <button
+                      onClick={() => setChosenSize(size)}
+                      disabled={!product.sizes.includes(size)}
+                    >
+                      {size}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <div className="product__action">
+                <div className="qty">
+                  <QuantityInput
+                    value={qty}
+                    min={1}
+                    max={10}
+                    onChange={(val) => setQty(val)}
+                  />
+                </div>
 
-              <button className="button cart-add" onClick={addToCart}>
-                add to cart
-              </button>
+                <button className="button cart-add" onClick={addToCart}>
+                  add to cart
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <Tabs>
-          <div label="Description">{product.desc}</div>
-          <div label="additional info">
-            <div className="meta-info">
-              <div className="info">
-                <span className="key">Weight</span>
-                <span className="value">60kg</span>
-              </div>
-              <div className="info">
-                <span className="key">Material</span>
-                <span className="value">100% cotton</span>
+          <Tabs>
+            <div label="Description">{product.desc}</div>
+            <div label="additional info">
+              <div className="meta-info">
+                <div className="info">
+                  <span className="key">Weight</span>
+                  <span className="value">60kg</span>
+                </div>
+                <div className="info">
+                  <span className="key">Material</span>
+                  <span className="value">100% cotton</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div label="reviews">mamam</div>
-        </Tabs>
-      </ProductDetail>
-    </Page>
+            <div label="reviews">mamam</div>
+          </Tabs>
+        </ProductDetail>
+      </Page>
+    </>
   );
 };

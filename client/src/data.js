@@ -44,9 +44,9 @@ export const products = [
   {
     id: 3,
     images: [
-      "https://images.topman.com/i/TopMan/TM83L12VGRY_F_1.jpg?$w700$&fmt=webp&qlt=80",
-      "https://images.topman.com/i/TopMan/TM83L12VGRY_C_1.jpg?$w700$&fmt=webp&qlt=80",
-      "https://images.topman.com/i/TopMan/TM83L12VGRY_D_1.jpg?$w700$&fmt=webp&qlt=80",
+      "https://images.topman.com/i/TopMan/TM71G37BBLE_M_1.jpg?$w700$&fmt=webp&qlt=80",
+      "https://images.topman.com/i/TopMan/TM71G37BBLE_F_1.jpg?$w700$&fmt=webp&qlt=80",
+      // "https://images.topman.com/i/TopMan/TM83L12VGRY_D_1.jpg?$w700$&fmt=webp&qlt=80",
     ],
     price: 10.0,
     discount: 0.5,
