@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { products } from "../data";
+import { products, sizes } from "../data";
 import Page from "./Page";
 import { Spinner, QuantityInput, Tabs, ProductCarousel } from "../components";
 
@@ -10,13 +10,17 @@ const Image = styled.div`
   width: 100%;
   background-position: 50% 50%;
   background-repeat: no-repeat;
-
+  img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: opacity 0.5s;
+  }
   @media (min-width: 768px) {
     background-image: ${({ url }) => `url(${url})`};
     cursor: zoom-in;
-    img {
-      transition: opacity 0.5s;
-    }
+
     &:hover img {
       opacity: 0;
     }
@@ -40,12 +44,6 @@ const ProductDetail = styled.div`
     height: 400px;
   }
 
-  .productdetail__images img {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
   .productdetail__content {
     margin-top: 20px;
   }
@@ -75,21 +73,41 @@ const ProductDetail = styled.div`
     margin: 5px 0;
     height: 30px;
     text-transform: uppercase;
-    border: 1px solid #ccc;
     font-weight: bold;
     display: flex;
     align-items: center;
-    cursor: pointer;
     justify-content: center;
-    user-select: none;
   }
-  .product__sizes .size:hover {
+  .product__sizes button {
+    display: block;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #ccc;
+  }
+
+  .product__sizes button:disabled:after {
+    height: 2px;
+    width: 200px;
+    content: "";
+    z-index: 4;
+    left: 0;
+    top: 0;
+    position: absolute;
+    background: #ccc;
+    transform: rotateZ(15deg);
+    transform-origin: left;
+  }
+  .product__sizes .size button:not(:disabled):hover {
     background: #303030;
     color: #fff;
+    border-color: #000;
   }
-  .product__sizes .size.active {
+  .product__sizes .size.active button {
     color: #fff;
     background: #000;
+    border-color: #000;
   }
 
   .productdetail__content .figure {
@@ -171,6 +189,8 @@ const ProductDetail = styled.div`
     .productdetail__info {
       height: 600px;
     }
+  }
+  @media (min-width: 1200px) {
     .product__sizes .size {
       flex-basis: 100px;
     }
@@ -191,7 +211,7 @@ export default () => {
 
     let timeout = setTimeout(() => {
       setProduct(currProduct);
-    }, 3000);
+    }, 1000);
     return () => clearTimeout(timeout);
   }, [slug]);
 
@@ -270,14 +290,18 @@ export default () => {
               </span>
             </p>
             <ul className="product__sizes">
-              {product.sizes.map((size, i) => (
+              {sizes.map((size, i) => (
                 <li
                   role="button"
                   key={i}
-                  className={`size ${chosenSize === size ? "active" : ""}`}
-                  onClick={() => setChosenSize(size)}
+                  className={`size  ${chosenSize === size ? "active" : ""}`}
                 >
-                  {size}
+                  <button
+                    onClick={() => setChosenSize(size)}
+                    disabled={!product.sizes.includes(size)}
+                  >
+                    {size}
+                  </button>
                 </li>
               ))}
             </ul>
@@ -286,6 +310,7 @@ export default () => {
                 <QuantityInput
                   value={qty}
                   min={1}
+                  max={10}
                   onChange={(val) => setQty(val)}
                 />
               </div>

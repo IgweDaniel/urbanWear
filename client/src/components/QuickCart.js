@@ -1,19 +1,20 @@
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { cart } from "../data";
+import CartItem from "./CartItem";
 
-let items = [
-  {
-    id: 1,
-    product: { name: "", price: 20, img: "" },
-    qty: 2,
-    total: 40,
-  },
-];
+const FullCart = styled.div`
+  width: 100%;
+  height: 100%;
+  /* background: red; */
+  margin: 0 auto;
+  padding: 10px;
+  overflow-y: auto;
+`;
 
-items = [];
-
-const Item = styled.div``;
+let items = cart;
+// items = [];
 
 const EmptyCart = styled.div`
   display: flex;
@@ -32,14 +33,18 @@ const EmptyCart = styled.div`
 `;
 
 const QuickCart = styled.div`
-  height: 100vh;
-  width: 350px;
+  height: var(--vh);
+  width: 320px;
+
+  @media (min-width: 768px) {
+    width: 350px;
+  }
 `;
 
 export default ({ closeQuickCart }) => {
   const history = useHistory();
   return (
-    <QuickCart>
+    <QuickCart height={window.innerHeight}>
       {items.length <= 0 ? (
         <EmptyCart>
           <div className="content">
@@ -59,11 +64,11 @@ export default ({ closeQuickCart }) => {
           </div>
         </EmptyCart>
       ) : (
-        items.map((item) => (
-          <Item>
-            <p>Hello</p>
-          </Item>
-        ))
+        <FullCart>
+          {items.map((item, i) => (
+            <CartItem {...item} key={i} />
+          ))}
+        </FullCart>
       )}
     </QuickCart>
   );

@@ -7,12 +7,11 @@ import Modal from "./Modal";
 import QuickCart from "./QuickCart";
 
 const Header = styled.header`
-  position: absolute;
+  position: fixed;
   top: 0;
-  z-index: 500;
+  z-index: 4000;
   width: 100%;
   height: 60px;
-  background: ${({ theme }) => theme.colors.ash};
   background: transparent;
 
   .header__content {
@@ -99,9 +98,9 @@ const ICON_SIZE = 20;
 export default ({ openCart }) => {
   return (
     <>
-      <Modal isOpen={openCart} position="right" close={closeQuickCart}>
+      {/* <Modal isOpen={openCart} position="right" close={closeQuickCart}>
         <QuickCart closeQuickCart={closeQuickCart} />
-      </Modal>
+      </Modal> */}
       <Header>
         <div className="header__content">
           <nav className="nav">

@@ -22,7 +22,28 @@ const Product = styled.div`
     transform-style: preserve-3d;
   }
 
-  .product__image {
+  .product__images:hover {
+    transform: rotateY(180deg);
+  }
+  .product__images img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    backface-visibility: hidden;
+  }
+
+  .product__images img:nth-of-type(2) {
+    transform: rotateY(180deg);
+  }
+
+  .product__image img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+  /* .product__image {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -42,7 +63,7 @@ const Product = styled.div`
     height: 100%;
     width: 100%;
     object-fit: cover;
-  }
+  } */
 
   .cartadd {
     position: absolute;
@@ -137,9 +158,9 @@ export default (props) => {
         </button>
         <Link className="product__images" to={productlink}>
           {product_images.map((image, i) => (
-            <div className="product__image" key={i}>
-              <img src={image} alt={name} />
-            </div>
+            <img src={image} alt={name} key={i} />
+            // <div className="product__image" key={i}>
+            // </div>
           ))}
         </Link>
       </div>

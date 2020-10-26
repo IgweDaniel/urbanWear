@@ -1,8 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 import HKNova from "./assets/HKNova-Medium.woff";
 export default createGlobalStyle`
-  
-  
   @font-face {
     font-family: HKNova;
     src: url(${HKNova}) format('woff');
@@ -21,6 +19,8 @@ export default createGlobalStyle`
   body {
     /* font-family:"HKNova"; */
       font-family: 'Catamaran', sans-serif;
+      height:100vh;
+      overflow:hidden;
     }
   
   li {
@@ -62,7 +62,7 @@ export default createGlobalStyle`
       font-size:0.8rem;
       text-transform:uppercase;
       font-variant:small-caps;
-      border-radius:5px;
+      /* border-radius:5px; */
     }
 
 

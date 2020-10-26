@@ -4,7 +4,7 @@ import { TimelineLite } from "gsap";
 const Modal = styled.div`
   position: fixed;
   top: 0;
-  z-index: 1000;
+  z-index: 10000;
   height: 100%;
   width: 100%;
   display: none;
