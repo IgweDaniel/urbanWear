@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link, NavLink } from "react-router-dom";
 import { ReactComponent as BagIcon } from "../assets/svg/bag.svg";
 // import { ReactComponent as MenuIcon } from "../assets/svg/menu-button.svg";
-
+import { FiHeart, FiSearch } from "react-icons/fi";
 const Header = styled.header`
   position: fixed;
   top: 0;
@@ -58,18 +58,27 @@ const Header = styled.header`
   .nav .links li {
     margin-left: 10px;
   }
-  .nav .actions li.cart {
-    position: relative;
-  }
-  .nav .actions li.cart button {
-    --size: 50px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.2);
-    width: var(--size);
-    height: var(--size);
+  .nav .actions li {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    /* height: var(--size); */
+  }
+  .nav .actions li.cart {
+    position: relative;
+  }
+
+  .nav .actions li.cart button {
+    --size: 50px;
+    width: var(--size);
+    height: var(--size);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    /* 
+    display: flex;
+    align-items: center;
+    justify-content: center; */
   }
   .nav .actions li.cart .label {
     position: absolute;
@@ -83,6 +92,7 @@ const Header = styled.header`
   .nav .links li .link-active {
     text-decoration: line-through;
   }
+
   @media (min-width: 969px) {
     height: 90px;
     .nav .logo {
@@ -132,10 +142,14 @@ export default ({ openCart }) => {
 
             <ul className="actions">
               <li>
-                <button>Search</button>
+                <button>
+                  <FiSearch size={ICON_SIZE} />
+                </button>
               </li>
               <li>
-                <button>WishList</button>
+                <button>
+                  <FiHeart size={ICON_SIZE} />
+                </button>
               </li>
               <li className="cart">
                 <span className="label">{0}</span>

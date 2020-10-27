@@ -7,7 +7,7 @@ export default createGlobalStyle`
   }
 
   :root{
-    font-size:14px
+    font-size:15px
   }
 
   * {

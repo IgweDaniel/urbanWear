@@ -39,6 +39,9 @@ const QuickCart = styled.div`
   @media (min-width: 768px) {
     width: 350px;
   }
+  @media (min-width: 1024px) {
+    width: 400px;
+  }
 `;
 
 export default ({ closeQuickCart }) => {

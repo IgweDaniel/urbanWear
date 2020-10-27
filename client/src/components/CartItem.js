@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { ReactComponent as BinIcon } from "../assets/svg/bin.svg";
+// import { ReactComponent as BinIcon } from "../assets/svg/bin.svg";
 import { sizes } from "../data";
+import { MdEdit, MdDelete } from "react-icons/md";
+import { Link } from "react-router-dom";
 // import Select from "react-dropdown-select";
+
 const ItemInfo = styled.div`
-  height: 150px;
+  min-height: 150px;
   display: flex;
 
   .image {
@@ -25,8 +28,6 @@ const ItemInfo = styled.div`
   .name {
     font-weight: bold;
     font-size: 1rem;
-    border-bottom: 2px solid #000;
-    line-height: 1;
     width: fit-content;
   }
   .quantitysize {
@@ -51,9 +52,9 @@ const ItemInfo = styled.div`
   }
 
   .actions button.edit {
-    font-size: 1.1rem;
-    border-bottom: 2px solid #000;
-    line-height: 1;
+    /* font-size: 1rem; */
+    /* border-bottom: 2px solid #000; */
+    /* line-height: 1; */
     margin-right: 10px;
   }
 `;
@@ -65,7 +66,7 @@ const UpdateItem = styled.div`
   }
   select {
     width: 100%;
-    height: 36px;
+    height: 40px;
     border: 1px solid #ccc;
     background: transparent;
     outline: none;
@@ -97,6 +98,7 @@ const UpdateItem = styled.div`
 const CartItem = styled.div`
   margin: 0 10px;
   border-bottom: 1px solid #ccc;
+  transition: height 0.3s ease-in-out;
 `;
 
 const ICON_SIZE = 20;
@@ -105,15 +107,16 @@ export default ({ product, quantity, size }) => {
   const [itemQty, setItemQty] = useState(quantity);
   const [itemSize, setItemSize] = useState(size);
 
+  const productlink = `/product/${product.name.replaceAll(" ", "-")}`;
   function handleItemDelete(e) {}
   function handleItemUpdate(e) {}
 
   return (
     <CartItem>
       <ItemInfo>
-        <div className="image">
+        <Link className="image" to={productlink}>
           <img src={product.images[0]} alt="" />
-        </div>
+        </Link>
         <div className="details">
           <p className="name">{product.name}</p>
           <p className="quantitysize">
@@ -126,10 +129,11 @@ export default ({ product, quantity, size }) => {
           {!editMode && (
             <div className="actions">
               <button className="edit" onClick={() => setEditMode(true)}>
-                Edit
+                <MdEdit size={ICON_SIZE} />
               </button>
               <button className="delete" onClick={handleItemDelete}>
-                <BinIcon height={ICON_SIZE} width={ICON_SIZE} />
+                <MdDelete size={ICON_SIZE} />
+                {/* <BinIcon height={ICON_SIZE} width={ICON_SIZE} /> */}
               </button>
             </div>
           )}
@@ -137,19 +141,6 @@ export default ({ product, quantity, size }) => {
       </ItemInfo>
       {editMode && (
         <UpdateItem>
-          {/* <div className="input">
-            <Select
-              multi={false}
-              values={[{ value: itemQty, label: itemQty }]}
-              options={[...Array(6)].map((_, i) => ({
-                label: i + 1,
-                value: i + 1,
-              }))}
-              onChange={(values) => {
-                console.log({ values });
-              }}
-            />
-          </div> */}
           <div className="input">
             <select
               name="quantity"
@@ -158,7 +149,9 @@ export default ({ product, quantity, size }) => {
               onChange={(e) => setItemQty(e.target.value)}
             >
               {[...Array(10)].map((_, i) => (
-                <option value={i + 1}>{i + 1}</option>
+                <option value={i + 1} key={i}>
+                  {i + 1}
+                </option>
               ))}
             </select>
           </div>
@@ -170,7 +163,9 @@ export default ({ product, quantity, size }) => {
               onChange={(e) => setItemSize(e.target.value)}
             >
               {sizes.map((size, i) => (
-                <option value={size}>{size}</option>
+                <option value={size} key={size}>
+                  {size}
+                </option>
               ))}
             </select>
           </div>

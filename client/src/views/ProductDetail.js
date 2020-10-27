@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { products, sizes } from "../data";
 import Page from "./Page";
@@ -12,6 +12,19 @@ import {
   ProductCarousel,
   Modal,
 } from "../components";
+import { useUpdateEffect } from "../hooks";
+
+const NotContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  margin: 200px auto 0;
+  text-align: center;
+  text-transform: uppercase;
+  font-variant: small-caps;
+`;
 
 const Image = styled.div`
   height: 100%;
@@ -25,11 +38,11 @@ const Image = styled.div`
     object-position: center;
     transition: opacity 0.5s;
   }
+
   @media (min-width: 768px) {
     background-image: ${({ url }) => `url(${url})`};
     cursor: zoom-in;
     cursor: crosshair;
-
     &:hover img {
       opacity: 0;
     }
@@ -228,15 +241,14 @@ const ViewBox = styled.div`
     width: 300px;
   }
   @media (min-width: 400px) {
-    width: 400px;
+    width: 350px;
   }
   @media (min-width: 768px) {
     height: var(--vh);
-    width: 600px;
+    width: 500px;
   }
   @media (min-width: 1024px) {
     width: 600px;
-    /* width: 75vw; */
   }
 `;
 
@@ -259,8 +271,10 @@ export default () => {
     return () => clearTimeout(timeout);
   }, [slug]);
 
-  useEffect(() => {
-    if (product !== null) {
+  useUpdateEffect(() => {
+    if (product == null) {
+      setStatus("error");
+    } else {
       setStatus("done");
     }
   }, [product]);
@@ -283,29 +297,27 @@ export default () => {
   }
 
   function zoom(e) {
+    // console.log(e.touches[0]);
     var zoomer = e.currentTarget;
     const x = (e.pageX / zoomer.offsetWidth) * 100;
     const y = ((e.pageY - 100) / zoomer.offsetHeight) * 100;
     zoomer.style.backgroundPosition = x + "% " + y + "%";
   }
 
-  if (status === "loading") {
+  if (status === "error") {
     return (
-      <div
-        style={{
-          marginTop: 200,
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <Spinner />
-      </div>
+      <NotContent>
+        <h3>Eror getting product. this product may be out of stock</h3>
+        <Link className="button" style={{ width: "100%" }} to="/shop">
+          Go to shop
+        </Link>
+      </NotContent>
     );
-  } else if (status === "error") {
+  } else if (status === "loading") {
     return (
-      <Page>
-        <h2> error</h2>
-      </Page>
+      <NotContent>
+        <Spinner />
+      </NotContent>
     );
   }
 
@@ -325,6 +337,7 @@ export default () => {
                 thumb={image}
                 key={i}
                 onMouseMove={zoom}
+                onTouchStart={zoom}
                 url={image.replace("700", "1300")}
               >
                 <img src={image} key={i} alt={`${product.name}-${i}`} />

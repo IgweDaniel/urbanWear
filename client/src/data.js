@@ -35,7 +35,7 @@ export const products = [
     discount: 0.5,
     final_price: 5.0,
     category: "Shirts",
-    name: "Blue Long shirt",
+    name: "Blue Long shirt ",
     inCart: false,
     sizes: ["XL", "XXL", "XS", "L", "M"],
     desc:
@@ -52,7 +52,7 @@ export const products = [
     discount: 0.5,
     final_price: 5.0,
     category: "Shirts",
-    name: "Blue Long shirt",
+    name: "Brown shirt",
     inCart: false,
     sizes: ["XL", "XXL", "XS", "L", "M"],
     desc:
@@ -60,9 +60,11 @@ export const products = [
   },
 ];
 
-export const cart = products.map((product) => ({
-  product,
-  size: "XL",
-  quantity: Math.round(Math.random() * 9 + 1),
-}));
+export const cart = products
+  .map((product) => ({
+    product,
+    size: "XL",
+    quantity: Math.round(Math.random() * 9 + 1),
+  }))
+  .slice(0, 2);
 export const sizes = ["XL", "XXL", "L", "S", "XS", "M", "XXS"];
