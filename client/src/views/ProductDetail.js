@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { products, sizes } from "../data";
+import { products } from "../data";
+import { SIZES } from "../constants";
 import Page from "./Page";
 
 import { TiTimes } from "react-icons/ti";
@@ -11,20 +12,9 @@ import {
   Tabs,
   ProductCarousel,
   Modal,
+  NotContent,
 } from "../components";
 import { useUpdateEffect } from "../hooks";
-
-const NotContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 80%;
-  margin: 200px auto 0;
-  text-align: center;
-  text-transform: uppercase;
-  font-variant: small-caps;
-`;
 
 const Image = styled.div`
   height: 100%;
@@ -306,7 +296,7 @@ export default () => {
 
   if (status === "error") {
     return (
-      <NotContent>
+      <NotContent offset={200}>
         <h3>Eror getting product. this product may be out of stock</h3>
         <Link className="button" style={{ width: "100%" }} to="/shop">
           Go to shop
@@ -315,7 +305,7 @@ export default () => {
     );
   } else if (status === "loading") {
     return (
-      <NotContent>
+      <NotContent offset={200}>
         <Spinner />
       </NotContent>
     );
@@ -379,7 +369,7 @@ export default () => {
                 </span>
               </p>
               <ul className="product__sizes">
-                {sizes.map((size, i) => (
+                {SIZES.map((size, i) => (
                   <li
                     role="button"
                     key={i}

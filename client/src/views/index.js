@@ -23,6 +23,10 @@ const routes = [
     component: Shop,
   },
   {
+    path: "/shop/:category",
+    component: Shop,
+  },
+  {
     path: "/product/:slug",
     component: ProductDetail,
   },

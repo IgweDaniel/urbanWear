@@ -47,6 +47,8 @@ export default createGlobalStyle`
       background:transparent;
       font-family:inherit;
       color:inherit;
+      text-transform:inherit;
+      font-size:inherit;
     }
   
     .button{

@@ -41,30 +41,9 @@ const Product = styled.div`
   .product__image img {
     height: 100%;
     width: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
   }
-  /* .product__image {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    backface-visibility: hidden;
-  }
-
-  .product__image:nth-of-type(2) {
-    transform: rotateY(180deg);
-  }
-
-  .product__images:hover {
-    transform: rotateY(180deg);
-  }
-
-  .product__image img {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-  } */
 
   .cartadd {
     position: absolute;

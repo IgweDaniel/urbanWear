@@ -1,9 +1,87 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+
+import { Range } from "rc-slider";
+import "rc-slider/assets/index.css";
+
+import { useFilter } from "../hooks";
+import { categories } from "../data";
+import { SIZES } from "../constants";
 
 const ProductFilter = styled.div`
   height: 100vh;
+  height: var(--vh);
   width: 320px;
+
+  .content {
+    width: 80%;
+    margin: 40px auto;
+  }
+  .subtext {
+    text-transform: uppercase;
+    font-variant: small-caps;
+    font-size: 0.9rem;
+  }
+  .categories {
+  }
+  .categories ul {
+    text-transform: uppercase;
+    font-variant: small-caps;
+  }
+  .price__inner,
+  .sizes ul,
+  .categories ul {
+    width: 100%;
+  }
+  .categories .category {
+    margin: 7px 0;
+  }
+
+  .sizes .size,
+  .categories .category {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    font-variant: small-caps;
+  }
+  .sizes ul {
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    flex-wrap: wrap;
+  }
+
+  .sizes .size {
+    flex-basis: 60px;
+    margin: 6px;
+    margin-left: 0;
+    /* border: 1px solid #000; */
+    background: #000;
+    color: #fff;
+  }
+  .sizes .size button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+  }
+  .size.active {
+    background: #ccc;
+  }
+  .category.active {
+    color: #ccc;
+    font-weight: bold;
+  }
+  .price {
+    height: 120px;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-right: none;
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+  }
 
   @media (min-width: 768px) {
     width: 350px;
@@ -11,5 +89,92 @@ const ProductFilter = styled.div`
 `;
 
 export default () => {
-  return <ProductFilter>ProductFilter</ProductFilter>;
+  const {
+    updateFilterSize,
+    updateFilterPrice,
+    category: activeCategory,
+    size: activeSize,
+    min__price,
+    max__price,
+  } = useFilter();
+
+  const [price, setPrice] = useState([min__price, max__price]);
+
+  return (
+    <ProductFilter>
+      <div className="content">
+        <div className="categories">
+          <h3 className="subtext">categories</h3>
+          <ul>
+            <li className="category">
+              <Link
+                to={`/shop`}
+                className={`category ${
+                  activeCategory.toLowerCase() === "all" ? "active" : ""
+                }`}
+              >
+                all
+              </Link>
+            </li>
+            {categories.map((category) => (
+              <li
+                key={category.id}
+                className={`category ${
+                  activeCategory.toLowerCase() === category.name.toLowerCase()
+                    ? "active"
+                    : ""
+                }`}
+              >
+                <Link to={`/shop/${category.name}`}>{category.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="price">
+          <div className="price__inner">
+            <h3 className="subtext">filter by price</h3>
+            <Range
+              max={20}
+              allowCross={false}
+              trackStyle={[{ backgroundColor: "#000" }]}
+              handleStyle={[{ borderColor: "#000" }, { borderColor: "#000" }]}
+              onChange={(price) => setPrice(price)}
+              value={price}
+              onAfterChange={updateFilterPrice}
+            />
+
+            <div className="value">
+              ${price[0]}-{price[1]}
+            </div>
+          </div>
+        </div>
+
+        <div className="sizes">
+          <h3 className="subtext">filter by size</h3>
+
+          <ul>
+            <li
+              className={`size ${
+                activeSize.toLowerCase() === "all" ? "active" : ""
+              }`}
+            >
+              <button onClick={() => updateFilterSize("all")}>all</button>
+            </li>
+            {SIZES.map((size) => (
+              <li
+                key={size}
+                className={`size ${
+                  activeSize.toLowerCase() === size.toLowerCase()
+                    ? "active"
+                    : ""
+                }`}
+              >
+                <button onClick={() => updateFilterSize(size)}>{size}</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </ProductFilter>
+  );
 };

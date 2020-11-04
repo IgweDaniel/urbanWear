@@ -6,6 +6,7 @@ import ProductFilter from "./ProductFilter";
 import Spinner from "./Spinner";
 import QuantityInput from "./QuantityInput";
 import ProductCarousel from "./ProductCarousel";
+import NotContent from "./NotContent";
 
 import Tabs from "./Tabs";
 export {
@@ -18,4 +19,5 @@ export {
   QuantityInput,
   Tabs,
   ProductCarousel,
+  NotContent,
 };

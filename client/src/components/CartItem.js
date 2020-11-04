@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 // import { ReactComponent as BinIcon } from "../assets/svg/bin.svg";
-import { sizes } from "../data";
+import { SIZES } from "../constants";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
 // import Select from "react-dropdown-select";
@@ -60,7 +60,7 @@ const ItemInfo = styled.div`
 `;
 
 const UpdateItem = styled.div`
-  margin-bottom: 20px;
+  margin: 10px 0;
   .input {
     margin: 0 0 10px;
   }
@@ -96,7 +96,7 @@ const UpdateItem = styled.div`
 `;
 
 const CartItem = styled.div`
-  margin: 0 10px;
+  margin: 0 10px 20px;
   border-bottom: 1px solid #ccc;
   transition: height 0.3s ease-in-out;
 `;
@@ -108,7 +108,9 @@ export default ({ product, quantity, size }) => {
   const [itemSize, setItemSize] = useState(size);
 
   const productlink = `/product/${product.name.replaceAll(" ", "-")}`;
-  function handleItemDelete(e) {}
+  function handleItemDelete(e) {
+    console.log("item deleted");
+  }
   function handleItemUpdate(e) {}
 
   return (
@@ -162,7 +164,7 @@ export default ({ product, quantity, size }) => {
               value={itemSize}
               onChange={(e) => setItemSize(e.target.value)}
             >
-              {sizes.map((size, i) => (
+              {SIZES.map((size, i) => (
                 <option value={size} key={size}>
                   {size}
                 </option>

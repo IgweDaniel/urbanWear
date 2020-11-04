@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Page from "./Page";
 import { ReactComponent as HangerIcon } from "../assets/svg/hanger.svg";
 import { ReactComponent as FilterIcon } from "../assets/svg/filter.svg";
 import { FiChevronDown } from "react-icons/fi";
-import { categories, products } from "../data";
+import { categories, products as productdata } from "../data";
 import { Link } from "react-router-dom";
-import { Modal, Product, ProductFilter } from "../components";
+import {
+  Modal,
+  Product,
+  ProductFilter,
+  Spinner,
+  NotContent,
+} from "../components";
+import { useFilter, useUpdateEffect } from "../hooks";
 
 const Banner = styled.div`
   display: flex;
@@ -14,6 +21,10 @@ const Banner = styled.div`
   justify-content: center;
   flex-direction: column;
   /* font-size: 4rem; */
+  .currentcategory {
+    text-transform: capitalize;
+    font-size: 2.7rem;
+  }
   margin: 100px 0 50px;
   .category-links {
     margin-top: 10px;
@@ -75,6 +86,11 @@ const Shop = styled.div`
   }
   .meta .sort span {
   }
+  .content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
   @media (min-width: 768px) {
     .meta .filter {
       width: 100px;
@@ -89,6 +105,7 @@ const Shop = styled.div`
 `;
 
 const ProductList = styled.div`
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
 
@@ -110,7 +127,72 @@ const ICON_SIZE = 75;
 export default () => {
   const [filterDisplay, setFilterDisplay] = useState(false);
 
+  const [products, setProducts] = useState([]);
+  const [status, setStatus] = useState("loading");
+  const { size, category, min__price, max__price } = useFilter();
+
   const toggleFilterDisplay = () => setFilterDisplay(!filterDisplay);
+
+  function getProducts(data) {
+    return data
+      .filter((product) =>
+        category.toLowerCase() === "all"
+          ? true
+          : product.category.toLowerCase() === category.toLowerCase()
+      )
+      .filter((product) =>
+        size === "all" ? true : product.sizes.includes(size)
+      )
+      .filter(
+        (product) =>
+          product.final_price >= min__price && product.final_price <= max__price
+      );
+  }
+
+  useEffect(() => {
+    setStatus("loading");
+    const activeproducts = getProducts(productdata);
+
+    let timeout = setTimeout(() => {
+      setProducts(activeproducts);
+    }, 1000);
+    return () => clearTimeout(timeout);
+  }, [category, size, min__price, max__price]);
+
+  useUpdateEffect(() => {
+    if (products === null) {
+      setStatus("error");
+    } else {
+      setStatus("done");
+    }
+  }, [products]);
+
+  let content = (
+    <NotContent>
+      <Spinner top={60} />
+    </NotContent>
+  );
+  if (status === "done") {
+    content =
+      products.length > 0 ? (
+        <ProductList>
+          {products.map((product) => (
+            <Product {...product} key={product.id} />
+          ))}
+        </ProductList>
+      ) : (
+        <NotContent>
+          <h3>No Products Mathching this filters</h3>
+        </NotContent>
+      );
+  }
+  if (status === "error")
+    content = (
+      <NotContent>
+        <h3>Eror fetching products</h3>
+      </NotContent>
+    );
+
   return (
     <>
       <Modal isOpen={filterDisplay} position="left" close={toggleFilterDisplay}>
@@ -118,14 +200,20 @@ export default () => {
       </Modal>
       <Page>
         <Banner>
-          <HangerIcon height={ICON_SIZE} width={ICON_SIZE} />
-          <ul className="category-links">
-            {categories.map((cat) => (
-              <li key={cat}>
-                <Link to={`/shop/${cat}`}>{cat}</Link>
-              </li>
-            ))}
-          </ul>
+          {category === "all" ? (
+            <>
+              <HangerIcon height={ICON_SIZE} width={ICON_SIZE} />
+              <ul className="category-links">
+                {categories.map((category) => (
+                  <li key={category.id}>
+                    <Link to={`/shop/${category.name}`}>{category.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <h1 className="currentcategory">{category}</h1>
+          )}
         </Banner>
         <Shop>
           <div className="meta">
@@ -144,11 +232,7 @@ export default () => {
             </div>
           </div>
 
-          <ProductList>
-            {products.map((product) => (
-              <Product {...product} key={product.id} />
-            ))}
-          </ProductList>
+          <div className="content">{content}</div>
         </Shop>
       </Page>
     </>

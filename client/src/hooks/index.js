@@ -1,3 +1,3 @@
 import useUpdateEffect from "./useUpdateEffect";
-
-export { useUpdateEffect };
+import useFilter from "./useFilter";
+export { useUpdateEffect, useFilter };
