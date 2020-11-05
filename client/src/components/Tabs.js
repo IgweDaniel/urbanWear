@@ -3,6 +3,7 @@ import styled from "styled-components";
 const Tabs = styled.div`
   --border-color: #d9d9d9;
   margin: 60px 0;
+
   .tab-list {
     border-bottom: 1px solid var(--border-color);
     display: flex;

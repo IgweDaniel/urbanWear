@@ -1,5 +1,6 @@
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { MIN_PRICE, MAX_PRICE } from "../constants";
+
 const useFilter = () => {
   const { category = "all" } = useParams();
 
@@ -8,24 +9,23 @@ const useFilter = () => {
 
   let query = new URLSearchParams(location.search);
   const size = query.get("size") || "all",
-    min__price = query.get("min__price") || MIN_PRICE,
-    max__price = query.get("max__price") || MAX_PRICE;
+    min_price = query.get("min_price") || MIN_PRICE,
+    max_price = query.get("max_price") || MAX_PRICE;
 
   let searchParams = {};
   const updateFilterSize = (size) => {
     searchParams = {
       size,
-      min__price,
-      max__price,
+      min_price,
+      max_price,
     };
     updateLocation(searchParams);
   };
   const updateFilterPrice = (price) => {
-    console.log(price);
     searchParams = {
       size,
-      min__price: price[0],
-      max__price: price[1],
+      min_price: price[0],
+      max_price: price[1],
     };
     updateLocation(searchParams);
   };
@@ -34,9 +34,9 @@ const useFilter = () => {
     if (params.size === "all") {
       delete params["size"];
     }
-    if (params.min__price === 20 && params.max__price === 200) {
-      delete params["min__price"];
-      delete params["max__price"];
+    if (params.min_price === 20 && params.max_price === 200) {
+      delete params["min_price"];
+      delete params["max_price"];
     }
     history.push({
       pathname: `/shop${category === "all" ? "" : `/${category}`}`,
@@ -48,8 +48,8 @@ const useFilter = () => {
     updateFilterSize,
     updateFilterPrice,
     size,
-    min__price,
-    max__price,
+    min_price,
+    max_price,
     category,
   };
 };

@@ -12,8 +12,8 @@ import { SIZES } from "../constants";
 const ProductFilter = styled.div`
   height: 100vh;
   height: var(--vh);
-  width: 320px;
-
+  width: calc(var(--vw) * 0.8);
+  max-width: 350px;
   .content {
     width: 80%;
     margin: 40px auto;
@@ -82,10 +82,6 @@ const ProductFilter = styled.div`
     align-items: center;
     margin: 20px 0;
   }
-
-  @media (min-width: 768px) {
-    width: 350px;
-  }
 `;
 
 export default () => {
@@ -94,11 +90,11 @@ export default () => {
     updateFilterPrice,
     category: activeCategory,
     size: activeSize,
-    min__price,
-    max__price,
+    min_price,
+    max_price,
   } = useFilter();
 
-  const [price, setPrice] = useState([min__price, max__price]);
+  const [price, setPrice] = useState([min_price, max_price]);
 
   return (
     <ProductFilter>

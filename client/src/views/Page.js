@@ -4,6 +4,7 @@ const Page = styled.div`
   margin-left: auto;
   margin-right: auto;
   width: 80%;
+  margin-top: 70px;
   &:before {
     content: "";
     background-color: #fff;
@@ -22,6 +23,7 @@ const Page = styled.div`
 
   @media (min-width: 969px) {
     width: 70%;
+    margin-top: 90px;
     &:before {
       height: 90px;
     }

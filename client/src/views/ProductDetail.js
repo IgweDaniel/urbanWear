@@ -210,8 +210,9 @@ const ProductDetail = styled.div`
 `;
 
 const ViewBox = styled.div`
-  height: 80vh;
-  width: 200px;
+  height: calc(var(--vh) * 0.9);
+  width: calc(var(--vw) * 0.8);
+  max-width: 500px;
   position: relative;
   .close {
     position: absolute;
@@ -226,19 +227,6 @@ const ViewBox = styled.div`
     top: 10px;
     right: 10px;
     z-index: 100;
-  }
-  @media (min-width: 320px) {
-    width: 300px;
-  }
-  @media (min-width: 400px) {
-    width: 350px;
-  }
-  @media (min-width: 768px) {
-    height: var(--vh);
-    width: 500px;
-  }
-  @media (min-width: 1024px) {
-    width: 600px;
   }
 `;
 

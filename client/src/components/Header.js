@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { Link, NavLink } from "react-router-dom";
 import { ReactComponent as BagIcon } from "../assets/svg/bag.svg";
 // import { ReactComponent as MenuIcon } from "../assets/svg/menu-button.svg";
-import { FiHeart, FiSearch } from "react-icons/fi";
+import { ReactComponent as UserIcon } from "../assets/svg/user.svg";
+import { FiSearch } from "react-icons/fi";
 const Header = styled.header`
   position: fixed;
   top: 0;
@@ -70,15 +71,11 @@ const Header = styled.header`
   }
 
   .nav .actions li.cart button {
-    --size: 50px;
+    /* --size: 50px;
     width: var(--size);
-    height: var(--size);
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    /* 
-    display: flex;
-    align-items: center;
-    justify-content: center; */
+    height: var(--size); */
+    /* background: rgba(0, 0, 0, 0.1); */
+    /* border-radius: 50%; */
   }
   .nav .actions li.cart .label {
     position: absolute;
@@ -111,7 +108,7 @@ const Header = styled.header`
 `;
 
 const ICON_SIZE = 20;
-export default ({ openCart }) => {
+export default ({ openCart, goToAccount }) => {
   return (
     <>
       <Header>
@@ -147,8 +144,8 @@ export default ({ openCart }) => {
                 </button>
               </li>
               <li>
-                <button>
-                  <FiHeart size={ICON_SIZE} />
+                <button onClick={goToAccount}>
+                  <UserIcon width={ICON_SIZE} height={ICON_SIZE} />
                 </button>
               </li>
               <li className="cart">

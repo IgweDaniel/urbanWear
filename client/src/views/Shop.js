@@ -124,16 +124,18 @@ const ProductList = styled.div`
   }
 `;
 const ICON_SIZE = 75;
+
 export default () => {
   const [filterDisplay, setFilterDisplay] = useState(false);
 
   const [products, setProducts] = useState([]);
   const [status, setStatus] = useState("loading");
-  const { size, category, min__price, max__price } = useFilter();
+  const { size, category, min_price, max_price } = useFilter();
 
   const toggleFilterDisplay = () => setFilterDisplay(!filterDisplay);
 
   function getProducts(data) {
+    console.log("fetching for category " + category);
     return data
       .filter((product) =>
         category.toLowerCase() === "all"
@@ -145,7 +147,7 @@ export default () => {
       )
       .filter(
         (product) =>
-          product.final_price >= min__price && product.final_price <= max__price
+          product.final_price >= min_price && product.final_price <= max_price
       );
   }
 
@@ -157,7 +159,8 @@ export default () => {
       setProducts(activeproducts);
     }, 1000);
     return () => clearTimeout(timeout);
-  }, [category, size, min__price, max__price]);
+    // eslint-disable-next-line
+  }, [category, size, min_price, max_price]);
 
   useUpdateEffect(() => {
     if (products === null) {

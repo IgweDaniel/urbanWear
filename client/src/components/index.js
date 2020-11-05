@@ -7,6 +7,7 @@ import Spinner from "./Spinner";
 import QuantityInput from "./QuantityInput";
 import ProductCarousel from "./ProductCarousel";
 import NotContent from "./NotContent";
+import Login from "./Login";
 
 import Tabs from "./Tabs";
 export {
@@ -20,4 +21,5 @@ export {
   Tabs,
   ProductCarousel,
   NotContent,
+  Login,
 };

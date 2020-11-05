@@ -2,6 +2,7 @@ import Checkout from "./Checkout";
 import Cart from "./Cart";
 import Home from "./Home";
 import Shop from "./Shop";
+import Account from "./Account";
 
 import ProductDetail from "./ProductDetail";
 
@@ -13,6 +14,7 @@ const routes = [
   {
     path: "/",
     component: Home,
+    exact: true,
   },
   {
     path: "/cart",
@@ -21,6 +23,7 @@ const routes = [
   {
     path: "/shop/",
     component: Shop,
+    exact: true,
   },
   {
     path: "/shop/:category",
@@ -29,6 +32,10 @@ const routes = [
   {
     path: "/product/:slug",
     component: ProductDetail,
+  },
+  {
+    path: "/account",
+    component: Account,
   },
 ];
 

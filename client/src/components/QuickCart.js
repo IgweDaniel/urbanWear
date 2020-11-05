@@ -34,14 +34,8 @@ const EmptyCart = styled.div`
 
 const QuickCart = styled.div`
   height: var(--vh);
-  width: 320px;
-
-  @media (min-width: 768px) {
-    width: 350px;
-  }
-  @media (min-width: 1024px) {
-    width: 400px;
-  }
+  width: calc(var(--vw) * 0.8);
+  max-width: 400px;
 `;
 
 export default ({ closeQuickCart }) => {

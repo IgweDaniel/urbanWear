@@ -24,9 +24,24 @@ const Product = styled.div`
   }
 
   .product__images:hover {
-    transform: rotateY(180deg);
+    transform: rotateY(-180deg);
+  }
+  .product__images .product__image {
+    position: absolute;
+    top: 0;
+    backface-visibility: hidden;
+    width: 100%;
+    height: 100%;
   }
   .product__images img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .product__images .product__image:nth-of-type(2) {
+    transform: rotateY(180deg);
+  }
+  /* .product__images img {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -36,7 +51,7 @@ const Product = styled.div`
 
   .product__images img:nth-of-type(2) {
     transform: rotateY(180deg);
-  }
+  } */
 
   .product__image img {
     height: 100%;
@@ -138,9 +153,9 @@ export default (props) => {
         </button>
         <Link className="product__images" to={productlink}>
           {product_images.map((image, i) => (
-            <img src={image} alt={name} key={i} />
-            // <div className="product__image" key={i}>
-            // </div>
+            <div className="product__image" key={i}>
+              <img src={image} alt={name} key={i} />
+            </div>
           ))}
         </Link>
       </div>
