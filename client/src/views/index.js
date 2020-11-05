@@ -2,6 +2,7 @@ import Checkout from "./Checkout";
 import Cart from "./Cart";
 import Home from "./Home";
 import Shop from "./Shop";
+
 import Account from "./Account";
 
 import ProductDetail from "./ProductDetail";
@@ -35,6 +36,7 @@ const routes = [
   },
   {
     path: "/account",
+    authRequired: true,
     component: Account,
   },
 ];

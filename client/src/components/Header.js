@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useHistory } from "react-router-dom";
 import { ReactComponent as BagIcon } from "../assets/svg/bag.svg";
 // import { ReactComponent as MenuIcon } from "../assets/svg/menu-button.svg";
 import { ReactComponent as UserIcon } from "../assets/svg/user.svg";
 import { FiSearch } from "react-icons/fi";
+import { useSelector } from "react-redux";
 const Header = styled.header`
   position: fixed;
   top: 0;
@@ -108,7 +109,10 @@ const Header = styled.header`
 `;
 
 const ICON_SIZE = 20;
-export default ({ openCart, goToAccount }) => {
+export default ({ openCart, showAuthForm }) => {
+  const history = useHistory(),
+    user = useSelector((state) => state.auth.user);
+
   return (
     <>
       <Header>
@@ -144,7 +148,17 @@ export default ({ openCart, goToAccount }) => {
                 </button>
               </li>
               <li>
-                <button onClick={goToAccount}>
+                <button
+                  onClick={() => {
+                    if (!user) {
+                      showAuthForm();
+                    } else {
+                      history.push({
+                        pathname: "/account",
+                      });
+                    }
+                  }}
+                >
                   <UserIcon width={ICON_SIZE} height={ICON_SIZE} />
                 </button>
               </li>

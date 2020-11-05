@@ -1,5 +1,8 @@
 import { createGlobalStyle } from "styled-components";
 import HKNova from "./assets/HKNova-Medium.woff";
+
+import loadingimg from "./assets/svg/loading.svg";
+
 export default createGlobalStyle`
   @font-face {
     font-family: HKNova;
@@ -65,8 +68,28 @@ export default createGlobalStyle`
       text-transform:uppercase;
       font-variant:small-caps;
       /* border-radius:5px; */
+      position:relative;
+    }
+    .button.loading{
+      text-indent:-9999px;
+    }
+    .button.loading:after{
+background:url(${loadingimg});
+background-size:contain;
+background-position:center;
+background-repeat:no-repeat;
+content:"";
+
+position:absolute;
+top:0;
+width:40%;
+height:100%;
     }
 
+.button:disabled{
+  background:#ccc;
+  color:#fff;
+}
 
 @media (min-width:1024px){
   :root{

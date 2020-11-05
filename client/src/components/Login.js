@@ -1,16 +1,38 @@
 import React from "react";
 import styled from "styled-components";
 import { TiTimes, TiTick } from "react-icons/ti";
+import { useDispatch } from "react-redux";
+import { Formik } from "formik";
+import { login } from "../ducks/auth";
+import { useHistory } from "react-router-dom";
+const Input = styled.div`
+  position: relative;
+  --diff: 15px;
+  &:first-of-type {
+    margin-top: var(--diff);
+  }
+  margin-bottom: var(--diff);
+  .error {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: #fff;
+    color: red;
+    z-index: 10;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+  }
+  input {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    font-family: "Catamaran", sans-serif;
+    border: 1px solid #ccc;
+    border-radius: none;
+    position: relative;
+  }
 
-const Input = styled.input`
-  width: 100%;
-  height: 40px;
-  margin-bottom: 15px;
-  padding: 10px;
-  font-family: "Catamaran", sans-serif;
-  border: 1px solid #ccc;
-  border-radius: none;
-  &::placeholder {
+  input::placeholder {
     /* font-weight: bold; */
     font-family: "Catamaran", sans-serif;
     text-transform: capitalize;
@@ -40,14 +62,15 @@ const Login = styled.div`
     width: 80%;
     margin: auto;
   }
+
   .legend {
     width: 100%;
     font-size: 1.5rem;
-    margin: 20px 0;
-    text-transform: uppercase;
-    font-variant: small-caps;
+    text-transform: capitalize;
     line-height: 1.2;
-    text-align: center;
+  }
+  .sub-legend {
+    /* margin-bottom: 18px; */
   }
   .submit.button {
     width: 100%;
@@ -96,37 +119,101 @@ const Login = styled.div`
 `;
 
 export default ({ closeAuth }) => {
-  function handleAuth(e) {
-    e.preventDefault();
-  }
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   return (
     <Login>
       <button className="close" onClick={closeAuth}>
         <TiTimes size={23} />
       </button>
-      <form>
-        <h1 className="legend">Your account for everything urban </h1>
-        <Input type="text" placeholder="email address" />
-        <Input type="text" placeholder="password" />
-        <div className="meta">
-          <div className="checkbox element">
-            <input type="checkbox" name="keepsigned" id="keepsigned" />
-            <label htmlFor="keepsigned">
-              <TiTick size={15} />
-            </label>
-            <span htmlFor="keepsigned">keep me signed in</span>
-          </div>
+      <Formik
+        initialValues={{ email: "", password: "", keepSignedIn: false }}
+        validate={(values) => {
+          const errors = {};
+          if (!values.email) {
+            errors.email = "Email address is required";
+          } else if (
+            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+          ) {
+            errors.email = "Invalid email address";
+          }
+          if (!values.password) {
+            errors.password = "Please choose a password";
+          } else if (values.password.length < 6) {
+            errors.password = "Password characters must be more than 6";
+          }
+          return errors;
+        }}
+        onSubmit={(values, { setSubmitting }, errors) => {
+          console.log(values);
+          dispatch(login({ user: { values }, token: "atoken" }));
+          history.push({
+            pathname: `/account`,
+          });
+          setTimeout(() => {
+            setSubmitting(false);
+          }, 1000);
+        }}
+      >
+        {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
+          <form>
+            <h4 className="legend">Login </h4>
+            <p className="sub-legend">The account for every wear urban</p>
 
-          <p className="element passwordReset">forgot password?</p>
-        </div>
-        <button className="button submit" onClick={handleAuth}>
-          sign in
-        </button>
-        <p className="info">
-          Don't have an account? Make your first purchase to create one
-        </p>
-      </form>
+            <Input>
+              {errors.email && <p className="error">{errors.email}</p>}
+              <input
+                type="text"
+                name="email"
+                placeholder="email address"
+                value={values.email}
+                onChange={handleChange}
+              />
+            </Input>
+
+            <Input>
+              {errors.password && <p className="error">{errors.password}</p>}
+              <input
+                type="password"
+                name="password"
+                placeholder="password"
+                onChange={handleChange}
+                value={values.password}
+              />
+            </Input>
+
+            <div className="meta">
+              <div className="checkbox element">
+                <input
+                  type="checkbox"
+                  name="keepSignedIn"
+                  id="keepSignedIn"
+                  checked={values.keepSignedIn}
+                  onChange={handleChange}
+                />
+                <label htmlFor="keepSignedIn">
+                  <TiTick size={15} />
+                </label>
+                <span htmlFor="keepsigned">keep me signed in</span>
+              </div>
+
+              <p className="element passwordReset">forgot password?</p>
+            </div>
+            <button
+              type="submit"
+              className={`button submit ${isSubmitting ? "loading" : ""}`}
+              disabled={isSubmitting}
+              onClick={handleSubmit}
+            >
+              sign in
+            </button>
+            <p className="info">
+              Don't have an account? Make your first purchase to create one
+            </p>
+          </form>
+        )}
+      </Formik>
     </Login>
   );
 };

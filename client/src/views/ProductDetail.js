@@ -275,10 +275,11 @@ export default () => {
   }
 
   function zoom(e) {
-    // console.log(e.touches[0]);
     var zoomer = e.currentTarget;
-    const x = (e.pageX / zoomer.offsetWidth) * 100;
-    const y = ((e.pageY - 100) / zoomer.offsetHeight) * 100;
+    const { left, top, height, width } = zoomer.getBoundingClientRect();
+
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
     zoomer.style.backgroundPosition = x + "% " + y + "%";
   }
 

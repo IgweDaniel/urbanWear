@@ -8,6 +8,7 @@ import QuantityInput from "./QuantityInput";
 import ProductCarousel from "./ProductCarousel";
 import NotContent from "./NotContent";
 import Login from "./Login";
+import PrivateRoute from "./PrivateRoute";
 
 import Tabs from "./Tabs";
 export {
@@ -22,4 +23,5 @@ export {
   ProductCarousel,
   NotContent,
   Login,
+  PrivateRoute,
 };

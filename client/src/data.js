@@ -5,10 +5,10 @@ export const categories = [
   { id: 4, name: "Bottoms" },
   { id: 5, name: "jackets" },
   { id: 6, name: "tops" },
-  { id: 6, name: "sweaters" },
+  { id: 7, name: "sweaters" },
 
-  { id: 7, name: "shirts" },
-  { id: 8, name: "foot wear" },
+  { id: 8, name: "shirts" },
+  { id: 9, name: "foot wear" },
 ];
 
 export const products = [
@@ -168,7 +168,7 @@ export const products = [
       "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''",
   },
   {
-    id: 9,
+    id: 10,
     images: [
       require("./assets/temp/Sadie-Sink-Cropped-Hoodie-1.jpg"),
       require("./assets/temp/Sadie-Sink-Cropped-Hoodie-2.jpg"),
@@ -186,7 +186,7 @@ export const products = [
       "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''",
   },
   {
-    id: 10,
+    id: 11,
     images: [
       require("./assets/temp/Monochrome-Sneakers-2.jpg"),
       require("./assets/temp/Monochrome-Sneakers-1.jpg"),
@@ -203,7 +203,7 @@ export const products = [
       "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''",
   },
   {
-    id: 11,
+    id: 12,
     images: [
       require("./assets/temp/Removable-Faux-Fur-Lining-1.jpg"),
       require("./assets/temp/Removable-Faux-Fur-Lining-4.jpg"),
@@ -222,7 +222,7 @@ export const products = [
       "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''",
   },
   {
-    id: 12,
+    id: 13,
     images: [
       require("./assets/temp/Push-up-Trousers-1.jpg"),
       require("./assets/temp/Push-up-Trousers-2.jpg"),
@@ -239,7 +239,7 @@ export const products = [
       "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''",
   },
   {
-    id: 13,
+    id: 14,
     images: [
       require("./assets/temp/Faux-Fur-Sweater-1.jpg"),
       require("./assets/temp/Faux-Fur-Sweater-2.jpg"),
@@ -257,7 +257,7 @@ export const products = [
       "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''",
   },
   {
-    id: 14,
+    id: 15,
     images: [
       require("./assets/temp/Navy-blue-coach-jacket-with-neon-detail-2.jpg"),
       require("./assets/temp/Navy-blue-coach-jacket-with-neon-detail-1.jpg"),
@@ -274,7 +274,7 @@ export const products = [
       "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''",
   },
   {
-    id: 15,
+    id: 16,
     images: [
       require("./assets/temp/Ribbed-Hoodie-1.jpg"),
       require("./assets/temp/Ribbed-Hoodie-2.jpg"),
@@ -292,7 +292,7 @@ export const products = [
       "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''",
   },
   {
-    id: 16,
+    id: 17,
     images: [
       require("./assets/temp/Men’s-Thong-Sandal-1.jpg"),
       require("./assets/temp/Men’s-Thong-Sandal-2.jpg"),
@@ -310,7 +310,7 @@ export const products = [
       "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''",
   },
   {
-    id: 17,
+    id: 18,
     images: [
       require("./assets/temp/Side-Pockets-Backpack-1.jpg"),
       require("./assets/temp/Side-Pockets-Backpack-2.jpg"),
