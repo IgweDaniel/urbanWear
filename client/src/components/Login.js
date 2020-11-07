@@ -41,7 +41,8 @@ const Input = styled.div`
 
 const Login = styled.div`
   height: calc(var(--vh) * 0.8);
-  width: calc(var(--vw) * 0.9);
+  width: calc(var(--vw));
+  min-height: 400px;
   max-width: 400px;
   display: flex;
   align-items: center;
@@ -60,6 +61,7 @@ const Login = styled.div`
   }
   form {
     width: 80%;
+    /* height: 100%; */
     margin: auto;
   }
 
@@ -116,6 +118,9 @@ const Login = styled.div`
   .info {
     line-height: 1.2;
   }
+  @media (min-width: 768px) {
+    width: calc(var(--vw) * 0.9);
+  }
 `;
 
 export default ({ closeAuth }) => {
@@ -147,13 +152,17 @@ export default ({ closeAuth }) => {
         }}
         onSubmit={(values, { setSubmitting }, errors) => {
           console.log(values);
-          dispatch(login({ user: { values }, token: "atoken" }));
-          history.push({
-            pathname: `/account`,
-          });
+          dispatch(
+            login({ user: { values, name: "daniel" }, token: "atoken" })
+          );
+
           setTimeout(() => {
             setSubmitting(false);
-          }, 1000);
+            closeAuth();
+            history.push({
+              pathname: `/account`,
+            });
+          }, 2000);
         }}
       >
         {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
@@ -195,7 +204,7 @@ export default ({ closeAuth }) => {
                 <label htmlFor="keepSignedIn">
                   <TiTick size={15} />
                 </label>
-                <span htmlFor="keepsigned">keep me signed in</span>
+                <span htmlFor="keepsigned">keep credentials</span>
               </div>
 
               <p className="element passwordReset">forgot password?</p>

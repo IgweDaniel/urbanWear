@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 // import { ReactComponent as BinIcon } from "../assets/svg/bin.svg";
-import { SIZES } from "../constants";
+import { CURRENCY, SIZES } from "../constants";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
 // import Select from "react-dropdown-select";
@@ -30,10 +30,6 @@ const ItemInfo = styled.div`
     font-size: 1rem;
     width: fit-content;
   }
-  .quantitysize {
-  }
-  .price {
-  }
   .total {
     display: flex;
     align-items: center;
@@ -52,9 +48,6 @@ const ItemInfo = styled.div`
   }
 
   .actions button.edit {
-    /* font-size: 1rem; */
-    /* border-bottom: 2px solid #000; */
-    /* line-height: 1; */
     margin-right: 10px;
   }
 `;
@@ -99,6 +92,9 @@ const CartItem = styled.div`
   margin: 0 10px 20px;
   border-bottom: 1px solid #ccc;
   transition: height 0.3s ease-in-out;
+  &:last-of-type {
+    /* border-bottom: none; */
+  }
 `;
 
 const ICON_SIZE = 20;
@@ -126,7 +122,11 @@ export default ({ product, quantity, size }) => {
           </p>
           <p className="price">£{product.price} </p>
           <p className="total">
-            Total: <span className="value">£{product.price * quantity} </span>
+            Total:
+            <span className="value">
+              {CURRENCY}
+              {product.price * quantity}{" "}
+            </span>
           </p>
           {!editMode && (
             <div className="actions">

@@ -3,6 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const authSlice = createSlice({
   name: "auth",
   initialState: {
+    user: {
+      name: "daniel",
+      email: "danielIgwe@gmail.com",
+    },
+    // eslint-disable-next-line
     user: null,
     token: null,
   },

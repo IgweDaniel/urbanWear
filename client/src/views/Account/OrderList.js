@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
+import { CURRENCY } from "../../constants";
 import { orders } from "../../data";
+
 const OrderList = styled.div`
   .actions {
     display: flex;
@@ -47,6 +49,7 @@ const OrderList = styled.div`
       /* Behave  like a "row" */
       border: none;
       position: relative;
+      padding: 5px;
       padding-left: 40%;
       /* overflow-x: auto; */
       font-size: 0.95rem;
@@ -56,7 +59,8 @@ const OrderList = styled.div`
   } */
     td:before {
       position: absolute;
-      top: 6px;
+      top: 50%;
+      transform: translateY(-50%);
       left: 6px;
       width: 45%;
       padding-right: 10px;
@@ -87,7 +91,10 @@ export default () => {
               <td data-label="order">{order.id}</td>
               <td data-label="date">{new Date(order.date).toDateString()}</td>
               <td data-label="status">{order.status}</td>
-              <td data-label="total">{order.total}</td>
+              <td data-label="total">
+                {CURRENCY}
+                {order.total}
+              </td>
               <td className="actions" data-label="actions">
                 <button className="button">view</button>
                 <button className="button">cancel</button>

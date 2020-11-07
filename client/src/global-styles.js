@@ -73,17 +73,22 @@ export default createGlobalStyle`
     .button.loading{
       text-indent:-9999px;
     }
+    .button:after{
+      background:url(${loadingimg});
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      content:"";
+      width:40%;
+      height:100%;
+      position:absolute;
+      top:0;
+      display:none;
+    }
     .button.loading:after{
-background:url(${loadingimg});
-background-size:contain;
-background-position:center;
-background-repeat:no-repeat;
-content:"";
 
-position:absolute;
-top:0;
-width:40%;
-height:100%;
+
+display:block
     }
 
 .button:disabled{

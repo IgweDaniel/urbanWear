@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Range } from "rc-slider";
 import "rc-slider/assets/index.css";
 
-import { useFilter } from "../hooks";
+import { useFilter, useUpdateEffect } from "../hooks";
 import { categories } from "../data";
 import { SIZES } from "../constants";
 
@@ -95,7 +95,9 @@ export default () => {
   } = useFilter();
 
   const [price, setPrice] = useState([min_price, max_price]);
-
+  useUpdateEffect(() => {
+    setPrice([min_price, max_price]);
+  }, [min_price, max_price]);
   return (
     <ProductFilter>
       <div className="content">

@@ -21,11 +21,12 @@ const Banner = styled.div`
   justify-content: center;
   flex-direction: column;
   /* font-size: 4rem; */
+  margin: 100px 0 50px;
   .currentcategory {
     text-transform: capitalize;
     font-size: 2.7rem;
   }
-  margin: 100px 0 50px;
+
   .category-links {
     margin-top: 10px;
     display: none;
@@ -44,7 +45,7 @@ const Banner = styled.div`
     font-weight: bold;
   }
   @media (min-width: 768px) {
-    margin: 100px 0 100px;
+    /* margin: 100px 0 50px; */
     .category-links {
       display: flex;
       align-items: center;

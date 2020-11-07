@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { products } from "../data";
-import { SIZES } from "../constants";
+import { CURRENCY, SIZES } from "../constants";
 import Page from "./Page";
 
 import { TiTimes } from "react-icons/ti";
@@ -211,7 +211,7 @@ const ProductDetail = styled.div`
 
 const ViewBox = styled.div`
   height: calc(var(--vh) * 0.9);
-  width: calc(var(--vw) * 0.8);
+  width: calc(var(--vw) * 0.9);
   max-width: 500px;
   position: relative;
   .close {
@@ -277,9 +277,10 @@ export default () => {
   function zoom(e) {
     var zoomer = e.currentTarget;
     const { left, top, height, width } = zoomer.getBoundingClientRect();
-
-    const x = ((e.clientX - left) / width) * 100;
-    const y = ((e.clientY - top) / height) * 100;
+    let eventX = e.touches ? e.touches[0].clientX : e.clientX;
+    let eventY = e.touches ? e.touches[0].clientY : e.clientY;
+    const x = ((eventX - left) / width) * 100;
+    const y = ((eventY - top) / height) * 100;
     zoomer.style.backgroundPosition = x + "% " + y + "%";
   }
 
@@ -349,11 +350,13 @@ export default () => {
               <p className="product__price">
                 {product.discount && (
                   <span className="actual-price">
-                    was $<span className="figure">{product.price}</span>
+                    was {CURRENCY}
+                    <span className="figure">{product.price}</span>
                   </span>
                 )}
                 <span className="final-price">
-                  {product.discount ? "Now" : "Buy for"}$
+                  {product.discount ? "Now " : "Buy for "}
+                  {CURRENCY}
                   <span className="figure">{product.final_price}</span>
                 </span>
               </p>

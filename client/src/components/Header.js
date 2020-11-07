@@ -6,6 +6,7 @@ import { ReactComponent as BagIcon } from "../assets/svg/bag.svg";
 import { ReactComponent as UserIcon } from "../assets/svg/user.svg";
 import { FiSearch } from "react-icons/fi";
 import { useSelector } from "react-redux";
+
 const Header = styled.header`
   position: fixed;
   top: 0;
@@ -64,28 +65,22 @@ const Header = styled.header`
     display: flex;
     align-items: center;
     justify-content: center;
-
-    /* height: var(--size); */
   }
   .nav .actions li.cart {
     position: relative;
   }
 
-  .nav .actions li.cart button {
-    /* --size: 50px;
-    width: var(--size);
-    height: var(--size); */
-    /* background: rgba(0, 0, 0, 0.1); */
-    /* border-radius: 50%; */
-  }
   .nav .actions li.cart .label {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+
+    right: -10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: bold;
     font-size: 0.9rem;
-    z-index: -1;
+    z-index: 1;
   }
   .nav .links li .link-active {
     text-decoration: line-through;
@@ -111,7 +106,8 @@ const Header = styled.header`
 const ICON_SIZE = 20;
 export default ({ openCart, showAuthForm }) => {
   const history = useHistory(),
-    user = useSelector((state) => state.auth.user);
+    user = useSelector((state) => state.auth.user),
+    qty = useSelector((state) => state.cart.qty);
 
   return (
     <>
@@ -163,7 +159,7 @@ export default ({ openCart, showAuthForm }) => {
                 </button>
               </li>
               <li className="cart">
-                <span className="label">{0}</span>
+                <span className="label">{qty}</span>
                 <button onClick={openCart}>
                   <BagIcon width={ICON_SIZE} height={ICON_SIZE} />
                 </button>

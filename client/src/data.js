@@ -21,7 +21,7 @@ export const products = [
 
     price: 20.0,
     discount: null,
-    final_price: 10.0,
+    final_price: 20.0,
     category: "Hoodies",
     name: "Colour Block Hoodie With Front Print",
     sizes: ["XL", "XS", "XXS"],
@@ -335,7 +335,7 @@ export const cart = products
     size: "XL",
     quantity: Math.round(Math.random() * 9 + 1),
   }))
-  .slice(0, 3);
+  .slice(0, 2);
 
 export const orders = [
   {

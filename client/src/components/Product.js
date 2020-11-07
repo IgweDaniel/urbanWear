@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Spinner } from ".";
 import { ReactComponent as CartAddIcon } from "../assets/svg/cart-add.svg";
-
+import { CURRENCY } from "../constants";
 const Product = styled.div`
   width: 100%;
   overflow-x: hidden;
@@ -167,9 +167,15 @@ export default (props) => {
           <Link to={productlink}> {name}</Link>
         </p>
         <p className="product__price">
-          {final_price && <span className="actual__price">${price}.00</span>}
+          {discount && (
+            <span className="actual__price">
+              {CURRENCY}
+              {price}.00
+            </span>
+          )}
           <span className="discount__price">
-            ${final_price ? final_price : price}.00
+            {CURRENCY}
+            {discount ? final_price : price}.00
           </span>
         </p>
       </div>

@@ -13,26 +13,42 @@ const Account = styled.div`
   display: flex;
   flex-direction: column;
   .content {
-    flex: 1;
   }
   .account__links {
     width: 100%;
+    margin: 40px 0 10px;
+    /* flex: 1; */
   }
+
   .account__link {
     text-align: uppercase;
     font-variant: small-caps;
-    font-weight: 700;
-    font-size: 1.35rem;
+    font-weight: 600;
+    font-size: 1.4rem;
     color: #b4b4b4;
+    margin: 0;
+    padding: 5px 0;
+    display: block;
+    flex: 1;
   }
+
   .active {
     color: #000;
+    font-weight: 700;
   }
 
   @media (min-width: 768px) {
     flex-direction: row;
+    .content {
+      flex: 1;
+    }
     .account__links {
       width: 180px;
+      margin: 0px;
+      /* margin-right: 20px; */
+    }
+    .account__link {
+      margin: 0;
     }
   }
 `;
@@ -85,9 +101,12 @@ export default () => {
         <div className="content">
           <Switch>
             {routes.map((route) => (
-              <Route exact={true} path={`${url}${route.path}`} key={route.name}>
-                {route.component}
-              </Route>
+              <Route
+                exact={true}
+                path={`${url}${route.path}`}
+                key={route.name}
+                component={route.component}
+              />
             ))}
           </Switch>
         </div>
