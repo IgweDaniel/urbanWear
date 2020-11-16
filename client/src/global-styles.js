@@ -1,14 +1,8 @@
 import { createGlobalStyle } from "styled-components";
-import HKNova from "./assets/HKNova-Medium.woff";
 
 import loadingimg from "./assets/svg/loading.svg";
 
 export default createGlobalStyle`
-  @font-face {
-    font-family: HKNova;
-    src: url(${HKNova}) format('woff');
-  }
-
   :root{
     font-size:15px
   }
@@ -20,7 +14,6 @@ export default createGlobalStyle`
   }
   
   body {
-    /* font-family:"HKNova"; */
       font-family: 'Catamaran', sans-serif;
       height:100vh;
       overflow:hidden;
@@ -54,7 +47,7 @@ export default createGlobalStyle`
       font-size:inherit;
     }
   
-    .button{
+  .button{  
       height:38px;
       display:flex;
       align-items:center;
@@ -67,8 +60,8 @@ export default createGlobalStyle`
       font-size:0.8rem;
       text-transform:uppercase;
       font-variant:small-caps;
-      /* border-radius:5px; */
-      position:relative;
+  
+     position:relative;
     }
     .button.loading{
       text-indent:-9999px;
@@ -86,20 +79,44 @@ export default createGlobalStyle`
       display:none;
     }
     .button.loading:after{
-
-
-display:block
+    display:block
     }
 
-.button:disabled{
-  background:#ccc;
-  color:#fff;
-}
-
-@media (min-width:1024px){
-  :root{
-    font-size:16px
+  .button:disabled{
+    background:#ccc;
+    color:#fff;
   }
-}
 
+ .input-wrapper {
+  position: relative;
+ }
+  .error {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: #fff;
+    color: red;
+    z-index: 10;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+  }
+  input {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    font-family: "Catamaran", sans-serif;
+    border: 1px solid #ccc;
+    border-radius: none;
+    position: relative;
+  }
+
+  input::placeholder {
+    font-family: "Catamaran", sans-serif;
+    text-transform: capitalize;
+  }
+  @media (min-width:1024px){
+    :root{
+      font-size:16px
+    }
+  }
   `;

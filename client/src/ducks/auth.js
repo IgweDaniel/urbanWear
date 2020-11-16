@@ -8,7 +8,7 @@ const authSlice = createSlice({
       email: "danielIgwe@gmail.com",
     },
     // eslint-disable-next-line
-    user: null,
+    // user: null,
     token: null,
   },
   reducers: {

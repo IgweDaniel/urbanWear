@@ -5,39 +5,6 @@ import { useDispatch } from "react-redux";
 import { Formik } from "formik";
 import { login } from "../ducks/auth";
 import { useHistory } from "react-router-dom";
-const Input = styled.div`
-  position: relative;
-  --diff: 15px;
-  &:first-of-type {
-    margin-top: var(--diff);
-  }
-  margin-bottom: var(--diff);
-  .error {
-    position: absolute;
-    top: -10px;
-    left: 10px;
-    background: #fff;
-    color: red;
-    z-index: 10;
-    font-size: 0.85rem;
-    text-transform: capitalize;
-  }
-  input {
-    width: 100%;
-    height: 40px;
-    padding: 10px;
-    font-family: "Catamaran", sans-serif;
-    border: 1px solid #ccc;
-    border-radius: none;
-    position: relative;
-  }
-
-  input::placeholder {
-    /* font-weight: bold; */
-    font-family: "Catamaran", sans-serif;
-    text-transform: capitalize;
-  }
-`;
 
 const Login = styled.div`
   height: calc(var(--vh) * 0.8);
@@ -47,12 +14,18 @@ const Login = styled.div`
   display: flex;
   align-items: center;
   position: relative;
+  --diff: 15px;
+  .input-wrapper {
+    margin-bottom: var(--diff);
+  }
+  .input-wrapper:first-of-type {
+    margin-top: var(--diff);
+  }
   button.close {
     --size: 40px;
     top: 0;
     right: 0;
     position: absolute;
-    /* background: #ccc; */
     width: var(--size);
     height: var(--size);
     display: flex;
@@ -61,7 +34,6 @@ const Login = styled.div`
   }
   form {
     width: 80%;
-    /* height: 100%; */
     margin: auto;
   }
 
@@ -170,7 +142,7 @@ export default ({ closeAuth }) => {
             <h4 className="legend">Login </h4>
             <p className="sub-legend">The account for every wear urban</p>
 
-            <Input>
+            <div className="input-wrapper">
               {errors.email && <p className="error">{errors.email}</p>}
               <input
                 type="text"
@@ -179,9 +151,9 @@ export default ({ closeAuth }) => {
                 value={values.email}
                 onChange={handleChange}
               />
-            </Input>
+            </div>
 
-            <Input>
+            <div className="input-wrapper">
               {errors.password && <p className="error">{errors.password}</p>}
               <input
                 type="password"
@@ -190,7 +162,7 @@ export default ({ closeAuth }) => {
                 onChange={handleChange}
                 value={values.password}
               />
-            </Input>
+            </div>
 
             <div className="meta">
               <div className="checkbox element">

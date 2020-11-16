@@ -9,12 +9,10 @@ import ProductCarousel from "./ProductCarousel";
 import NotContent from "./NotContent";
 import Login from "./Login";
 import PrivateRoute from "./PrivateRoute";
-import Input from "./Input";
 
 import Tabs from "./Tabs";
 export {
   Header,
-  Input,
   Modal,
   QuickCart,
   Product,

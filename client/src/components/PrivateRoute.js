@@ -8,10 +8,10 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={({ location }) => {
-        console.dir(location);
+      render={(props) => {
+        const { location } = props;
         return user ? (
-          <Component />
+          <Component {...props} />
         ) : (
           <Redirect
             to={{

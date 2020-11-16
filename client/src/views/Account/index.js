@@ -12,6 +12,7 @@ import { NavLink, Route, Switch, useRouteMatch } from "react-router-dom";
 const Account = styled.div`
   display: flex;
   flex-direction: column;
+  margin: 40px 0;
   .content {
   }
   .account__links {
@@ -24,10 +25,10 @@ const Account = styled.div`
     text-align: uppercase;
     font-variant: small-caps;
     font-weight: 600;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     color: #b4b4b4;
     margin: 0;
-    padding: 5px 0;
+    padding: 2px 0;
     display: block;
     flex: 1;
   }
@@ -78,8 +79,8 @@ const routes = [
 ];
 
 export default () => {
-  let { path, url } = useRouteMatch();
-  console.log({ url, path });
+  let { url } = useRouteMatch();
+
   return (
     <Page>
       <Account>
@@ -102,7 +103,7 @@ export default () => {
           <Switch>
             {routes.map((route) => (
               <Route
-                exact={true}
+                exact={route.exact}
                 path={`${url}${route.path}`}
                 key={route.name}
                 component={route.component}

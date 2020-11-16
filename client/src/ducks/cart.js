@@ -9,9 +9,6 @@ const cartSlice = createSlice({
       0
     ),
     qty: cart.length,
-    // items: [],
-    // total: 0,
-    // qty: 0,
   },
   reducers: {
     addItem(state, action) {

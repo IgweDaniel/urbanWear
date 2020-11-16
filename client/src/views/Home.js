@@ -52,10 +52,18 @@ const slides = [
 const Home = styled.div`
   --height: 100vh;
   height: var(--height);
-
+  &:before {
+    display: block;
+    content: "";
+    height: 70px;
+    background: #fff;
+    width: 100%;
+    z-index: 10;
+    position: fixed;
+    top: 0;
+  }
   .slider {
     transition: transform 0.8s ease-in-out;
-    height: 100%;
   }
   section {
     height: var(--height);
@@ -97,9 +105,7 @@ const Home = styled.div`
 
     transition: transform 0.5s ease-in-out;
   }
-  section .content .item .item__content:hover {
-    /* transform: scale(0.9); */
-  }
+
   section .content .item .contentitem__details {
     position: absolute;
   }
@@ -123,6 +129,13 @@ const Home = styled.div`
   }
 
   @media (min-width: 1024px) {
+    &:before {
+      display: none;
+    }
+    .slider {
+      transition: transform 0.8s ease-in-out;
+      height: 100%;
+    }
     section .content .cover {
       display: block;
     }
@@ -142,18 +155,10 @@ const Home = styled.div`
     margin-top: 0px;
     --height: calc(100vh - 0px);
     overflow: hidden;
+
     section .content .cover {
       display: block;
     }
-
-    /* section .item__content {
-    }
-    section .item__content img {
-    }
-    section.active .item__content img {
-    }
-    section.active .item__content {
-    } */
 
     section .content .item .item__content .name {
       font-size: 1.6rem;
@@ -197,7 +202,6 @@ export default () => {
   }
 
   function handleMouseWheel(e) {
-    console.log();
     if (e.currentTarget.innerWidth < 1024) return;
     if (!isAnimating.current && e.deltaY > 0) {
       slide("next");
@@ -210,6 +214,10 @@ export default () => {
     // eslint-disable-next-line
     slideElements = containerRef.current?.querySelectorAll("section");
     window.addEventListener("mousewheel", handleMouseWheel, {
+      passive: true,
+      capture: true,
+    });
+    window.addEventListener("scroll", handleMouseWheel, {
       passive: true,
       capture: true,
     });

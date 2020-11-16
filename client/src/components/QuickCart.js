@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { CURRENCY } from "../constants";
-
+import { ReactComponent as BagAlt } from "../assets/svg/bag-alt.svg";
 import CartItem from "./CartItem";
 import { TiTimes } from "react-icons/ti";
 
@@ -44,12 +44,7 @@ const FullCart = styled.div`
     font-weight: bold;
     text-transform: capitalize;
   }
-  .total {
-  }
 `;
-
-// let items = cart;
-// items = [];
 
 const EmptyCart = styled.div`
   display: flex;
@@ -63,7 +58,6 @@ const EmptyCart = styled.div`
   }
   .button {
     margin: 20px auto;
-    width: 80%;
   }
 `;
 
@@ -86,6 +80,7 @@ export default ({ closeQuickCart }) => {
       {items.length <= 0 ? (
         <EmptyCart>
           <div className="content">
+            <BagAlt height={40} width={40} />
             <h4>CART IS EMPTY</h4>
             <p>Check out all the available products and buy some in the shop</p>
             <Link to="/shop">
