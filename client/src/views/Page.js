@@ -22,7 +22,7 @@ const Page = styled.div`
   }
 
   @media (min-width: 969px) {
-    width: 70%;
+    /* width: 70%; */
     margin-top: 90px;
     &:before {
       height: 90px;

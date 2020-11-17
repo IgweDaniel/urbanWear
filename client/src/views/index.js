@@ -1,8 +1,9 @@
-import Checkout from "./Checkout";
+// import Checkout from "./Checkout";
 import Cart from "./Cart";
 import Home from "./Home";
 import Shop from "./Shop";
 
+import CheckOut from "./CheckOut";
 import Account from "./Account";
 
 import ProductDetail from "./ProductDetail";
@@ -10,7 +11,7 @@ import ProductDetail from "./ProductDetail";
 const routes = [
   {
     path: "/checkout",
-    component: Checkout,
+    component: CheckOut,
   },
   {
     path: "/",

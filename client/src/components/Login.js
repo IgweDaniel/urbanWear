@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { TiTimes, TiTick } from "react-icons/ti";
+import { TiTimes } from "react-icons/ti";
 import { useDispatch } from "react-redux";
 import { Formik } from "formik";
 import { login } from "../ducks/auth";
 import { useHistory } from "react-router-dom";
+import CheckBox from "./CheckBox";
 
 const Login = styled.div`
   height: calc(var(--vh) * 0.8);
@@ -63,30 +64,7 @@ const Login = styled.div`
     display: flex;
     justify-content: flex-end;
   }
-  .checkbox {
-    display: flex;
-    align-items: center;
-  }
-  .checkbox input {
-    display: none;
-  }
-  .checkbox label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    --size: 15px;
-    cursor: pointer;
-    width: var(--size);
-    height: var(--size);
-    border: 1px solid #000;
-    margin-right: 5px;
-  }
-  .checkbox label svg {
-    fill: #fff;
-  }
-  .checkbox input:checked + label svg {
-    fill: #000;
-  }
+
   .info {
     line-height: 1.2;
   }
@@ -165,19 +143,14 @@ export default ({ closeAuth }) => {
             </div>
 
             <div className="meta">
-              <div className="checkbox element">
-                <input
-                  type="checkbox"
-                  name="keepSignedIn"
-                  id="keepSignedIn"
-                  checked={values.keepSignedIn}
-                  onChange={handleChange}
-                />
-                <label htmlFor="keepSignedIn">
-                  <TiTick size={15} />
-                </label>
-                <span htmlFor="keepsigned">keep credentials</span>
-              </div>
+              <CheckBox
+                name="keepSignedIn"
+                id="keepSignedIn"
+                className="element"
+                checked={values.keepSignedIn}
+                onChange={handleChange}
+                label="keep credentials"
+              />
 
               <p className="element passwordReset">forgot password?</p>
             </div>

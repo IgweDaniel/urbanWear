@@ -9,6 +9,7 @@ import ProductCarousel from "./ProductCarousel";
 import NotContent from "./NotContent";
 import Login from "./Login";
 import PrivateRoute from "./PrivateRoute";
+import CheckBox from "./CheckBox";
 
 import Tabs from "./Tabs";
 export {
@@ -24,4 +25,5 @@ export {
   NotContent,
   Login,
   PrivateRoute,
+  CheckBox,
 };
