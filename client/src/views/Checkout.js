@@ -3,11 +3,8 @@ import { Formik } from "formik";
 
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { CheckBox, CartItem } from "../../components";
-import Page from "../Page";
-
-import Coupon from "./Coupon";
-import AddressForm from "./AddressForm";
+import { CheckBox, CartItem, AddressForm, Coupon } from "../components";
+import Page from "./Page";
 
 const Checkout = styled.div`
   margin: 150px auto;

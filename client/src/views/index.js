@@ -1,17 +1,17 @@
-// import Checkout from "./Checkout";
 import Cart from "./Cart";
 import Home from "./Home";
 import Shop from "./Shop";
 
-import CheckOut from "./CheckOut";
+import Checkout from "./Checkout";
 import Account from "./Account";
 
 import ProductDetail from "./ProductDetail";
+import _4o4 from "./4o4";
 
 const routes = [
   {
     path: "/checkout",
-    component: CheckOut,
+    component: Checkout,
   },
   {
     path: "/",
@@ -39,6 +39,10 @@ const routes = [
     path: "/account",
     authRequired: true,
     component: Account,
+  },
+  {
+    path: "*",
+    component: _4o4,
   },
 ];
 

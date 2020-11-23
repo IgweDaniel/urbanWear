@@ -11,6 +11,8 @@ import Login from "./Login";
 import PrivateRoute from "./PrivateRoute";
 import CheckBox from "./CheckBox";
 import SideBar from "./SideBar";
+import Coupon from "./Coupon";
+import AddressForm from "./AddressForm";
 
 import CartItem from "./CartItem";
 
@@ -31,4 +33,6 @@ export {
   CheckBox,
   SideBar,
   CartItem,
+  AddressForm,
+  Coupon,
 };
