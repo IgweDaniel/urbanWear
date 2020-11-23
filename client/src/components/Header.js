@@ -5,6 +5,7 @@ import { ReactComponent as BagIcon } from "../assets/svg/bag.svg";
 // import { ReactComponent as MenuIcon } from "../assets/svg/menu-button.svg";
 import { ReactComponent as UserIcon } from "../assets/svg/user.svg";
 import { FiSearch } from "react-icons/fi";
+import { GoThreeBars } from "react-icons/go";
 import { useSelector } from "react-redux";
 
 const Header = styled.header`
@@ -37,12 +38,18 @@ const Header = styled.header`
   }
 
   .nav .logo {
-    width: 50%;
+    /* width: 100px; */
+
+    /* justify-content: center; */
   }
   .nav .logo img {
     --logo-size: 40px;
     height: var(--logo-size);
     width: var(--logo-size);
+  }
+  .menu-button {
+    /* width: 50%; */
+    flex: 1;
   }
 
   .nav .links {
@@ -54,7 +61,7 @@ const Header = styled.header`
     display: none;
   }
   .nav .actions {
-    width: 50%;
+    flex: 1;
     justify-content: flex-end;
   }
   .nav .actions li,
@@ -87,6 +94,9 @@ const Header = styled.header`
   }
 
   @media (min-width: 969px) {
+    .menu-button {
+      display: none;
+    }
     height: 90px;
     .nav .logo {
       width: 20%;
@@ -104,7 +114,7 @@ const Header = styled.header`
 `;
 
 const ICON_SIZE = 20;
-export default ({ openCart, showAuthForm }) => {
+export default ({ openCart, showAuthForm, toggleSideBar }) => {
   const history = useHistory(),
     user = useSelector((state) => state.auth.user),
     qty = useSelector((state) => state.cart.qty);
@@ -114,6 +124,12 @@ export default ({ openCart, showAuthForm }) => {
       <Header>
         <div className="header__content">
           <nav className="nav">
+            <div className="menu-button">
+              <button>
+                <GoThreeBars size={ICON_SIZE} onClick={toggleSideBar} />
+              </button>
+            </div>
+
             <div className="logo">
               <Link to="/">
                 <img src={require("../assets/logo.webp")} alt="logo" />

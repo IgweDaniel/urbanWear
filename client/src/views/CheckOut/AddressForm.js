@@ -7,18 +7,42 @@ export default ({
   values,
   touched,
 }) => {
-  const textFieldsTypes = ["street", "apartment", "zipCode", "country"];
+  const textFieldsTypes = [
+    { name: "street", placeholder: "street" },
+    { name: "apartment", placeholder: "apartment" },
+    { name: "zip", placeholder: "zip" },
+    { name: "country", placeholder: "country" },
+  ];
 
   return (
     <div className="address-form">
-      {textFieldsTypes.map((field) => (
-        <div className={`input-wrapper ${field}`} key={field}>
-          <label>{field}</label>
+      <div className="input-group ">
+        <div className="input-wrapper">
+          <label>name</label>
           <input
-            // placeholder={field}
             type="text"
-            name={`${type}.${field}`}
-            value={values[type][field]}
+            name={`${"shipping"}.name`}
+            value={values["shipping"].name}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="input-wrapper">
+          <label>lastName</label>
+          <input
+            type="text"
+            name={`${"shipping"}.lastname`}
+            value={values["shipping"].lastname}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+      {textFieldsTypes.map(({ name, placeholder }) => (
+        <div className={`input-wrapper ${name}`} key={name}>
+          <label>{placeholder}</label>
+          <input
+            type="text"
+            name={`${type}.${name}`}
+            value={values[type][name]}
             onChange={handleChange}
           />
         </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ThemeProvider } from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import GlobalStyle from "./global-styles";
@@ -7,8 +7,14 @@ import theme from "./theme";
 
 import routes from "./views";
 
-import { Header, Modal, QuickCart, Login, PrivateRoute } from "./components";
-import styled from "styled-components";
+import {
+  Header,
+  Modal,
+  QuickCart,
+  Login,
+  PrivateRoute,
+  SideBar,
+} from "./components";
 
 const Body = styled.div`
   overflow-y: auto;
@@ -20,8 +26,10 @@ const Body = styled.div`
 function App() {
   const [openCart, setOpenCart] = useState(false),
     [logindisplay, setLogindisplay] = useState(false),
+    [sideBarDisplay, setSideBarDisplay] = useState(false),
     toggleCartState = () => setOpenCart(!openCart),
-    toggleLoginDisplay = () => setLogindisplay(!logindisplay);
+    toggleLoginDisplay = () => setLogindisplay(!logindisplay),
+    toggleSideBar = () => setSideBarDisplay(!sideBarDisplay);
 
   function updateBrowserDimensions() {
     let vh = window.innerHeight;
@@ -50,6 +58,9 @@ function App() {
         <Modal isOpen={openCart} position="right" close={toggleCartState}>
           <QuickCart closeQuickCart={toggleCartState} />
         </Modal>
+        <Modal isOpen={sideBarDisplay} position="left" close={toggleSideBar}>
+          <SideBar close={toggleSideBar} />
+        </Modal>
         <Modal isOpen={logindisplay} close={toggleLoginDisplay}>
           <Login closeAuth={toggleLoginDisplay} />
         </Modal>
@@ -58,6 +69,7 @@ function App() {
           <Header
             openCart={toggleCartState}
             showAuthForm={toggleLoginDisplay}
+            toggleSideBar={toggleSideBar}
           />
           {routes.map(({ path, component, exact, authRequired }) =>
             authRequired ? (

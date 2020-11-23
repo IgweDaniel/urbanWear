@@ -10,6 +10,9 @@ import NotContent from "./NotContent";
 import Login from "./Login";
 import PrivateRoute from "./PrivateRoute";
 import CheckBox from "./CheckBox";
+import SideBar from "./SideBar";
+
+import CartItem from "./CartItem";
 
 import Tabs from "./Tabs";
 export {
@@ -26,4 +29,6 @@ export {
   Login,
   PrivateRoute,
   CheckBox,
+  SideBar,
+  CartItem,
 };
