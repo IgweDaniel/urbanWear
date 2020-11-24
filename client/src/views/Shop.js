@@ -4,7 +4,7 @@ import Page from "./Page";
 import { ReactComponent as HangerIcon } from "../assets/svg/hanger.svg";
 import { ReactComponent as FilterIcon } from "../assets/svg/filter.svg";
 import { FiChevronDown } from "react-icons/fi";
-import { categories, products as productdata } from "../data";
+import { categories } from "../data";
 import { Link } from "react-router-dom";
 import {
   Modal,
@@ -14,6 +14,8 @@ import {
   NotContent,
 } from "../components";
 import { useFilter, useUpdateEffect } from "../hooks";
+
+import * as Api from "../api";
 
 const Banner = styled.div`
   display: flex;
@@ -135,31 +137,20 @@ export default () => {
 
   const toggleFilterDisplay = () => setFilterDisplay(!filterDisplay);
 
-  function getProducts(data) {
-    console.log("fetching for category " + category);
-    return data
-      .filter((product) =>
-        category.toLowerCase() === "all"
-          ? true
-          : product.category.toLowerCase() === category.toLowerCase()
-      )
-      .filter((product) =>
-        size === "all" ? true : product.sizes.includes(size)
-      )
-      .filter(
-        (product) =>
-          product.final_price >= min_price && product.final_price <= max_price
-      );
+  async function getProducts() {
+    const { data, error } = await Api.fetchProducts(
+      size === "all" ? null : size,
+      category === "all" ? null : category
+    );
+    if (error) {
+      setStatus("error");
+    }
+    setProducts(data);
   }
 
   useEffect(() => {
     setStatus("loading");
-    const activeproducts = getProducts(productdata);
-
-    let timeout = setTimeout(() => {
-      setProducts(activeproducts);
-    }, 1000);
-    return () => clearTimeout(timeout);
+    getProducts();
     // eslint-disable-next-line
   }, [category, size, min_price, max_price]);
 

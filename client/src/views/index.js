@@ -42,6 +42,7 @@ const routes = [
   },
   {
     path: "*",
+    exact: true,
     component: _4o4,
   },
 ];

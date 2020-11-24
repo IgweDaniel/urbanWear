@@ -69,9 +69,8 @@ export default () => {
     console.log(values);
     setTimeout(() => {
       cb(false);
+      HasEditAddress(false);
     }, 2000);
-
-    // HasEditAddress(false);
   }
 
   function handleValidation(values) {

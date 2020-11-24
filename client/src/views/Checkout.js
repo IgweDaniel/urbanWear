@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Formik } from "formik";
 
 import styled from "styled-components";
@@ -50,8 +50,9 @@ const Checkout = styled.div`
     font-size: 0.8rem;
     font-weight: bold;
   }
-  .input-wrapper input {
-    /* height: 30px; */
+
+  .content .input-wrapper input {
+    height: 30px;
   }
   .zip {
     width: 200px;
@@ -63,6 +64,10 @@ const Checkout = styled.div`
   .content {
     display: flex;
     flex-direction: column-reverse;
+  }
+  .errors li {
+    text-transform: capitalize;
+    color: red;
   }
   @media (min-width: 768px) {
     .input-group {
@@ -82,8 +87,9 @@ const Checkout = styled.div`
       align-items: flex-start;
       justify-content: space-between;
     }
-    form {
+    .content form {
       width: 55%;
+      /* margin-top: 40px; */
     }
     .summary {
       display: block;
@@ -98,13 +104,73 @@ const Checkout = styled.div`
 `;
 
 export default () => {
-  const [editShippingAddress, setEditShippingAddress] = useState(false);
-  const [canCreateAccount, setCanCreateAccount] = useState(false);
   const { items, qty, total } = useSelector((state) => ({
     items: state.cart.items,
     total: state.cart.total,
     qty: state.cart.qty,
   }));
+
+  function validateAddress(address) {
+    const errors = {};
+    const fields = [
+      "name",
+      "street",
+      "apartment",
+      "zip",
+      "country",
+      "lastname",
+    ];
+
+    fields.forEach((field) =>
+      address[field] ? null : (errors[field] = `${field} is required`)
+    );
+    return errors;
+  }
+
+  function handlePurchase(values, { setSubmitting }, errors) {
+    console.log(values);
+    setTimeout(() => {
+      setSubmitting(false);
+    }, 2000);
+  }
+
+  function renderError(error) {
+    const arr = [];
+    Object.keys(error).forEach((key) => {
+      const isObject = typeof error[key] == "object";
+      let data = isObject ? (
+        renderError(error[key])
+      ) : (
+        <li key={error[key]}>{error[key]}</li>
+      );
+      arr.push(data);
+    });
+
+    return arr;
+  }
+
+  function validatePurchase(values) {
+    const errors = {};
+    errors.billing = validateAddress(values.billing);
+    if (values.createAccount) {
+      if (!values.email) {
+        errors.email = "email address required";
+      } else if (
+        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+      ) {
+        errors.email = "Invalid email address";
+      }
+      if (!values.password || values.password < 6) {
+        errors.password = "Password Invalid or required";
+      }
+    }
+    if (values.altShippingAddress) {
+      errors.shipping = validateAddress(values.shipping);
+    }
+    console.log(errors);
+    return errors;
+  }
+
   return (
     <Page>
       <Checkout>
@@ -114,10 +180,12 @@ export default () => {
             initialValues={{
               email: "",
               password: "",
+              createAccount: false,
+              altShippingAddress: false,
               billing: {
                 name: "",
                 lastname: "",
-                street: "Bayowa Street",
+                street: "",
                 apartment: "12",
                 zip: "260123",
                 country: "NG",
@@ -132,17 +200,8 @@ export default () => {
                 notes: "",
               },
             }}
-            validate={(values) => {
-              const errors = {};
-              return errors;
-            }}
-            onSubmit={(values, { setSubmitting }, errors) => {
-              console.log(values);
-
-              setTimeout(() => {
-                setSubmitting(false);
-              }, 2000);
-            }}
+            validate={validatePurchase}
+            onSubmit={handlePurchase}
           >
             {({
               handleSubmit,
@@ -152,6 +211,7 @@ export default () => {
               ...rest
             }) => (
               <form>
+                <ul className="errors">{renderError(rest.errors)}</ul>
                 <div className="addresses">
                   <div className="address">
                     <h4 className="address__type">billing address</h4>
@@ -164,17 +224,15 @@ export default () => {
                   </div>
 
                   <CheckBox
-                    name="create account"
-                    checked={canCreateAccount}
+                    name="createAccount"
+                    checked={values.createAccount}
                     renderLabel={() => (
                       <h4 className="address__type">create account</h4>
                     )}
-                    onChange={(e) => {
-                      setCanCreateAccount(e.target.checked);
-                    }}
+                    onChange={handleChange}
                   />
 
-                  {canCreateAccount && (
+                  {values.createAccount && (
                     <div className="input-group ">
                       <div className="input-wrapper">
                         <label>email address</label>
@@ -198,19 +256,16 @@ export default () => {
                   )}
                   <div className="address shipping">
                     <CheckBox
-                      name="shipping"
-                      label="ship to different address"
-                      checked={editShippingAddress}
+                      name="altShippingAddress"
+                      checked={values.altShippingAddress}
                       renderLabel={() => (
                         <h4 className="address__type">
                           use different shipping address
                         </h4>
                       )}
-                      onChange={(e) => {
-                        setEditShippingAddress(e.target.checked);
-                      }}
+                      onChange={handleChange}
                     />
-                    {editShippingAddress && (
+                    {values.altShippingAddress && (
                       <AddressForm
                         values={values}
                         handleChange={handleChange}
@@ -248,6 +303,8 @@ export default () => {
                 <CartItem {...item} key={i} />
               ))}
             </div>
+            {qty}
+            {total}
           </div>
         </div>
       </Checkout>

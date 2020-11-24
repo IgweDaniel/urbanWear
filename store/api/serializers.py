@@ -2,19 +2,19 @@ from rest_framework import serializers
 from store.models import Payment, Product, ProductImage, ProductSize, Address, Order, OrderItem
 
 
-class ProductImageSerialiser(serializers.ModelSerializer):
-    url = serializers.SerializerMethodField()
-    alt = serializers.SerializerMethodField()
+# class ProductImageSerialiser(serializers.ModelSerializer):
+#     url = serializers.SerializerMethodField()
+#     alt = serializers.SerializerMethodField()
 
-    class Meta:
-        model = ProductImage
-        fields = ('alt', 'url')
+#     class Meta:
+#         model = ProductImage
+#         fields = ('alt', 'url')
 
-    def get_url(self, obj):
-        return obj.image.url
+#     def get_url(self, obj):
+#         return obj.image.url
 
-    def get_alt(self, obj):
-        return obj.product.name
+#     def get_alt(self, obj):
+#         return obj.product.name
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -34,21 +34,22 @@ class ProductSerializer(serializers.ModelSerializer):
         return discount_price
 
     def get_images(self, obj):
-        return ProductImageSerialiser(obj.images.all(), many=True).data
+        images = []
+        domain = "http://localhost:8000"
+        for image in obj.images.all():
+            images.append(domain + image.image.url)
+        return images
+
+        # return ProductImageSerialiser(obj.images.all(), many=True).data
 
     def get_sizes(self, obj):
         sizes = []
         for size in obj.sizes.all():
             sizes.append(size.label)
-
         return sizes
 
     def get_category(self, obj):
-        return {
-            'name': obj.category.name,
-            'image': obj.category.image.url,
-            'id': obj.category.id
-        }
+        return obj.category.name
 
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -112,6 +113,21 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ['amount', 'timestamp']
+
+
+class CartSerializer(serializers.ModelSerializer):
+    total = serializers.SerializerMethodField()
+    items = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = ['total', 'items']
+
+    def get_total(self, obj):
+        return obj.calc_total_price()
+
+    def get_items(self, obj):
+        return OrderItemSerializer(obj.items.all(), many=True).data
 
 
 class OrderSerializer(serializers.ModelSerializer):

@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Page from "./Page";
-const _404 = styled.div`
+
+const FourOFour = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,7 +25,7 @@ const _404 = styled.div`
 export default () => {
   return (
     <Page>
-      <_404>
+      <FourOFour>
         <div className="content">
           <h1>Oops!!</h1>
           <p>
@@ -35,7 +36,7 @@ export default () => {
             go home
           </Link>
         </div>
-      </_404>
+      </FourOFour>
     </Page>
   );
 };

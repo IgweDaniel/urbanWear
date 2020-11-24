@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { Link, NavLink, useHistory } from "react-router-dom";
 import { ReactComponent as BagIcon } from "../assets/svg/bag.svg";
-// import { ReactComponent as MenuIcon } from "../assets/svg/menu-button.svg";
 import { ReactComponent as UserIcon } from "../assets/svg/user.svg";
 import { FiSearch } from "react-icons/fi";
 import { GoThreeBars } from "react-icons/go";
@@ -80,7 +79,7 @@ const Header = styled.header`
   .nav .actions li.cart .label {
     position: absolute;
 
-    right: -10px;
+    right: -12px;
 
     display: flex;
     align-items: center;
@@ -115,9 +114,13 @@ const Header = styled.header`
 
 const ICON_SIZE = 20;
 export default ({ openCart, showAuthForm, toggleSideBar }) => {
-  const history = useHistory(),
-    user = useSelector((state) => state.auth.user),
-    qty = useSelector((state) => state.cart.qty);
+  const history = useHistory();
+  const { user, qty } = useSelector((state) => ({
+    user: state.auth.user,
+    qty: state.cart.qty,
+  }));
+
+  // console.log(history.location);
 
   return (
     <>

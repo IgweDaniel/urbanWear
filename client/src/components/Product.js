@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Spinner } from ".";
 import { ReactComponent as CartAddIcon } from "../assets/svg/cart-add.svg";
 import { CURRENCY } from "../constants";
+import { addCartItem } from "../ducks/cart";
 const Product = styled.div`
   width: 100%;
   overflow-x: hidden;
@@ -122,7 +124,17 @@ const Product = styled.div`
 `;
 
 export default (props) => {
-  const { id, images, price, discount, final_price, category, name } = props;
+  const dispatch = useDispatch();
+  const {
+    id,
+    images,
+    price,
+    discount,
+    final_price,
+    category,
+    name,
+    sizes,
+  } = props;
   const product_images =
     images.length < 2 ? images.push(images[0]) : images.slice(0, 2);
   const productlink = `/product/${name.replaceAll(" ", "-")}`;
@@ -137,8 +149,7 @@ export default (props) => {
 
   function addToCart() {
     setStatus("loading");
-    console.log({ id, images, price, discount, final_price, category, name });
-    timeout = setTimeout(() => setStatus("done"), 5000);
+    dispatch(addCartItem(sizes[0], id)).then(() => setStatus("done"));
   }
 
   return (

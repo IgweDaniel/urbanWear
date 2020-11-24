@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { products } from "../data";
+
 import { CURRENCY, SIZES } from "../constants";
 import Page from "./Page";
 
@@ -15,6 +15,7 @@ import {
   NotContent,
 } from "../components";
 import { useUpdateEffect } from "../hooks";
+import * as Api from "../api";
 
 const Image = styled.div`
   height: 100%;
@@ -41,6 +42,7 @@ const Image = styled.div`
 
 const ProductDetail = styled.div`
   margin: 100px 0;
+  font-size: 1.05rem;
 
   .productdetail__info {
     display: flex;
@@ -238,15 +240,17 @@ export default () => {
   const [viewBox, setViewBox] = useState({ open: false, startIndex: 1 });
   const [status, setStatus] = useState("loading");
 
-  useEffect(() => {
-    let currProduct = products.find(
-      (product) => product.name === slug.replaceAll("-", " ")
-    );
+  async function getProduct() {
+    const { data, error } = await Api.fetchFullProduct(slug);
+    if (error) {
+      console.log(error);
+    }
+    setProduct(data);
+  }
 
-    let timeout = setTimeout(() => {
-      setProduct(currProduct);
-    }, 1000);
-    return () => clearTimeout(timeout);
+  useEffect(() => {
+    getProduct();
+    // eslint-disable-next-line
   }, [slug]);
 
   useUpdateEffect(() => {
@@ -394,7 +398,7 @@ export default () => {
           </div>
 
           <Tabs>
-            <div label="Description">{product.desc}</div>
+            <div label="Description">{product.description}</div>
             <div label="additional info">
               <div className="meta-info">
                 <div className="info">

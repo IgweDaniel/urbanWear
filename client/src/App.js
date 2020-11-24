@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled, { ThemeProvider } from "styled-components";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import GlobalStyle from "./global-styles";
 import theme from "./theme";
-
+import { fetchUserCart } from "./ducks/cart";
+import { useDispatch } from "react-redux";
 import routes from "./views";
 
 import {
@@ -24,6 +25,7 @@ const Body = styled.div`
 `;
 
 function App() {
+  const dispatch = useDispatch();
   const [openCart, setOpenCart] = useState(false),
     [logindisplay, setLogindisplay] = useState(false),
     [sideBarDisplay, setSideBarDisplay] = useState(false),
@@ -44,12 +46,14 @@ function App() {
   }
 
   useEffect(() => {
+    dispatch(fetchUserCart());
+
     updateBrowserDimensions();
     window.addEventListener("resize", updateBrowserDimensions);
     return () => {
       window.removeEventListener("resize", updateBrowserDimensions);
     };
-  }, []);
+  });
 
   return (
     <Router>
@@ -71,23 +75,25 @@ function App() {
             showAuthForm={toggleLoginDisplay}
             toggleSideBar={toggleSideBar}
           />
-          {routes.map(({ path, component, exact, authRequired }) =>
-            authRequired ? (
-              <PrivateRoute
-                component={component}
-                path={path}
-                exact={exact}
-                key={path.replace("/", "")}
-              />
-            ) : (
-              <Route
-                path={path}
-                exact={exact}
-                component={component}
-                key={path.replace("/", "")}
-              />
-            )
-          )}
+          <Switch>
+            {routes.map(({ path, component, exact, authRequired }) =>
+              authRequired ? (
+                <PrivateRoute
+                  component={component}
+                  path={path}
+                  exact={exact}
+                  key={path.replace("/", "")}
+                />
+              ) : (
+                <Route
+                  path={path}
+                  exact={exact}
+                  component={component}
+                  key={path.replace("/", "")}
+                />
+              )
+            )}
+          </Switch>
         </Body>
       </ThemeProvider>
     </Router>

@@ -1,14 +1,23 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { cart } from "../data";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+import * as Api from "../api";
+export const fetchUserCart = createAsyncThunk(
+  "cart/fetchUserCart",
+  async () => {
+    const { data, error } = await Api.fetchCart();
+    if (error) {
+      console.log(error);
+    }
+    return data;
+  }
+);
+
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
-    items: [...cart],
-    total: cart.reduce(
-      (acc, item) => item.quantity * item.product.final_price + acc,
-      0
-    ),
-    qty: cart.length,
+    items: [],
+    total: 0,
+    qty: 0,
   },
   reducers: {
     addItem(state, action) {
@@ -26,9 +35,32 @@ const cartSlice = createSlice({
       state.qty = 0;
       state.total = 0;
     },
+    updateCart(state, action) {
+      const { items, total, quantity } = action.payload;
+
+      state.items = items;
+      state.total = total;
+      state.qty = quantity;
+    },
+  },
+
+  extraReducers: {
+    [fetchUserCart.fulfilled]: (state, { payload }) => {
+      state.items = payload.items;
+      state.total = payload.total;
+      state.qty = payload.quantity;
+    },
   },
 });
 
-export const { addItem, removeItem, clearCart } = cartSlice.actions;
+export const addCartItem = (size, productId, quantity) => async (dispatch) => {
+  const { data, error } = await Api.addToCart(size, productId, quantity);
+  if (error) {
+    console.log(error);
+  }
+  dispatch(updateCart(data));
+};
+
+export const { addItem, removeItem, clearCart, updateCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

@@ -2,7 +2,7 @@
 import os
 from rest_framework import generics
 from store.models import Coupon, Payment, Product, ProductSize, Order, Address, OrderItem
-from .serializers import PaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer
+from .serializers import PaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -38,6 +38,7 @@ class ProductList(generics.ListCreateAPIView):
 class ProductDetail(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+    lookup_field = "slug"
 
 
 class UserAddressCreation(generics.ListCreateAPIView):
@@ -59,9 +60,10 @@ class UserAddress(generics.RetrieveUpdateDestroyAPIView):
 
 
 class OrderListUpdate(APIView):
-    permission_classes = [IsAuthenticated, IsOwnerPermission]
+    permission_classes = []
 
     def post(self, request, *args, **kwargs):
+
         serializer = OrderUpdateSerializer(data=request.data)
         if not serializer.is_valid(raise_exception=True):
             return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
@@ -74,32 +76,54 @@ class OrderListUpdate(APIView):
         if not size.exists():
             return Response({"message": "Invalid request(size nonexistent on product)"}, status=HTTP_400_BAD_REQUEST)
         size = size[0]
+        if request.user.is_authenticated:
+            # Find Active Order or Create One
+            active_order = Order.objects.get_or_create(
+                user=request.user, ordered=False)[0]
 
-        # Find Active Order or Create One
-        active_order = Order.objects.get_or_create(
-            user=request.user, ordered=False)[0]
+            # Check for OrderItem
+            order_item = active_order.items.all().filter(
+                product=product).filter(size__label=size.label)
 
-        # Check for OrderItem
-        order_item = active_order.items.all().filter(
-            product=product).filter(size__label=size.label)
+            if not order_item.exists():
+                order_item = active_order.items.create(
+                    size=size, product=product, quantity=0)
+            else:
+                order_item = order_item[0]
 
-        if not order_item.exists():
-            order_item = active_order.items.create(
-                size=size, product=product, quantity=0)
+            # Update Quantity
+
+            if quantity is not None:
+                order_item.quantity += quantity
+            else:
+                order_item.quantity += 1
+
+            order_item.save()
+            return Response(OrderItemSerializer(order_item).data, status=HTTP_200_OK)
         else:
-            order_item = order_item[0]
+            cart = request.session['cart'] if request.session.get(
+                'cart', None) else {"items": [], "total": 0, "quantity": 0}
 
-        # Update Quantity
+            for item in cart['items']:
+                if item['product']['name'] == product.name:
+                    item['quantity'] += quantity
+                    cart['total'] += quantity * item['product']['price']
+                    break
+            else:
+                cart['items'].append(
+                    {"product": ProductSerializer(
+                        product).data, "size": size.label, "quantity": quantity})
+                cart['total'] += quantity * product.price
 
-        if quantity is not None:
-            order_item.quantity += quantity
-        else:
-            order_item.quantity += 1
-
-        order_item.save()
-        return Response(OrderItemSerializer(order_item).data, status=HTTP_200_OK)
+            cart['quantity'] += quantity
+            request.session['cart'] = cart
+            return Response(cart, status=HTTP_200_OK)
+            # return Response(CartSerializer(request.session['cart']).data, status=HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
+
+        print("Hello")
+        return Response({"message": "yet to refactor"}, status=HTTP_400_BAD_REQUEST)
         items = request.data.get('items', None)
         serializer = OrderUpdateSerializer(data=items, many=True)
 
@@ -137,18 +161,24 @@ class OrderListUpdate(APIView):
 
     def get(self, request, *args, **kwargs):
         status = request.query_params.get("status", None)
+        if request.user.is_authenticated:
+            if status == "active":
+                cart = Order.objects.get_or_create(
+                    user=request.user, ordered=False)[0]
+                return Response(OrderSerializer(cart).data, status=HTTP_200_OK)
 
-        if status == "active":
-            cart = Order.objects.get_or_create(
-                user=request.user, ordered=False)[0]
-            return Response(OrderSerializer(cart).data, status=HTTP_200_OK)
-
-        orders = Order.objects.filter(
-            user=request.user, ordered=True)
-        return Response(OrderSerializer(orders, many=True).data, status=HTTP_200_OK)
+            orders = Order.objects.filter(
+                user=request.user, ordered=True)
+            return Response(OrderSerializer(orders, many=True).data, status=HTTP_200_OK)
+        else:
+            cart = request.session['cart'] if request.session.get(
+                'cart', None) else {"items": [], "total": 0, "quantity": 0}
+            return Response(cart, status=HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
         coupon_code = request.data.get('coupon', None)
+        if request.user.is_authenticated:
+            return Response({"message": "Coupon Applicable for registered users only"}, status=HTTP_400_BAD_REQUEST)
         if not coupon_code:
             return Response({"message": "Invalid input"}, status=HTTP_400_BAD_REQUEST)
         coupon = Coupon.objects.all().filter(code__exact=coupon_code)

@@ -1,7 +1,7 @@
 import React from "react";
 
 export default ({
-  type = "shipping",
+  type = "billing",
   errors,
   handleChange,
   values,
@@ -10,7 +10,7 @@ export default ({
   const textFieldsTypes = [
     { name: "street", placeholder: "street" },
     { name: "apartment", placeholder: "apartment" },
-    { name: "zip", placeholder: "zip" },
+    { name: "zip", placeholder: "zipCode" },
     { name: "country", placeholder: "country" },
   ];
 
@@ -21,8 +21,8 @@ export default ({
           <label>name</label>
           <input
             type="text"
-            name={`${"shipping"}.name`}
-            value={values["shipping"].name}
+            name={`${type}.name`}
+            value={values[type].name}
             onChange={handleChange}
           />
         </div>
@@ -30,8 +30,8 @@ export default ({
           <label>lastName</label>
           <input
             type="text"
-            name={`${"shipping"}.lastname`}
-            value={values["shipping"].lastname}
+            name={`${type}.lastname`}
+            value={values[type].lastname}
             onChange={handleChange}
           />
         </div>

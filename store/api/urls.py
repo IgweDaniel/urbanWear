@@ -7,7 +7,8 @@ urlpatterns = [
     path('', include('djoser.urls.jwt')),
 
     path('products/', ProductList.as_view(), name='product-list'),
-    path('products/<pk>/', ProductDetail.as_view(), name='product-detail'),
+    # path('products/<pk>/', ProductDetail.as_view(), name='product-detail'),
+    path('products/<slug>/', ProductDetail.as_view(), name='product-detail'),
 
     path('order/', OrderListUpdate.as_view(), name='order'),
     path('order/<pk>', TrackOrder.as_view(), name='order-tracking'),
