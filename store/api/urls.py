@@ -1,6 +1,6 @@
 from django.urls import path
 from django.urls.conf import include
-from .views import ProductList, ProductDetail, UserAddress, UserAddressCreation, OrderListUpdate, DeleteOrderItem, TrackOrder, ListCreatePayment
+from .views import ProductList, ProductDetail, UserAddress, UserAddressCreation, OrderListUpdate, TrackOrder, ListCreatePayment, DeleteUpdateOrderItem
 
 
 urlpatterns = [
@@ -12,8 +12,8 @@ urlpatterns = [
 
     path('order/', OrderListUpdate.as_view(), name='order'),
     path('order/<pk>', TrackOrder.as_view(), name='order-tracking'),
-
-    path('orderitem/<pk>', DeleteOrderItem.as_view(), name='delete-order-item'),
+    path('orderitem/<pk>', DeleteUpdateOrderItem.as_view(),
+         name='delete-order-item'),
 
     # Payments <List and  pay>
     path('payment/', ListCreatePayment.as_view(), name='checkout'),

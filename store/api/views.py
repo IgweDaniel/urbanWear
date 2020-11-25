@@ -9,7 +9,34 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 import stripe
 
+
 stripe.api_key = os.getenv("STRIPE_KEY")
+
+
+def findItem(collection, cb):
+    for item in collection:
+        if cb(item) == True:
+            return item
+    else:
+        return None
+
+
+def get_address(value, user):
+    if value is None:
+        return Response({"message": "Address Required"}, status=HTTP_404_NOT_FOUND)
+    if type(value) is int:
+        address = Address.objects.all().filter(user=user, pk=value)
+        if not address.exists():
+            return Response({"message": "No adress with such <pk>"}, status=HTTP_404_NOT_FOUND)
+        address = address[0]
+        return address
+    if type(value) is dict:
+        serializer = AddressSerializer(data=value)
+        if not serializer.is_valid(raise_exception=True):
+            return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
+        address = Address.objects.create(
+            **serializer.validated_data, user=user)
+        return address
 
 
 class IsOwnerPermission(BasePermission):
@@ -63,7 +90,6 @@ class OrderListUpdate(APIView):
     permission_classes = []
 
     def post(self, request, *args, **kwargs):
-
         serializer = OrderUpdateSerializer(data=request.data)
         if not serializer.is_valid(raise_exception=True):
             return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
@@ -104,60 +130,23 @@ class OrderListUpdate(APIView):
             cart = request.session['cart'] if request.session.get(
                 'cart', None) else {"items": [], "total": 0, "quantity": 0}
 
-            for item in cart['items']:
-                if item['product']['name'] == product.name and item['size'] == size.label:
-                    item['quantity'] += quantity
-                    cart['total'] += quantity * item['product']['price']
-                    break
+            item_id = len(cart['items']) + 1
+
+            item = findItem(cart['items'], lambda item: item['product']
+                            ['name'] == product.name and item['size'] == size.label)
+
+            if item:
+                item['quantity'] += quantity
+                cart['total'] += quantity * item['product']['price']
             else:
                 cart['items'].append(
                     {"product": ProductSerializer(
-                        product).data, "size": size.label, "quantity": quantity})
+                        product).data, "size": size.label, "quantity": quantity, "id": item_id})
                 cart['total'] += quantity * product.price
 
             cart['quantity'] += quantity
             request.session['cart'] = cart
             return Response(cart, status=HTTP_200_OK)
-            # return Response(CartSerializer(request.session['cart']).data, status=HTTP_200_OK)
-
-    def put(self, request, *args, **kwargs):
-
-        print("Hello")
-        return Response({"message": "yet to refactor"}, status=HTTP_400_BAD_REQUEST)
-        items = request.data.get('items', None)
-        serializer = OrderUpdateSerializer(data=items, many=True)
-
-        if not serializer.is_valid(raise_exception=True):
-            return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
-
-        items = serializer.validated_data
-        active_order = Order.objects.get_or_create(
-            user=request.user, ordered=False)[0]
-
-        for item in items:
-            size = item.get('size')
-            product = item.get('product')
-            quantity = item.get('quantity')
-
-            size = product.sizes.all().filter(label=size.label)
-
-            if not size.exists():
-                continue
-            size = size[0]
-
-            order_item = active_order.items.all().filter(
-                product=product).filter(size=size)
-
-            if not order_item.exists():
-                continue
-
-            order_item = order_item[0]
-
-            order_item.quantity = quantity
-            order_item.size = size
-            order_item.save()
-
-        return Response(OrderSerializer(active_order).data, status=HTTP_200_OK)
 
     def get(self, request, *args, **kwargs):
         status = request.query_params.get("status", None)
@@ -205,33 +194,90 @@ class TrackOrder(generics.RetrieveAPIView):
         return queryset
 
 
-class DeleteOrderItem(generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = OrderItemSerializer
+class DeleteUpdateOrderItem(APIView):
+    permission_classes = []
 
-    def get_queryset(self):
-        cart = Order.objects.get_or_create(
-            user=self.request.user, ordered=False)[0]
-        queryset = cart.items.all()
-        return queryset
+    def delete(self, request, *args, **kwargs):
+        try:
+            pk = int(kwargs['pk'])
+        except ValueError:
+            return Response({"message": "Invalid CartItemId"}, status=HTTP_400_BAD_REQUEST)
+        if request.user.is_authenticated:
+            # Find Active Order or Create One
+            active_order = Order.objects.get_or_create(
+                user=request.user, ordered=False)[0]
+            order_item = active_order.items.all().filter(
+                pk=pk)
+            if not order_item.exists():
+                return Response({"message": "Invalid CartItemId"}, status=HTTP_400_BAD_REQUEST)
+            order_item = order_item[0]
+            order_item.delete()
+            return Response(CartSerializer(active_order).data, status=HTTP_200_OK)
 
+        else:
+            cart = request.session['cart'] if request.session.get(
+                'cart', None) else {"items": [], "total": 0, "quantity": 0}
+            item = findItem(cart['items'], lambda item: item['id'] == pk)
+            if not item:
+                return Response({"message": "Invalid CartItemId"}, status=HTTP_400_BAD_REQUEST)
 
-def get_address(value, user):
-    if value is None:
-        return Response({"message": "Address Required"}, status=HTTP_404_NOT_FOUND)
-    if type(value) is int:
-        address = Address.objects.all().filter(user=user, pk=value)
-        if not address.exists():
-            return Response({"message": "No adress with such <pk>"}, status=HTTP_404_NOT_FOUND)
-        address = address[0]
-        return address
-    if type(value) is dict:
-        serializer = AddressSerializer(data=value)
-        if not serializer.is_valid(raise_exception=True):
-            return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
-        address = Address.objects.create(
-            **serializer.validated_data, user=user)
-        return address
+            cart['total'] -= item['quantity'] * item['product']['price']
+            cart['quantity'] -= item['quantity']
+            cart['items'].remove(item)
+            request.session['cart'] = cart
+            return Response(cart, status=HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        try:
+            pk = int(kwargs['pk'])
+        except ValueError:
+            return Response({"message": "Invalid CartItemId"}, status=HTTP_400_BAD_REQUEST)
+        try:
+            quantity = int(request.data.get('quantity', None))
+        except ValueError:
+            return Response({"message": "Invalid Quantity value"}, status=HTTP_400_BAD_REQUEST)
+
+        size = request.data.get('size')
+
+        if request.user.is_authenticated:
+            # Find Active Order or Create One
+            active_order = Order.objects.get_or_create(
+                user=request.user, ordered=False)[0]
+            order_item = active_order.items.all().filter(
+                pk=pk)
+
+            if not order_item.exists():
+                return Response({"message": "Invalid CartItemId"}, status=HTTP_400_BAD_REQUEST)
+            order_item = order_item[0]
+            size = ProductSize.objects.filter(label=size)[0]
+
+            order_item.quantity = quantity
+            order_item.size = size
+            order_item.save()
+            return Response(CartSerializer(active_order).data, status=HTTP_200_OK)
+        else:
+            cart = request.session['cart'] if request.session.get(
+                'cart', None) else {"items": [], "total": 0, "quantity": 0}
+            item = findItem(cart['items'], lambda item: item['id'] == pk)
+            if not item:
+                return Response({"message": "Invalid CartItemId"}, status=HTTP_400_BAD_REQUEST)
+
+            has_size = findItem(
+                item['product']['sizes'], lambda item: item == size)
+            if not has_size:
+                return Response({"message": "Invalid product size"}, status=HTTP_400_BAD_REQUEST)
+
+            old_quantity = item['quantity']
+
+            cart['total'] -= old_quantity * item['product']['price']
+            cart['quantity'] -= old_quantity
+            item['quantity'] = quantity
+            item['size'] = size
+            cart['total'] += quantity * item['product']['price']
+            cart['quantity'] += quantity
+            request.session['cart'] = cart
+
+            return Response(cart, status=HTTP_200_OK)
 
 
 class ListCreatePayment(generics.ListCreateAPIView):

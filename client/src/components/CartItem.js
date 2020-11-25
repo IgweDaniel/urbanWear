@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-// import { ReactComponent as BinIcon } from "../assets/svg/bin.svg";
-import { CURRENCY, SIZES } from "../constants";
+
+import { CURRENCY } from "../constants";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
+import * as Api from "../api";
+import { updateCart } from "../ducks/cart";
+import { useDispatch } from "react-redux";
 // import Select from "react-dropdown-select";
 
 const ItemInfo = styled.div`
@@ -98,16 +101,27 @@ const CartItem = styled.div`
 `;
 
 const ICON_SIZE = 20;
-export default ({ product, quantity, size }) => {
+export default ({ id, product, quantity, size }) => {
+  const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
   const [itemQty, setItemQty] = useState(quantity);
   const [itemSize, setItemSize] = useState(size);
 
   const productlink = `/product/${product.name.replaceAll(" ", "-")}`;
-  function handleItemDelete(e) {
-    console.log("item deleted");
+  async function handleItemDelete(e) {
+    const { data, error } = await Api.deleteCartItem(id);
+    if (error) {
+      console.log(error.response.data);
+    }
+    dispatch(updateCart(data));
   }
-  function handleItemUpdate(e) {}
+  async function handleItemUpdate() {
+    const { data, error } = await Api.updateCartItem(id, itemSize, itemQty);
+    if (error) {
+      console.log(error.response.data);
+    }
+    dispatch(updateCart(data));
+  }
 
   return (
     <CartItem>
@@ -164,7 +178,7 @@ export default ({ product, quantity, size }) => {
               value={itemSize}
               onChange={(e) => setItemSize(e.target.value)}
             >
-              {SIZES.map((size, i) => (
+              {product.sizes.map((size, i) => (
                 <option value={size} key={size}>
                   {size}
                 </option>

@@ -286,7 +286,6 @@ export default () => {
     }
     setButtonStatus("loading");
     dispatch(addCartItem(chosenSize, product.id, qty)).then(() => {
-      console.log("added to cart");
       setButtonStatus("done");
       setQty(1);
       setChosenSize(null);
@@ -409,7 +408,6 @@ export default () => {
                   className={`button cart-add  ${
                     buttonStatus === "loading" ? "loading" : ""
                   }`}
-                  // buttonStatus
                   disabled={!chosenSize}
                   onClick={addToCart}
                 >

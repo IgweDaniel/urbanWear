@@ -7,7 +7,7 @@ export async function addToCart(size, productId, quantity) {
       product: productId,
       quantity: quantity,
     });
-    console.log(data);
+
     return { error: null, data };
   } catch (error) {
     return { error, data: null };
@@ -23,9 +23,20 @@ export async function fetchCart() {
   }
 }
 
-export async function updateCartItem(id) {
+export async function updateCartItem(id, size, quantity) {
   try {
-    const { data } = await axios.get(`/orderitem/${id}/`);
+    const { data } = await axios.put(`/orderitem/${id}`, {
+      size,
+      quantity,
+    });
+    return { error: null, data };
+  } catch (error) {
+    return { error, data: null };
+  }
+}
+export async function deleteCartItem(id) {
+  try {
+    const { data } = await axios.delete(`/orderitem/${id}`);
     return { error: null, data };
   } catch (error) {
     return { error, data: null };

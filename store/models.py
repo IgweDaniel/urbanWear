@@ -5,7 +5,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
+    stripe_customer_id = models.CharField(
+        max_length=50, blank=True, null=True)
     email = models.EmailField(unique=True)
     REQUIRED_FIELDS = ['username']
     USERNAME_FIELD = 'email'
