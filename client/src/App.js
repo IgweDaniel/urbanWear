@@ -5,7 +5,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import GlobalStyle from "./global-styles";
 import theme from "./theme";
 import { fetchUserCart } from "./ducks/cart";
-import { useDispatch } from "react-redux";
+import { setUserData } from "./ducks/auth";
+import { useDispatch, useSelector } from "react-redux";
 import routes from "./views";
 
 import {
@@ -26,6 +27,9 @@ const Body = styled.div`
 
 function App() {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
+
   const [openCart, setOpenCart] = useState(false),
     [logindisplay, setLogindisplay] = useState(false),
     [sideBarDisplay, setSideBarDisplay] = useState(false),
@@ -47,6 +51,9 @@ function App() {
 
   useEffect(() => {
     dispatch(fetchUserCart());
+    if (token && !user) {
+      dispatch(setUserData());
+    }
 
     updateBrowserDimensions();
     window.addEventListener("resize", updateBrowserDimensions);

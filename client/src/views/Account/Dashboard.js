@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { logout } from "../../ducks/auth";
 
 const Dashboard = styled.div`
-  .name {
+  .email {
     font-weight: bold;
     /* margin: 0 5px 0 0; */
   }
@@ -25,8 +25,8 @@ export default () => {
     <Dashboard>
       <p className="subText">
         Hello
-        <span className="name"> {user.name} </span>
-        (not <span className="name">{user.name}</span>?{" "}
+        <span className="email"> {user.email} </span>
+        (not <span className="email">{user.email}</span>?{" "}
         <button onClick={handleLogoutRequest} className="logout">
           Log out
         </button>

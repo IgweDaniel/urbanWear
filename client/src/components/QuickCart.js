@@ -77,7 +77,7 @@ export default ({ closeQuickCart }) => {
 
   return (
     <QuickCart height={window.innerHeight}>
-      {items.length <= 0 ? (
+      {items && items.length <= 0 ? (
         <EmptyCart>
           <div className="content">
             <BagAlt height={40} width={40} />
@@ -103,9 +103,7 @@ export default ({ closeQuickCart }) => {
           </button>
           <div className="meta">my Bag({qty})</div>
           <div className="items">
-            {items.map((item, i) => (
-              <CartItem {...item} key={i} />
-            ))}
+            {items && items.map((item, i) => <CartItem {...item} key={i} />)}
           </div>
           <div className="actions">
             <div className="summary">

@@ -99,13 +99,13 @@ class OrderListUpdate(APIView):
                 order_item.quantity += 1
 
             order_item.save()
-            return Response(OrderItemSerializer(order_item).data, status=HTTP_200_OK)
+            return Response(CartSerializer(active_order).data, status=HTTP_200_OK)
         else:
             cart = request.session['cart'] if request.session.get(
                 'cart', None) else {"items": [], "total": 0, "quantity": 0}
 
             for item in cart['items']:
-                if item['product']['name'] == product.name:
+                if item['product']['name'] == product.name and item['size'] == size.label:
                     item['quantity'] += quantity
                     cart['total'] += quantity * item['product']['price']
                     break
@@ -165,7 +165,7 @@ class OrderListUpdate(APIView):
             if status == "active":
                 cart = Order.objects.get_or_create(
                     user=request.user, ordered=False)[0]
-                return Response(OrderSerializer(cart).data, status=HTTP_200_OK)
+                return Response(CartSerializer(cart).data, status=HTTP_200_OK)
 
             orders = Order.objects.filter(
                 user=request.user, ordered=True)

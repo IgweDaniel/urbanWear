@@ -178,7 +178,7 @@ export default ({ openCart, showAuthForm, toggleSideBar }) => {
                 </button>
               </li>
               <li className="cart">
-                <span className="label">{qty}</span>
+                {qty > 0 && <span className="label">{qty}</span>}
                 <button onClick={openCart}>
                   <BagIcon width={ICON_SIZE} height={ICON_SIZE} />
                 </button>

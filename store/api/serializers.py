@@ -93,15 +93,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         return obj.sub_total()
 
     def get_product(self, obj):
-        product = obj.product
-        return {
-            "id": product.id,
-            "name": product.name,
-            "price": product.price,
-            "final_price": product.final_price(),
-            "category": product.category.name
-
-        }
+        return ProductSerializer(obj.product).data
 
     def get_size(self, obj):
         return obj.size.label
@@ -118,16 +110,24 @@ class PaymentSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
     items = serializers.SerializerMethodField()
+    quantity = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
-        fields = ['total', 'items']
+        fields = ['total', 'items', 'quantity']
 
     def get_total(self, obj):
         return obj.calc_total_price()
 
     def get_items(self, obj):
         return OrderItemSerializer(obj.items.all(), many=True).data
+
+    def get_quantity(self, obj):
+        quantity = 0
+        for item in obj.items.all():
+            quantity += item.quantity
+
+        return quantity
 
 
 class OrderSerializer(serializers.ModelSerializer):

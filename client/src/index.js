@@ -9,15 +9,34 @@ import axios from "axios";
 axios.defaults.baseURL = "/api";
 axios.defaults.withCredentials = true;
 
-// axios.interceptors.response.use(
-//   function (response) {
-//     console.log("axios response", response);
-//     return response;
-//   },
-//   function (error) {
-//     return Promise.reject(error);
-//   }
-// );
+axios.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  function (error) {
+    const requiresLogin =
+      error.response.statusText === "Unauthorized" &&
+      error.response.data.code === "token_not_valid";
+    if (requiresLogin && window.location.pathname !== "/") {
+      window.location.replace("/");
+      console.log(window.location);
+    }
+
+    return Promise.reject(error);
+  }
+);
+axios.interceptors.request.use(
+  function (config) {
+    const token = localStorage.getItem("token");
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  function (error) {
+    return Promise.reject(error);
+  }
+);
 
 const store = configureStore({
   reducer: rootReducer,

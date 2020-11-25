@@ -65,6 +65,7 @@ export default createGlobalStyle`
     }
     .button.loading{
       text-indent:-9999px;
+      background:#ccc !important;
     }
     .button:after{
       background:url(${loadingimg});
@@ -83,7 +84,7 @@ export default createGlobalStyle`
     }
 
   .button:disabled{
-    background:#ccc;
+    background:#ccc !important;
     color:#fff;
   }
 

@@ -184,7 +184,7 @@ export default () => {
   if (status === "error")
     content = (
       <NotContent>
-        <h3>Eror fetching products</h3>
+        <h3>Error fetching products</h3>
       </NotContent>
     );
 

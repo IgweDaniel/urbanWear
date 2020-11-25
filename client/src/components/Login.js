@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { TiTimes } from "react-icons/ti";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Formik } from "formik";
-import { login } from "../ducks/auth";
+import { authenticateUser } from "../ducks/auth";
 import { useHistory } from "react-router-dom";
 import CheckBox from "./CheckBox";
 
@@ -76,6 +76,38 @@ const Login = styled.div`
 export default ({ closeAuth }) => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const user = useSelector((state) => state.auth.user);
+
+  function handleSubmit(values, { setSubmitting }) {
+    dispatch(authenticateUser(values.email, values.password)).then(() => {
+      setSubmitting(false);
+    });
+  }
+
+  useEffect(() => {
+    if (user != null) {
+      history.push({
+        pathname: `/account`,
+      });
+      closeAuth();
+    }
+    // eslint-disable-next-line
+  }, [user]);
+
+  function handleValidation(values) {
+    const errors = {};
+    if (!values.email) {
+      errors.email = "Email address is required";
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+      errors.email = "Invalid email address";
+    }
+    if (!values.password) {
+      errors.password = "Please choose a password";
+    } else if (values.password.length < 6) {
+      errors.password = "Password characters must be more than 6";
+    }
+    return errors;
+  }
 
   return (
     <Login>
@@ -83,37 +115,13 @@ export default ({ closeAuth }) => {
         <TiTimes size={23} />
       </button>
       <Formik
-        initialValues={{ email: "", password: "", keepSignedIn: false }}
-        validate={(values) => {
-          const errors = {};
-          if (!values.email) {
-            errors.email = "Email address is required";
-          } else if (
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-          ) {
-            errors.email = "Invalid email address";
-          }
-          if (!values.password) {
-            errors.password = "Please choose a password";
-          } else if (values.password.length < 6) {
-            errors.password = "Password characters must be more than 6";
-          }
-          return errors;
+        initialValues={{
+          email: "daniel@gmail.com",
+          password: "ltDjpe123",
+          keepSignedIn: false,
         }}
-        onSubmit={(values, { setSubmitting }, errors) => {
-          console.log(values);
-          dispatch(
-            login({ user: { values, name: "daniel" }, token: "atoken" })
-          );
-
-          setTimeout(() => {
-            setSubmitting(false);
-            closeAuth();
-            history.push({
-              pathname: `/account`,
-            });
-          }, 2000);
-        }}
+        validate={handleValidation}
+        onSubmit={handleSubmit}
       >
         {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
           <form>

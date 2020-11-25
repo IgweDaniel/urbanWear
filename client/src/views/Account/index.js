@@ -7,7 +7,10 @@ import Dashboard from "./Dashboard";
 import OrderList from "./OrderList";
 import UserDetails from "./UserDetails";
 
+import { Spinner, NotContent } from "../../components";
+
 import { NavLink, Route, Switch, useRouteMatch } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Account = styled.div`
   display: flex;
@@ -80,38 +83,45 @@ const routes = [
 
 export default () => {
   let { url } = useRouteMatch();
+  const user = useSelector((state) => state.auth.user);
 
   return (
     <Page>
-      <Account>
-        <ul className="account__links">
-          {routes.map((route) => (
-            <li key={route.name}>
-              <NavLink
-                to={`${url}${route.path}`}
-                exact={true}
-                activeClassName="active"
-                className="account__link"
-              >
-                {route.name}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-
-        <div className="content">
-          <Switch>
+      {!user ? (
+        <NotContent offset={200}>
+          <Spinner />
+        </NotContent>
+      ) : (
+        <Account>
+          <ul className="account__links">
             {routes.map((route) => (
-              <Route
-                exact={route.exact}
-                path={`${url}${route.path}`}
-                key={route.name}
-                component={route.component}
-              />
+              <li key={route.name}>
+                <NavLink
+                  to={`${url}${route.path}`}
+                  exact={true}
+                  activeClassName="active"
+                  className="account__link"
+                >
+                  {route.name}
+                </NavLink>
+              </li>
             ))}
-          </Switch>
-        </div>
-      </Account>
+          </ul>
+
+          <div className="content">
+            <Switch>
+              {routes.map((route) => (
+                <Route
+                  exact={route.exact}
+                  path={`${url}${route.path}`}
+                  key={route.name}
+                  component={route.component}
+                />
+              ))}
+            </Switch>
+          </div>
+        </Account>
+      )}
     </Page>
   );
 };

@@ -3,10 +3,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as Api from "../api";
 export const fetchUserCart = createAsyncThunk(
   "cart/fetchUserCart",
-  async () => {
+  async (_, { rejectWithValue }) => {
     const { data, error } = await Api.fetchCart();
     if (error) {
       console.log(error);
+      rejectWithValue("error");
     }
     return data;
   }
@@ -46,6 +47,7 @@ const cartSlice = createSlice({
 
   extraReducers: {
     [fetchUserCart.fulfilled]: (state, { payload }) => {
+      if (!payload) return;
       state.items = payload.items;
       state.total = payload.total;
       state.qty = payload.quantity;
@@ -53,7 +55,9 @@ const cartSlice = createSlice({
   },
 });
 
-export const addCartItem = (size, productId, quantity) => async (dispatch) => {
+export const addCartItem = (size, productId, quantity = 1) => async (
+  dispatch
+) => {
   const { data, error } = await Api.addToCart(size, productId, quantity);
   if (error) {
     console.log(error);

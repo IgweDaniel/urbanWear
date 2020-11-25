@@ -16,6 +16,8 @@ import {
 } from "../components";
 import { useUpdateEffect } from "../hooks";
 import * as Api from "../api";
+import { useDispatch } from "react-redux";
+import { addCartItem } from "../ducks/cart";
 
 const Image = styled.div`
   height: 100%;
@@ -114,11 +116,12 @@ const ProductDetail = styled.div`
     transform-origin: left;
   }
   .product__sizes .size button:not(:disabled):hover {
-    background: #303030;
-    color: #fff;
-    border-color: #000;
+    /* background: #303030;
+    color: #fff; */
+    border: 2px solid #000;
   }
   .product__sizes .size.active button {
+    font-weight: bold;
     color: #fff;
     background: #000;
     border-color: #000;
@@ -141,7 +144,9 @@ const ProductDetail = styled.div`
   }
   .product__action .button {
     flex: 1;
+    background: ${({ theme }) => theme.colors.success};
   }
+
   .meta-info {
     border: 1px solid #777;
   }
@@ -234,16 +239,20 @@ const ViewBox = styled.div`
 
 export default () => {
   let { slug } = useParams();
+  const dispatch = useDispatch();
   const [product, setProduct] = useState(null);
   const [chosenSize, setChosenSize] = useState(null);
   const [qty, setQty] = useState(1);
   const [viewBox, setViewBox] = useState({ open: false, startIndex: 1 });
   const [status, setStatus] = useState("loading");
+  const [buttonStatus, setButtonStatus] = useState("done");
 
   async function getProduct() {
     const { data, error } = await Api.fetchFullProduct(slug);
     if (error) {
       console.log(error);
+      setStatus("error");
+      return;
     }
     setProduct(data);
   }
@@ -270,12 +279,18 @@ export default () => {
   }
 
   function addToCart() {
-    let cartItem = {
-      product,
-      size: chosenSize,
-      quantity: qty,
-    };
-    console.log(cartItem);
+    if (!chosenSize) {
+      // Handle nO CHOZEN SIZE eRROR
+      console.log("Please select a size");
+      return;
+    }
+    setButtonStatus("loading");
+    dispatch(addCartItem(chosenSize, product.id, qty)).then(() => {
+      console.log("added to cart");
+      setButtonStatus("done");
+      setQty(1);
+      setChosenSize(null);
+    });
   }
 
   function zoom(e) {
@@ -291,7 +306,7 @@ export default () => {
   if (status === "error") {
     return (
       <NotContent offset={200}>
-        <h3>Eror getting product. this product may be out of stock</h3>
+        <h3>Error getting product. this product may be out of stock</h3>
         <Link className="button" style={{ width: "100%" }} to="/shop">
           Go to shop
         </Link>
@@ -390,7 +405,14 @@ export default () => {
                   />
                 </div>
 
-                <button className="button cart-add" onClick={addToCart}>
+                <button
+                  className={`button cart-add  ${
+                    buttonStatus === "loading" ? "loading" : ""
+                  }`}
+                  // buttonStatus
+                  disabled={!chosenSize}
+                  onClick={addToCart}
+                >
                   add to cart
                 </button>
               </div>

@@ -52,7 +52,7 @@ const Checkout = styled.div`
   }
 
   .content .input-wrapper input {
-    height: 30px;
+    height: 35px;
   }
   .zip {
     width: 200px;
