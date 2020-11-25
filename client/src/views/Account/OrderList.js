@@ -1,8 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 import { CURRENCY } from "../../constants";
-import { orders } from "../../data";
 
+const orders = [
+  {
+    id: 234,
+    date: "2020-11-05T16:17:13.851Z",
+    status: "pending",
+    total: 200,
+  },
+];
 const OrderList = styled.div`
   .actions {
     display: flex;

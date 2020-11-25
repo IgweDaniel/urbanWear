@@ -1,20 +1,11 @@
 from rest_framework import serializers
-from store.models import Payment, Product, ProductImage, ProductSize, Address, Order, OrderItem
+from store.models import Category, Payment, Product, ProductSize, Address, Order, OrderItem
 
 
-# class ProductImageSerialiser(serializers.ModelSerializer):
-#     url = serializers.SerializerMethodField()
-#     alt = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = ProductImage
-#         fields = ('alt', 'url')
-
-#     def get_url(self, obj):
-#         return obj.image.url
-
-#     def get_alt(self, obj):
-#         return obj.product.name
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['name', 'id']
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -40,8 +31,6 @@ class ProductSerializer(serializers.ModelSerializer):
             images.append(domain + image.image.url)
         return images
 
-        # return ProductImageSerialiser(obj.images.all(), many=True).data
-
     def get_sizes(self, obj):
         sizes = []
         for size in obj.sizes.all():
@@ -49,6 +38,7 @@ class ProductSerializer(serializers.ModelSerializer):
         return sizes
 
     def get_category(self, obj):
+        # print(self.get_extra_kwargs())
         return obj.category.name
 
 
@@ -120,7 +110,7 @@ class CartSerializer(serializers.ModelSerializer):
         return obj.calc_total_price()
 
     def get_items(self, obj):
-        return OrderItemSerializer(obj.items.all(), many=True).data
+        return OrderItemSerializer(obj.items.order_by("id"), many=True).data
 
     def get_quantity(self, obj):
         quantity = 0

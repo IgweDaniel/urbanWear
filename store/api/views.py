@@ -1,8 +1,8 @@
 
 import os
 from rest_framework import generics
-from store.models import Coupon, Payment, Product, ProductSize, Order, Address, OrderItem
-from .serializers import PaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer
+from store.models import Category, Coupon, Payment, Product, ProductSize, Order, Address, OrderItem
+from .serializers import CategorySerializer, PaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -46,7 +46,12 @@ class IsOwnerPermission(BasePermission):
         return obj.user == request.user
 
 
-class ProductList(generics.ListCreateAPIView):
+class CategoryList(generics.ListAPIView):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+
+class ProductList(generics.ListAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):

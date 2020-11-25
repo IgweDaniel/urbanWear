@@ -69,11 +69,9 @@ const QuickCart = styled.div`
 
 export default ({ closeQuickCart }) => {
   const history = useHistory();
-  const { items, qty, total } = useSelector((state) => ({
-    items: state.cart.items,
-    total: state.cart.total,
-    qty: state.cart.qty,
-  }));
+  const items = useSelector((state) => state.cart.items);
+  const qty = useSelector((state) => state.cart.qty);
+  const total = useSelector((state) => state.cart.total);
 
   return (
     <QuickCart height={window.innerHeight}>
@@ -103,7 +101,7 @@ export default ({ closeQuickCart }) => {
           </button>
           <div className="meta">my Bag({qty})</div>
           <div className="items">
-            {items && items.map((item, i) => <CartItem {...item} key={i} />)}
+            {items && items.map((item) => <CartItem {...item} key={item.id} />)}
           </div>
           <div className="actions">
             <div className="summary">

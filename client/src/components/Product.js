@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -139,13 +139,6 @@ export default (props) => {
     images.length < 2 ? images.push(images[0]) : images.slice(0, 2);
   const productlink = `/product/${name.replaceAll(" ", "-")}`;
   const [status, setStatus] = useState("done");
-
-  let timeout = null;
-
-  useEffect(() => {
-    return () => clearTimeout(timeout);
-    //eslint-disable-next-line
-  }, []);
 
   function addToCart() {
     setStatus("loading");

@@ -1,5 +1,13 @@
 import axios from "axios";
 
+export async function fetchProductsCategories() {
+  try {
+    const { data } = await axios.get("/categories/");
+    return { error: null, data };
+  } catch (error) {
+    return { error, data: null };
+  }
+}
 export async function fetchProducts(size, category) {
   let query = "?";
   if (size) query += `size=${size}`;

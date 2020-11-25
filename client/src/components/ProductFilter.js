@@ -6,8 +6,9 @@ import { Range } from "rc-slider";
 import "rc-slider/assets/index.css";
 
 import { useFilter, useUpdateEffect } from "../hooks";
-import { categories } from "../data";
+
 import { SIZES } from "../constants";
+import { useSelector } from "react-redux";
 
 const ProductFilter = styled.div`
   height: 100vh;
@@ -85,6 +86,8 @@ const ProductFilter = styled.div`
 `;
 
 export default () => {
+  const categories = useSelector((state) => state.global.categories);
+
   const {
     updateFilterSize,
     updateFilterPrice,
@@ -98,6 +101,7 @@ export default () => {
   useUpdateEffect(() => {
     setPrice([min_price, max_price]);
   }, [min_price, max_price]);
+
   return (
     <ProductFilter>
       <div className="content">
@@ -118,9 +122,7 @@ export default () => {
               <li
                 key={category.id}
                 className={`category ${
-                  activeCategory.toLowerCase() === category.name.toLowerCase()
-                    ? "active"
-                    : ""
+                  activeCategory === category.name ? "active" : ""
                 }`}
               >
                 <Link to={`/shop/${category.name}`}>{category.name}</Link>

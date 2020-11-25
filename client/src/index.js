@@ -14,10 +14,12 @@ axios.interceptors.response.use(
     return response;
   },
   function (error) {
+    console.log(error.response);
     const requiresLogin =
       error.response.statusText === "Unauthorized" &&
       error.response.data.code === "token_not_valid";
-    if (requiresLogin && window.location.pathname !== "/") {
+    const pathname = window.location.pathname;
+    if (requiresLogin && pathname !== "/") {
       window.location.replace("/");
       console.log(window.location);
     }

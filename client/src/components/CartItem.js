@@ -121,6 +121,7 @@ export default ({ id, product, quantity, size }) => {
       console.log(error.response.data);
     }
     dispatch(updateCart(data));
+    setEditMode(false);
   }
 
   return (

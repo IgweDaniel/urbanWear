@@ -1,12 +1,13 @@
 from django.urls import path
 from django.urls.conf import include
-from .views import ProductList, ProductDetail, UserAddress, UserAddressCreation, OrderListUpdate, TrackOrder, ListCreatePayment, DeleteUpdateOrderItem
+from .views import ProductList, ProductDetail, UserAddress, UserAddressCreation, OrderListUpdate, TrackOrder, ListCreatePayment, DeleteUpdateOrderItem, CategoryList
 
 
 urlpatterns = [
     path('', include('djoser.urls')),
     path('', include('djoser.urls.jwt')),
 
+    path('categories/', CategoryList.as_view(), name='categories-list'),
     path('products/', ProductList.as_view(), name='product-list'),
     path('products/<slug>/', ProductDetail.as_view(), name='product-detail'),
 

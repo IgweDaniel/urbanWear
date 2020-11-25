@@ -63,7 +63,7 @@ const Home = styled.div`
     top: 0;
   }
   .slider {
-    transition: transform 0.8s ease-in-out;
+    /* transition: transform 0.8s ease-in-out; */
   }
   section {
     height: var(--height);
@@ -129,13 +129,15 @@ const Home = styled.div`
   }
 
   @media (min-width: 1024px) {
+    overflow: hidden;
     &:before {
       display: none;
     }
     .slider {
-      transition: transform 0.8s ease-in-out;
       height: 100%;
+      transition: transform 0.8s ease-in-out;
     }
+
     section .content .cover {
       display: block;
     }
@@ -181,7 +183,8 @@ export default () => {
   const idx = useRef(0);
 
   const isAnimating = useRef(false);
-  let slideElements = null;
+  const slideElements = useRef(null);
+  // let slideElements = null;
 
   function slide(dir) {
     let toIdx = null;
@@ -210,22 +213,23 @@ export default () => {
     }
   }
 
+  function handleResize(e) {
+    containerRef.current.style.transform = `translateY(0)`;
+  }
+
   useEffect(() => {
-    // eslint-disable-next-line
-    slideElements = containerRef.current?.querySelectorAll("section");
+    slideElements.current = containerRef.current?.querySelectorAll("section");
     window.addEventListener("mousewheel", handleMouseWheel, {
       passive: true,
       capture: true,
     });
-    window.addEventListener("scroll", handleMouseWheel, {
-      passive: true,
-      capture: true,
-    });
-
+    window.addEventListener("resize", handleResize);
     return () => {
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousewheel", handleMouseWheel);
     };
-  });
+    // eslint-disable-next-line
+  }, []);
   return (
     <Home>
       <div
@@ -233,7 +237,7 @@ export default () => {
         ref={containerRef}
         onTransitionEnd={(e) => {
           isAnimating.current = false;
-          slideElements.forEach((el, i) => {
+          slideElements.current.forEach((el, i) => {
             el.classList.remove("active");
             if (idx.current === i) {
               el.classList.add("active");

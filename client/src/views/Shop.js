@@ -4,7 +4,7 @@ import Page from "./Page";
 import { ReactComponent as HangerIcon } from "../assets/svg/hanger.svg";
 import { ReactComponent as FilterIcon } from "../assets/svg/filter.svg";
 import { FiChevronDown } from "react-icons/fi";
-import { categories } from "../data";
+
 import { Link } from "react-router-dom";
 import {
   Modal,
@@ -16,6 +16,7 @@ import {
 import { useFilter, useUpdateEffect } from "../hooks";
 
 import * as Api from "../api";
+import { useSelector } from "react-redux";
 
 const Banner = styled.div`
   display: flex;
@@ -126,9 +127,10 @@ const ProductList = styled.div`
     grid-template-columns: repeat(4, 1fr);
   }
 `;
-const ICON_SIZE = 75;
 
+const ICON_SIZE = 75;
 export default () => {
+  const categories = useSelector((state) => state.global.categories);
   const [filterDisplay, setFilterDisplay] = useState(false);
 
   const [products, setProducts] = useState([]);

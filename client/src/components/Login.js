@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { TiTimes } from "react-icons/ti";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Formik } from "formik";
 import { authenticateUser } from "../ducks/auth";
 import { useHistory } from "react-router-dom";
@@ -76,23 +76,16 @@ const Login = styled.div`
 export default ({ closeAuth }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const user = useSelector((state) => state.auth.user);
 
   function handleSubmit(values, { setSubmitting }) {
     dispatch(authenticateUser(values.email, values.password)).then(() => {
       setSubmitting(false);
-    });
-  }
-
-  useEffect(() => {
-    if (user != null) {
       history.push({
         pathname: `/account`,
       });
       closeAuth();
-    }
-    // eslint-disable-next-line
-  }, [user]);
+    });
+  }
 
   function handleValidation(values) {
     const errors = {};

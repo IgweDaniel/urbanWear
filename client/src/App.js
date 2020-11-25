@@ -6,6 +6,7 @@ import GlobalStyle from "./global-styles";
 import theme from "./theme";
 import { fetchUserCart } from "./ducks/cart";
 import { setUserData } from "./ducks/auth";
+import { fetchCategories } from "./ducks/global";
 import { useDispatch, useSelector } from "react-redux";
 import routes from "./views";
 
@@ -50,17 +51,21 @@ function App() {
   }
 
   useEffect(() => {
+    dispatch(fetchCategories());
     dispatch(fetchUserCart());
     if (token && !user) {
       dispatch(setUserData());
     }
+    // eslint-disable-next-line
+  }, [token]);
 
+  useEffect(() => {
     updateBrowserDimensions();
     window.addEventListener("resize", updateBrowserDimensions);
     return () => {
       window.removeEventListener("resize", updateBrowserDimensions);
     };
-  });
+  }, []);
 
   return (
     <Router>
