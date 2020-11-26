@@ -20,6 +20,7 @@ axios.interceptors.response.use(
       error.response.data.code === "token_not_valid";
     const pathname = window.location.pathname;
     if (requiresLogin && pathname !== "/") {
+      console.log(pathname.includes("account"));
       window.location.replace("/");
       console.log(window.location);
     }
@@ -30,6 +31,7 @@ axios.interceptors.response.use(
 axios.interceptors.request.use(
   function (config) {
     const token = localStorage.getItem("token");
+
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }

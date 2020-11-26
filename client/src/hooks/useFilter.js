@@ -1,11 +1,17 @@
 import { useHistory, useLocation, useParams } from "react-router-dom";
+
 import { MIN_PRICE, MAX_PRICE } from "../constants";
 
 const useFilter = () => {
-  const { category = "all" } = useParams();
-
   let location = useLocation();
   const history = useHistory();
+
+  let category =
+    location.pathname.replace("/shop/", "") === "/shop"
+      ? "all"
+      : location.pathname.replace("/shop/", "");
+
+  const { activeCategory = category } = useParams();
 
   let query = new URLSearchParams(location.search);
   const size = query.get("size") || "all",
@@ -50,7 +56,7 @@ const useFilter = () => {
     size,
     min_price,
     max_price,
-    category,
+    category: activeCategory,
   };
 };
 

@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import { TiTimes } from "react-icons/ti";
+import useModal from "../hooks/useModal";
 
 const SideBar = styled.div`
   height: var(--vh);
@@ -39,10 +40,16 @@ const SideBar = styled.div`
   }
 `;
 
-export default ({ close }) => {
+export default () => {
+  const display = useModal();
   return (
     <SideBar>
-      <button className="button close" onClick={close}>
+      <button
+        className="button close"
+        onClick={() => {
+          display({ type: "CLOSE" });
+        }}
+      >
         <TiTimes size={20} />
       </button>
       <div className="content">

@@ -87,7 +87,6 @@ const ProductFilter = styled.div`
 
 export default () => {
   const categories = useSelector((state) => state.global.categories);
-
   const {
     updateFilterSize,
     updateFilterPrice,
@@ -112,7 +111,7 @@ export default () => {
               <Link
                 to={`/shop`}
                 className={`category ${
-                  activeCategory.toLowerCase() === "all" ? "active" : ""
+                  activeCategory === "all" ? "active" : ""
                 }`}
               >
                 all

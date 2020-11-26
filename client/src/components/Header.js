@@ -6,6 +6,7 @@ import { ReactComponent as UserIcon } from "../assets/svg/user.svg";
 import { FiSearch } from "react-icons/fi";
 import { GoThreeBars } from "react-icons/go";
 import { useSelector } from "react-redux";
+import useModal from "../hooks/useModal";
 
 const Header = styled.header`
   position: fixed;
@@ -115,13 +116,16 @@ const Header = styled.header`
 const ICON_SIZE = 20;
 export default ({ openCart, showAuthForm, toggleSideBar }) => {
   const history = useHistory();
-  const { user, qty } = useSelector((state) => ({
-    user: state.auth.user,
-    qty: state.cart.qty,
-  }));
 
+  const user = useSelector((state) => state.auth.user);
+  const qty = useSelector((state) => state.cart.qty);
+  const display = useModal();
   // console.log(history.location);
-
+  function handleAction(action) {
+    display({
+      type: action,
+    });
+  }
   return (
     <>
       <Header>
@@ -129,7 +133,10 @@ export default ({ openCart, showAuthForm, toggleSideBar }) => {
           <nav className="nav">
             <div className="menu-button">
               <button>
-                <GoThreeBars size={ICON_SIZE} onClick={toggleSideBar} />
+                <GoThreeBars
+                  size={ICON_SIZE}
+                  onClick={() => handleAction("SIDEBAR")}
+                />
               </button>
             </div>
 
@@ -166,7 +173,8 @@ export default ({ openCart, showAuthForm, toggleSideBar }) => {
                 <button
                   onClick={() => {
                     if (!user) {
-                      showAuthForm();
+                      // showAuthForm();
+                      handleAction("LOGIN");
                     } else {
                       history.push({
                         pathname: "/account",
@@ -179,7 +187,7 @@ export default ({ openCart, showAuthForm, toggleSideBar }) => {
               </li>
               <li className="cart">
                 {qty > 0 && <span className="label">{qty}</span>}
-                <button onClick={openCart}>
+                <button onClick={() => handleAction("CART")}>
                   <BagIcon width={ICON_SIZE} height={ICON_SIZE} />
                 </button>
               </li>

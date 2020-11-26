@@ -13,26 +13,30 @@ import CheckBox from "./CheckBox";
 import SideBar from "./SideBar";
 import Coupon from "./Coupon";
 import AddressForm from "./AddressForm";
+import ModalProvider from "./ModalProvider";
 
 import CartItem from "./CartItem";
 
 import Tabs from "./Tabs";
 export {
-  Header,
-  Modal,
   QuickCart,
-  Product,
+  Modal,
+  Login,
   ProductFilter,
+  //  To remove up above
+
+  Header,
+  Product,
   Spinner,
   QuantityInput,
   Tabs,
   ProductCarousel,
   NotContent,
-  Login,
   PrivateRoute,
   CheckBox,
   SideBar,
   CartItem,
   AddressForm,
   Coupon,
+  ModalProvider,
 };

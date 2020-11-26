@@ -7,7 +7,7 @@ import { FiChevronDown } from "react-icons/fi";
 
 import { Link } from "react-router-dom";
 import {
-  Modal,
+  // Modal,
   Product,
   ProductFilter,
   Spinner,
@@ -17,6 +17,7 @@ import { useFilter, useUpdateEffect } from "../hooks";
 
 import * as Api from "../api";
 import { useSelector } from "react-redux";
+import useModal from "../hooks/useModal";
 
 const Banner = styled.div`
   display: flex;
@@ -131,13 +132,13 @@ const ProductList = styled.div`
 const ICON_SIZE = 75;
 export default () => {
   const categories = useSelector((state) => state.global.categories);
-  const [filterDisplay, setFilterDisplay] = useState(false);
+  // const [filterDisplay, setFilterDisplay] = useState(false);
 
   const [products, setProducts] = useState([]);
   const [status, setStatus] = useState("loading");
   const { size, category, min_price, max_price } = useFilter();
 
-  const toggleFilterDisplay = () => setFilterDisplay(!filterDisplay);
+  // const toggleFilterDisplay = () => setFilterDisplay(!filterDisplay);
 
   async function getProducts() {
     const { data, error } = await Api.fetchProducts(
@@ -190,11 +191,12 @@ export default () => {
       </NotContent>
     );
 
+  const display = useModal();
   return (
     <>
-      <Modal isOpen={filterDisplay} position="left" close={toggleFilterDisplay}>
+      {/* <Modal isOpen={filterDisplay} position="left" close={toggleFilterDisplay}>
         <ProductFilter />
-      </Modal>
+      </Modal> */}
       <Page>
         <Banner>
           {category === "all" ? (
@@ -214,7 +216,17 @@ export default () => {
         </Banner>
         <Shop>
           <div className="meta">
-            <button className="filter" onClick={toggleFilterDisplay}>
+            <button
+              className="filter"
+              onClick={() => {
+                display({
+                  type: "OPEN",
+                  component: <ProductFilter />,
+                  position: "left",
+                });
+              }}
+            >
+              {/* <button className="filter" onClick={toggleFilterDisplay}> */}
               <span className="icon">
                 <FilterIcon height={20} width={20} />
               </span>

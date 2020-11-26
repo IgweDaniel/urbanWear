@@ -1,3 +1,4 @@
 import useUpdateEffect from "./useUpdateEffect";
 import useFilter from "./useFilter";
-export { useUpdateEffect, useFilter };
+import useModal from "./useModal";
+export { useUpdateEffect, useFilter, useModal };

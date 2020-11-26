@@ -21,3 +21,19 @@ export async function getUser() {
     return { error, data: null };
   }
 }
+
+export async function updateAddress(address) {
+  try {
+    const { data } = await axios.post("/addresses/", {
+      street: "my billing address",
+      apartment: "josey",
+      zip_code: "260101",
+      country: "NG",
+      address_type: "B",
+    });
+
+    return { error: null, data };
+  } catch (error) {
+    return { error, data: null };
+  }
+}

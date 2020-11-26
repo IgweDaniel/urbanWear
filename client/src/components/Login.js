@@ -6,6 +6,7 @@ import { Formik } from "formik";
 import { authenticateUser } from "../ducks/auth";
 import { useHistory } from "react-router-dom";
 import CheckBox from "./CheckBox";
+import useModal from "../hooks/useModal";
 
 const Login = styled.div`
   height: calc(var(--vh) * 0.8);
@@ -76,6 +77,13 @@ const Login = styled.div`
 export default ({ closeAuth }) => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const display = useModal();
+
+  function closeForm() {
+    display({
+      type: "CLOSE",
+    });
+  }
 
   function handleSubmit(values, { setSubmitting }) {
     dispatch(authenticateUser(values.email, values.password)).then(() => {
@@ -83,7 +91,7 @@ export default ({ closeAuth }) => {
       history.push({
         pathname: `/account`,
       });
-      closeAuth();
+      closeForm();
     });
   }
 
@@ -104,7 +112,7 @@ export default ({ closeAuth }) => {
 
   return (
     <Login>
-      <button className="close" onClick={closeAuth}>
+      <button className="close" onClick={closeForm}>
         <TiTimes size={23} />
       </button>
       <Formik

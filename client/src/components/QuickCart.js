@@ -6,6 +6,7 @@ import { CURRENCY } from "../constants";
 import { ReactComponent as BagAlt } from "../assets/svg/bag-alt.svg";
 import CartItem from "./CartItem";
 import { TiTimes } from "react-icons/ti";
+import useModal from "../hooks/useModal";
 
 const FullCart = styled.div`
   width: 100%;
@@ -67,11 +68,16 @@ const QuickCart = styled.div`
   max-width: 400px;
 `;
 
-export default ({ closeQuickCart }) => {
+export default () => {
   const history = useHistory();
   const items = useSelector((state) => state.cart.items);
   const qty = useSelector((state) => state.cart.qty);
   const total = useSelector((state) => state.cart.total);
+  const display = useModal();
+
+  function closeQuickCart() {
+    display({ type: "CLOSE" });
+  }
 
   return (
     <QuickCart height={window.innerHeight}>

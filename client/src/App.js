@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
@@ -12,11 +12,12 @@ import routes from "./views";
 
 import {
   Header,
-  Modal,
-  QuickCart,
-  Login,
+  // Modal,
+  // QuickCart,
+  // Login,
   PrivateRoute,
-  SideBar,
+  ModalProvider,
+  // SideBar,
 } from "./components";
 
 const Body = styled.div`
@@ -30,13 +31,6 @@ function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
-
-  const [openCart, setOpenCart] = useState(false),
-    [logindisplay, setLogindisplay] = useState(false),
-    [sideBarDisplay, setSideBarDisplay] = useState(false),
-    toggleCartState = () => setOpenCart(!openCart),
-    toggleLoginDisplay = () => setLogindisplay(!logindisplay),
-    toggleSideBar = () => setSideBarDisplay(!sideBarDisplay);
 
   function updateBrowserDimensions() {
     let vh = window.innerHeight;
@@ -71,42 +65,30 @@ function App() {
     <Router>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <Modal isOpen={openCart} position="right" close={toggleCartState}>
-          <QuickCart closeQuickCart={toggleCartState} />
-        </Modal>
-        <Modal isOpen={sideBarDisplay} position="left" close={toggleSideBar}>
-          <SideBar close={toggleSideBar} />
-        </Modal>
-        <Modal isOpen={logindisplay} close={toggleLoginDisplay}>
-          <Login closeAuth={toggleLoginDisplay} />
-        </Modal>
-
-        <Body onScroll={updateNavBar}>
-          <Header
-            openCart={toggleCartState}
-            showAuthForm={toggleLoginDisplay}
-            toggleSideBar={toggleSideBar}
-          />
-          <Switch>
-            {routes.map(({ path, component, exact, authRequired }) =>
-              authRequired ? (
-                <PrivateRoute
-                  component={component}
-                  path={path}
-                  exact={exact}
-                  key={path.replace("/", "")}
-                />
-              ) : (
-                <Route
-                  path={path}
-                  exact={exact}
-                  component={component}
-                  key={path.replace("/", "")}
-                />
-              )
-            )}
-          </Switch>
-        </Body>
+        <ModalProvider>
+          <Body onScroll={updateNavBar}>
+            <Header />
+            <Switch>
+              {routes.map(({ path, component, exact, authRequired }) =>
+                authRequired ? (
+                  <PrivateRoute
+                    component={component}
+                    path={path}
+                    exact={exact}
+                    key={path.replace("/", "")}
+                  />
+                ) : (
+                  <Route
+                    path={path}
+                    exact={exact}
+                    component={component}
+                    key={path.replace("/", "")}
+                  />
+                )
+              )}
+            </Switch>
+          </Body>
+        </ModalProvider>
       </ThemeProvider>
     </Router>
   );

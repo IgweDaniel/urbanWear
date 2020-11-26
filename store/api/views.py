@@ -1,6 +1,7 @@
 
 import os
 from rest_framework import generics
+from django.db.models import Q
 from store.models import Category, Coupon, Payment, Product, ProductSize, Order, Address, OrderItem
 from .serializers import CategorySerializer, PaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
@@ -78,7 +79,11 @@ class UserAddressCreation(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, ]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        data = dict(serializer.validated_data)
+        address_type = data.get('address_type')
+        Address.objects.update_or_create(
+            default=True, address_type=address_type,
+            user=self.request.user, defaults=data)
 
     def get_queryset(self):
         queryset = Address.objects.all().filter(user=self.request.user)
