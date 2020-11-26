@@ -5,6 +5,11 @@ import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./ducks";
 import { Provider } from "react-redux";
 import axios from "axios";
+import { logout } from "./ducks/auth";
+
+const store = configureStore({
+  reducer: rootReducer,
+});
 
 axios.defaults.baseURL = "/api";
 axios.defaults.withCredentials = true;
@@ -13,16 +18,29 @@ axios.interceptors.response.use(
   function (response) {
     return response;
   },
-  function (error) {
+  async function (error) {
     console.log(error.response);
-    const requiresLogin =
+    const invalidToken =
       error.response.statusText === "Unauthorized" &&
       error.response.data.code === "token_not_valid";
-    const pathname = window.location.pathname;
-    if (requiresLogin && pathname !== "/") {
-      console.log(pathname.includes("account"));
-      window.location.replace("/");
-      console.log(window.location);
+
+    const refresh = localStorage.getItem("refresh");
+    const originalRequest = error.config;
+
+    if (invalidToken && refresh) {
+      const instance = axios.create();
+      try {
+        const { data } = await instance.post("/jwt/refresh/", { refresh });
+        localStorage.setItem("token", data.access);
+        localStorage.setItem("refresh", data.refresh);
+        originalRequest.headers.Authorization = `Bearer ${data.access}`;
+        return axios(originalRequest);
+      } catch (error) {
+        store.dispatch(logout());
+        localStorage.removeItem("refresh");
+      }
+    } else {
+      store.dispatch(logout());
     }
 
     return Promise.reject(error);
@@ -31,20 +49,16 @@ axios.interceptors.response.use(
 axios.interceptors.request.use(
   function (config) {
     const token = localStorage.getItem("token");
-
-    if (token && !config.headers.Authorization) {
+    if (token && !config.url.includes("product")) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   function (error) {
     return Promise.reject(error);
   }
 );
-
-const store = configureStore({
-  reducer: rootReducer,
-});
 
 ReactDOM.render(
   <React.StrictMode>

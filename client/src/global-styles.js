@@ -60,6 +60,7 @@ export default createGlobalStyle`
       font-size:0.8rem;
       text-transform:uppercase;
       font-variant:small-caps;
+      cursor:pointer;
   
      position:relative;
     }

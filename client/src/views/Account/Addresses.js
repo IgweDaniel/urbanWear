@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Formik } from "formik";
+import * as Api from "../../api";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../ducks/auth";
 
 const Addresses = styled.div`
   display: flex;
@@ -12,8 +15,7 @@ const Addresses = styled.div`
     display: flex;
     align-items: center;
   }
-
-  .button {
+  .button.edit-mode {
     margin-left: auto;
   }
 
@@ -38,11 +40,17 @@ const Addresses = styled.div`
     width: 30%;
   }
 
-  .button.submit {
-    /* width: 50%; */
+  .form-actions {
+    display: flex;
+    align-items: center;
     margin: 20px 0;
   }
-
+  .form-actions .cancel {
+    margin-left: auto;
+    border: 1px solid #000;
+    background: transparent;
+    color: #000;
+  }
   @media (min-width: 1024px) {
     flex-direction: row;
     justify-content: space-between;
@@ -53,175 +61,147 @@ const Addresses = styled.div`
   }
 `;
 
-const billingAddress = {
-  name: "daniel",
-  lastname: "",
-  street: "Bayowa Street",
-  apartment: "12",
-  zipCode: "",
-  country: "",
-};
-
 export default () => {
-  const [isEditingAddress, HasEditAddress] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
 
-  function updateBilling(values, cb) {
-    console.log(values);
-    setTimeout(() => {
-      cb(false);
-      HasEditAddress(false);
-    }, 2000);
+  async function handleAddressUpdate(values, cb) {
+    const { data, error } = await Api.updateAddress(values);
+    if (error) {
+      console.log(error);
+    }
+    dispatch(setUser(data));
   }
 
-  function handleValidation(values) {
+  async function handleValidation(values) {
     const errors = {};
     if (!values.name) {
       errors.name = "Email address is required";
     }
     return errors;
   }
+
   return (
     <Addresses>
       <div className="address">
-        {!isEditingAddress && (
-          <div className="action">
-            <h3 className="address__type">Billing Address</h3>
-            <button className="button" onClick={() => HasEditAddress(true)}>
-              {billingAddress ? "edit" : "add"}
-            </button>
-          </div>
-        )}
-
-        {!isEditingAddress && billingAddress && (
-          <div className="details">
-            {Object.keys(billingAddress).map((key) => (
-              <span key={key}>{billingAddress[key]}</span>
-            ))}
-          </div>
-        )}
-        {isEditingAddress && (
-          <UpdateAddress
-            initialValues={billingAddress}
-            handleUpdate={updateBilling}
-            validate={handleValidation}
-          />
-        )}
+        <UpdateAddress
+          type="Billing"
+          handleUpdate={handleAddressUpdate}
+          initialValues={{
+            name: user.username,
+            lastname: user.username,
+            ...user.address.billing,
+          }}
+          validate={handleValidation}
+        />
       </div>
       <div className="address">
-        <div className="action">
-          <h3 className="address__type">Shipping Address</h3>
-          <button className="button">add</button>
-        </div>
+        <UpdateAddress
+          type="Shipping"
+          handleUpdate={handleAddressUpdate}
+          initialValues={{
+            name: user.username,
+            lastname: user.username,
+            ...user.address.shipping,
+          }}
+          validate={handleValidation}
+        />
       </div>
     </Addresses>
   );
 };
 
-function UpdateAddress({ handleUpdate, initialValues, validate }) {
+function UpdateAddress({ handleUpdate, initialValues, validate, type }) {
+  const [isEditingAddress, HasEditAddress] = useState(false);
+  const fields = [
+    "name",
+    "lastname",
+    "street",
+    "apartment",
+    "zip_code",
+    "country",
+  ];
+
+  function update(values, { setSubmitting }, errors) {
+    handleUpdate(values).then(() => {
+      setSubmitting(false);
+    });
+  }
   return (
     <>
-      <Formik
-        initialValues={initialValues}
-        validate={validate}
-        onSubmit={(values, { setSubmitting }, errors) => {
-          handleUpdate(values, setSubmitting);
-        }}
-      >
-        {({
-          values,
-          errors,
-          handleChange,
-          handleSubmit,
-          isSubmitting,
-          touched,
-        }) => (
-          <form>
-            <div className="input-wrapper">
-              <label htmlFor="name">name</label>
-              {touched.name && errors.name && (
-                <p className="error">{errors.name}</p>
-              )}
-              <input
-                type="text"
-                name="name"
-                value={values.name}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="input-wrapper">
-              <label htmlFor="lastname">lastname</label>
-              {touched.lastname && errors.lastname && (
-                <p className="error">{errors.lastname}</p>
-              )}
-              <input
-                type="text"
-                name="lastname"
-                value={values.lastname}
-                onChange={handleChange}
-              />
-            </div>
+      {!isEditingAddress && (
+        <div className="action">
+          <h3 className="address__type">{type} Address</h3>
+          <button
+            className="button edit-mode"
+            onClick={() => HasEditAddress(true)}
+          >
+            {initialValues ? "edit" : "add"}
+          </button>
+        </div>
+      )}
+      {!isEditingAddress && initialValues && (
+        <div className="details">
+          {Object.keys(initialValues).map(
+            (key) =>
+              key !== "address_type" && (
+                <span key={key}>{initialValues[key]}</span>
+              )
+          )}
+        </div>
+      )}
+      {isEditingAddress && (
+        <Formik
+          initialValues={initialValues}
+          validate={validate}
+          onSubmit={update}
+        >
+          {({
+            values,
+            errors,
+            handleChange,
+            handleSubmit,
+            isSubmitting,
+            touched,
+          }) => (
+            <form>
+              {fields.map((field) => (
+                <div className="input-wrapper" key={field}>
+                  <label htmlFor="name">{field}</label>
+                  {touched[field] && errors[field] && (
+                    <p className="error">{errors[field]}</p>
+                  )}
+                  <input
+                    type="text"
+                    name={field}
+                    value={values[field]}
+                    onChange={handleChange}
+                  />
+                </div>
+              ))}
 
-            <div className="input-wrapper">
-              <label htmlFor="street">street</label>
-              {touched.street && errors.street && (
-                <p className="error">{errors.street}</p>
-              )}
-              <input
-                type="text"
-                name="street"
-                value={values.street}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="input-wrapper">
-              <label htmlFor="apartment">apartment</label>
-              {touched.apartment && errors.apartment && (
-                <p className="error">{errors.apartment}</p>
-              )}
-              <input
-                type="text"
-                name="apartment"
-                value={values.apartment}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="input-wrapper zip">
-              <label htmlFor="zipCode">zipCode</label>
-              {touched.zipCode && errors.zipCode && (
-                <p className="error">{errors.zipCode}</p>
-              )}
-              <input
-                type="text"
-                name="zipCode"
-                value={values.zipCode}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="input-wrapper ">
-              <label htmlFor="country">country</label>
-              {touched.country && errors.country && (
-                <p className="error">{errors.country}</p>
-              )}
-              <input
-                type="text"
-                name="country"
-                value={values.country}
-                onChange={handleChange}
-              />
-            </div>
-
-            <button
-              type="submit"
-              className={`button submit ${isSubmitting ? "loading" : ""}`}
-              disabled={isSubmitting}
-              onClick={handleSubmit}
-            >
-              save address
-            </button>
-          </form>
-        )}
-      </Formik>
+              <div className="form-actions">
+                <button
+                  type="submit"
+                  className={`button submit ${isSubmitting ? "loading" : ""}`}
+                  disabled={isSubmitting}
+                  onClick={handleSubmit}
+                >
+                  save address
+                </button>
+                <div
+                  className="button cancel"
+                  onClick={() => {
+                    HasEditAddress(false);
+                  }}
+                >
+                  cancel
+                </div>
+              </div>
+            </form>
+          )}
+        </Formik>
+      )}
     </>
   );
 }

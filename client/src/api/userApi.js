@@ -15,7 +15,6 @@ export async function LoginUser(email, password) {
 export async function getUser() {
   try {
     const { data } = await axios.get("/users/me");
-
     return { error: null, data };
   } catch (error) {
     return { error, data: null };
@@ -25,11 +24,11 @@ export async function getUser() {
 export async function updateAddress(address) {
   try {
     const { data } = await axios.post("/addresses/", {
-      street: "my billing address",
-      apartment: "josey",
-      zip_code: "260101",
-      country: "NG",
-      address_type: "B",
+      street: address["street"],
+      apartment: address["apartment"],
+      zip_code: address["zip_code"],
+      country: address["country"],
+      address_type: address["address_type"],
     });
 
     return { error: null, data };

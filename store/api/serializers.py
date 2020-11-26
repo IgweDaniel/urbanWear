@@ -1,5 +1,23 @@
 from rest_framework import serializers
-from store.models import Category, Payment, Product, ProductSize, Address, Order, OrderItem
+from store.models import Category, Payment, Product, ProductSize, Address, Order, OrderItem, User
+
+
+class UserSerializer(serializers.ModelSerializer):
+    address = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'address', 'username']
+
+    def get_address(self, obj):
+        billing, shipping = None, None
+        for address in obj.addresses.all().filter(default=True):
+            if address.address_type == "S":
+                shipping = AddressSerializer(address).data
+            else:
+                billing = AddressSerializer(address).data
+
+        return {"billing": billing, "shipping": shipping}
 
 
 class CategorySerializer(serializers.ModelSerializer):

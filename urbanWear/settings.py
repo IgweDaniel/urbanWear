@@ -147,9 +147,14 @@ REST_FRAMEWORK = {
     ),
 }
 
-# SIMPLE_JWT = {
-#     'AUTH_HEADER_TYPES': ('JWT',),
-# }
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=14),
+    # 'ACCESS_TOKEN_LIFETIME': timedelta(seconds=2),
+    # 'REFRESH_TOKEN_LIFETIME': timedelta(seconds=5),
+    'ROTATE_REFRESH_TOKENS': True
+}
 
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
@@ -157,6 +162,10 @@ DJOSER = {
     'HIDE_USERS': True,
     # 'LOGIN_FIELD': 'email',
     # 'SEND_ACTIVATION_EMAIL': True,
+    "SERIALIZERS": {
+        "user": "store.api.serializers.UserSerializer",
+        "current_user": "store.api.serializers.UserSerializer",
+    },
     'PERMISSIONS': {
         'username_reset': ['rest_framework.permissions.IsAdminUser'],
         'username_reset_confirm': ['rest_framework.permissions.IsAdminUser'],

@@ -3,7 +3,7 @@ import os
 from rest_framework import generics
 from django.db.models import Q
 from store.models import Category, Coupon, Payment, Product, ProductSize, Order, Address, OrderItem
-from .serializers import CategorySerializer, PaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer
+from .serializers import CategorySerializer, PaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -74,20 +74,24 @@ class ProductDetail(generics.RetrieveAPIView):
     lookup_field = "slug"
 
 
-class UserAddressCreation(generics.ListCreateAPIView):
-    serializer_class = AddressSerializer
+class UserAddressCreation(generics.CreateAPIView):
+    # serializer_class = AddressSerializer
     permission_classes = [IsAuthenticated, ]
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
+        serializer = AddressSerializer(data=request.data)
+        if not serializer.is_valid(raise_exception=True):
+            return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
         data = dict(serializer.validated_data)
         address_type = data.get('address_type')
         Address.objects.update_or_create(
             default=True, address_type=address_type,
             user=self.request.user, defaults=data)
+        return Response(UserSerializer(self.request.user).data, status=HTTP_200_OK)
 
-    def get_queryset(self):
-        queryset = Address.objects.all().filter(user=self.request.user)
-        return queryset
+    # def get_queryset(self):
+    #     queryset = Address.objects.all().filter(user=self.request.user)
+    #     return queryset
 
 
 class UserAddress(generics.RetrieveUpdateDestroyAPIView):
