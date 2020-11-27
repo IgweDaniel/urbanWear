@@ -93,6 +93,11 @@ export default createGlobalStyle`
   position: relative;
  }
   .error {
+    color: red;
+    font-size: 12px;
+    text-transform: capitalize;
+  }
+  /* .error {
     position: absolute;
     top: -10px;
     left: 10px;
@@ -101,7 +106,7 @@ export default createGlobalStyle`
     z-index: 10;
     font-size: 0.85rem;
     text-transform: capitalize;
-  }
+  } */
   input {
     width: 100%;
     height: 40px;

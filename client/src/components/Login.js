@@ -124,13 +124,21 @@ export default ({ closeAuth }) => {
         validate={handleValidation}
         onSubmit={handleSubmit}
       >
-        {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
+        {({
+          values,
+          errors,
+          handleChange,
+          touched,
+          handleSubmit,
+          isSubmitting,
+        }) => (
           <form>
             <h4 className="legend">Login </h4>
             <p className="sub-legend">The account for every wear urban</p>
-
             <div className="input-wrapper">
-              {errors.email && <p className="error">{errors.email}</p>}
+              {errors.email && touched.email && (
+                <p className="error">{errors.email}</p>
+              )}
               <input
                 type="text"
                 name="email"
@@ -141,7 +149,9 @@ export default ({ closeAuth }) => {
             </div>
 
             <div className="input-wrapper">
-              {errors.password && <p className="error">{errors.password}</p>}
+              {errors.password && touched.password && (
+                <p className="error">{errors.password}</p>
+              )}
               <input
                 type="password"
                 name="password"

@@ -10,15 +10,7 @@ import { fetchCategories } from "./ducks/global";
 import { useDispatch, useSelector } from "react-redux";
 import routes from "./views";
 
-import {
-  Header,
-  // Modal,
-  // QuickCart,
-  // Login,
-  PrivateRoute,
-  ModalProvider,
-  // SideBar,
-} from "./components";
+import { Header, PrivateRoute, ModalProvider } from "./components";
 
 const Body = styled.div`
   overflow-y: auto;

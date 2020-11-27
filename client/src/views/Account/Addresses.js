@@ -76,7 +76,19 @@ export default () => {
   async function handleValidation(values) {
     const errors = {};
     if (!values.name) {
-      errors.name = "Email address is required";
+      errors.name = "name is required";
+    }
+    if (!values.lastname) {
+      errors.lastname = "lastname  is required";
+    }
+    if (!values.street) {
+      errors.street = "street is required";
+    }
+    if (!values.apartment) {
+      errors.apartment = "apartment is required";
+    }
+    if (!values.country) {
+      errors.country = "country is required";
     }
     return errors;
   }

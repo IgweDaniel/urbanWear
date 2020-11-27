@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Spinner } from ".";
 import { ReactComponent as CartAddIcon } from "../assets/svg/cart-add.svg";
 import { CURRENCY } from "../constants";
 import { addCartItem } from "../ducks/cart";
+import { TiTick } from "react-icons/ti";
+import { FaListUl } from "react-icons/fa";
+
 const Product = styled.div`
   width: 100%;
   overflow-x: hidden;
@@ -43,17 +46,6 @@ const Product = styled.div`
   .product__images .product__image:nth-of-type(2) {
     transform: rotateY(180deg);
   }
-  /* .product__images img {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    backface-visibility: hidden;
-  }
-
-  .product__images img:nth-of-type(2) {
-    transform: rotateY(180deg);
-  } */
 
   .product__image img {
     height: 100%;
@@ -61,18 +53,30 @@ const Product = styled.div`
     object-fit: cover;
     object-position: center;
   }
-
-  .cartadd {
+  .product__action {
     position: absolute;
     z-index: 4;
     bottom: 0;
     right: 0;
-    background: #fff;
+    display: flex;
+    align-items: center;
+  }
+  .icon,
+  .cartadd,
+  .options {
     height: 40px;
     width: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .cartadd,
+  .options {
+    background: #fff;
+  }
+
+  .icon {
+    background: #b39964;
   }
   .product__name a:hover {
     text-decoration: underline;
@@ -134,11 +138,20 @@ export default (props) => {
     category,
     name,
     sizes,
+    slug,
   } = props;
   const product_images =
     images.length < 2 ? images.push(images[0]) : images.slice(0, 2);
-  const productlink = `/product/${name.replaceAll(" ", "-")}`;
+
+  const productlink = `/product/${slug}`;
+
   const [status, setStatus] = useState("done");
+  const items = useSelector((state) => state.cart.items);
+  const inCart = items.find((item) => item.product.id === id);
+
+  const hasOptions = !["bottoms", "foot wear", "accessories"].includes(
+    category
+  );
 
   function addToCart() {
     setStatus("loading");
@@ -148,13 +161,27 @@ export default (props) => {
   return (
     <Product>
       <div className="product__display">
-        <button className="cartadd" onClick={addToCart}>
-          {status === "loading" ? (
-            <Spinner variant="action" size={20} />
-          ) : (
-            <CartAddIcon height={20} width={25} />
+        <div className="product__action">
+          {inCart && (
+            <span className=" icon in-cart">
+              <TiTick size={20} color="#fff" />
+            </span>
           )}
-        </button>
+          {hasOptions ? (
+            <Link to={productlink} className="options">
+              <FaListUl width={25} />
+            </Link>
+          ) : (
+            <button className="cartadd" onClick={addToCart}>
+              {status === "loading" ? (
+                <Spinner variant="action" size={24} />
+              ) : (
+                <CartAddIcon height={20} width={25} />
+              )}
+            </button>
+          )}
+        </div>
+
         <Link className="product__images" to={productlink}>
           {product_images.map((image, i) => (
             <div className="product__image" key={i}>
