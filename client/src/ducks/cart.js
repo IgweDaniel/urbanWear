@@ -19,6 +19,8 @@ const cartSlice = createSlice({
     items: [],
     total: 0,
     qty: 0,
+    coupon: null,
+    discountAmount: 0,
   },
   reducers: {
     addItem(state, action) {
@@ -38,11 +40,13 @@ const cartSlice = createSlice({
     },
     updateCart(state, action) {
       if (!action.payload) return;
-      const { items, total, quantity } = action.payload;
+      const { items, total, quantity, coupon } = action.payload;
 
       state.items = items;
       state.total = total;
       state.qty = quantity;
+      state.coupon = coupon.code;
+      state.discountAmount = coupon.amount;
     },
   },
 
@@ -52,6 +56,8 @@ const cartSlice = createSlice({
       state.items = payload.items;
       state.total = payload.total;
       state.qty = payload.quantity;
+      state.coupon = payload.coupon.code;
+      state.discountAmount = payload.coupon.amount;
     },
   },
 });

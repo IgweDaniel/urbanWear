@@ -19,7 +19,7 @@ axios.interceptors.response.use(
     return response;
   },
   async function (error) {
-    console.log(error.response);
+    console.log(error.response.data);
     const invalidToken =
       error.response.statusText === "Unauthorized" &&
       error.response.data.code === "token_not_valid";

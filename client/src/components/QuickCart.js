@@ -45,6 +45,33 @@ const FullCart = styled.div`
     font-weight: bold;
     text-transform: capitalize;
   }
+  .real-total {
+    display: inline-block;
+    margin: 0 10px;
+    text-decoration: line-through;
+
+    color: #888;
+  }
+  .discount-total {
+    font-size: 1.2rem;
+  }
+  .emph {
+    font-weight: bold;
+    text-transform: none;
+    font-variant: normal;
+  }
+  .coupon {
+    background: #eee;
+    text-transform: uppercase;
+    font-variant: small-caps;
+    padding: 5px;
+    font-size: 0.9rem;
+  }
+  .discount {
+    display: inline-block;
+    margin-left: auto;
+    font-weight: bold;
+  }
 `;
 
 const EmptyCart = styled.div`
@@ -73,6 +100,8 @@ export default () => {
   const items = useSelector((state) => state.cart.items);
   const qty = useSelector((state) => state.cart.qty);
   const total = useSelector((state) => state.cart.total);
+  const coupon = useSelector((state) => state.cart.coupon);
+  const discountAmount = useSelector((state) => state.cart.discountAmount);
   const display = useModal();
 
   function closeQuickCart() {
@@ -113,10 +142,28 @@ export default () => {
             <div className="summary">
               <span className="total">total to pay:</span>
               <span className="total-value">
-                {CURRENCY}
-                {total}
+                {coupon && (
+                  <span className="real-total">
+                    {CURRENCY}
+                    {total + discountAmount}
+                  </span>
+                )}
+                <span className="discount-total">
+                  {CURRENCY}
+                  {total}
+                </span>
               </span>
             </div>
+            {coupon && (
+              <p className="coupon">
+                coupon <span className="emph">{coupon}</span> applied
+                <span className="discount">
+                  - {CURRENCY}
+                  {discountAmount}
+                </span>{" "}
+                from total purchase
+              </p>
+            )}
 
             <button
               className="button checkout"

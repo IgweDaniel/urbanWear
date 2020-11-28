@@ -68,10 +68,10 @@ const ProductFilter = styled.div`
     width: 100%;
   }
   .size.active {
-    background: #ccc;
+    background: ${({ theme }) => theme.colors.primary};
   }
   .category.active {
-    color: #ccc;
+    color: ${({ theme }) => theme.colors.primary};
     font-weight: bold;
   }
   .price {

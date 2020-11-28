@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
@@ -10,7 +10,14 @@ import { fetchCategories } from "./ducks/global";
 import { useDispatch, useSelector } from "react-redux";
 import routes from "./views";
 
-import { Header, PrivateRoute, ModalProvider } from "./components";
+import {
+  Header,
+  PrivateRoute,
+  ModalProvider,
+  Spinner,
+  NotContent,
+} from "./components";
+import { useUpdateEffect } from "./hooks";
 
 const Body = styled.div`
   overflow-y: auto;
@@ -23,6 +30,9 @@ function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
+  const items = useSelector((state) => state.cart.items);
+
+  const [status, setStatus] = useState("loading");
 
   function updateBrowserDimensions() {
     let vh = window.innerHeight;
@@ -37,6 +47,7 @@ function App() {
   }
 
   useEffect(() => {
+    setStatus("loading");
     dispatch(fetchCategories());
     dispatch(fetchUserCart());
     if (token && !user) {
@@ -44,6 +55,10 @@ function App() {
     }
     // eslint-disable-next-line
   }, [token]);
+
+  useUpdateEffect(() => {
+    setStatus("done");
+  }, [items]);
 
   useEffect(() => {
     updateBrowserDimensions();
@@ -58,28 +73,34 @@ function App() {
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <ModalProvider>
-          <Body onScroll={updateNavBar}>
-            <Header />
-            <Switch>
-              {routes.map(({ path, component, exact, authRequired }) =>
-                authRequired ? (
-                  <PrivateRoute
-                    component={component}
-                    path={path}
-                    exact={exact}
-                    key={path.replace("/", "")}
-                  />
-                ) : (
-                  <Route
-                    path={path}
-                    exact={exact}
-                    component={component}
-                    key={path.replace("/", "")}
-                  />
-                )
-              )}
-            </Switch>
-          </Body>
+          {status === "loading" ? (
+            <NotContent>
+              <Spinner />
+            </NotContent>
+          ) : (
+            <Body onScroll={updateNavBar}>
+              <Header />
+              <Switch>
+                {routes.map(({ path, component, exact, authRequired }) =>
+                  authRequired ? (
+                    <PrivateRoute
+                      component={component}
+                      path={path}
+                      exact={exact}
+                      key={path.replace("/", "")}
+                    />
+                  ) : (
+                    <Route
+                      path={path}
+                      exact={exact}
+                      component={component}
+                      key={path.replace("/", "")}
+                    />
+                  )
+                )}
+              </Switch>
+            </Body>
+          )}
         </ModalProvider>
       </ThemeProvider>
     </Router>

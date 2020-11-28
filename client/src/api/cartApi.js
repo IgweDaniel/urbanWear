@@ -42,3 +42,11 @@ export async function deleteCartItem(id) {
     return { error, data: null };
   }
 }
+export async function applyCoupon(code) {
+  try {
+    const { data } = await axios.patch(`/order/`, { code });
+    return { error: null, data };
+  } catch (error) {
+    return { error: error.response.data, data: null };
+  }
+}

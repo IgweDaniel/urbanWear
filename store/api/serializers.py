@@ -119,10 +119,11 @@ class CartSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
     items = serializers.SerializerMethodField()
     quantity = serializers.SerializerMethodField()
+    coupon = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
-        fields = ['total', 'items', 'quantity']
+        fields = ['total', 'items', 'quantity', 'coupon']
 
     def get_total(self, obj):
         return obj.calc_total_price()
@@ -134,8 +135,13 @@ class CartSerializer(serializers.ModelSerializer):
         quantity = 0
         for item in obj.items.all():
             quantity += item.quantity
-
         return quantity
+
+    def get_coupon(self, obj):
+        return {
+            'amount': obj.coupon.amount if obj.coupon else 0,
+            'code': obj.coupon.code if obj.coupon else ""
+        }
 
 
 class OrderSerializer(serializers.ModelSerializer):

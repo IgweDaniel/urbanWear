@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { Formik } from "formik";
+import { useFormik } from "formik";
 import styled from "styled-components";
-
+import * as Api from "../api";
+import { updateCart } from "../ducks/cart";
+import { useDispatch, useSelector } from "react-redux";
 const Coupon = styled.div`
   margin: 20px 0;
   .action {
     text-transform: uppercase;
     font-variant: small-caps;
     font-size: 0.95rem;
-    margin: 10px 0;
+    margin: 5px 0;
   }
   .action .text {
     margin-right: 5px;
@@ -17,7 +19,8 @@ const Coupon = styled.div`
     font-weight: bold;
     /* margin-left: 5px; */
   }
-  form {
+
+  form .block {
     display: flex;
     flex-direction: column;
   }
@@ -27,8 +30,20 @@ const Coupon = styled.div`
     margin-bottom: 10px;
   }
 
+  .coupon-code {
+    background: #ccc;
+    width: fit-content;
+    padding: 5px 10px;
+    margin: 0 0 10px;
+  }
+  .code {
+    font-weight: bold;
+    display: inline-block;
+    margin: 0 5px;
+  }
+
   @media (min-width: 768px) {
-    form {
+    form .block {
       align-items: center;
       flex-direction: row;
     }
@@ -42,6 +57,39 @@ const Coupon = styled.div`
 
 export default () => {
   const [showCouponForm, setshowCouponForm] = useState(false);
+  const dispatch = useDispatch();
+  const coupon = useSelector((state) => state.cart.coupon);
+
+  const formik = useFormik({
+    // muFasa
+    initialValues: { code: "" },
+    validate: (values) => {
+      const errors = {};
+      if (!values.code || values.code === "") {
+        errors.code = "Code Required";
+      }
+      return errors;
+    },
+    onSubmit: handleSubmit,
+  });
+
+  async function handleSubmit(values, { setSubmitting }, errors) {
+    if (coupon === values.code) {
+      formik.setErrors({ code: "This code is currently applied" });
+      return;
+    }
+    const { data, error } = await Api.applyCoupon(values.code);
+
+    if (error) {
+      formik.setErrors({ code: error.message });
+      return;
+    }
+
+    dispatch(updateCart(data));
+    setSubmitting(false);
+    formik.resetForm();
+  }
+
   return (
     <Coupon>
       <div className="action">
@@ -50,47 +98,38 @@ export default () => {
           click here to enter your code
         </button>
       </div>
+      {coupon && (
+        <p className="coupon-code">
+          coupon
+          <span className="code">{coupon}</span>
+          has been applied
+        </p>
+      )}
       {showCouponForm && (
-        <Formik
-          initialValues={{ email: "", password: "", keepSignedIn: false }}
-          validate={(values) => {
-            const errors = {};
-            if (!values.code) {
-              errors.code = "Code Required";
-            }
-            return errors;
-          }}
-          onSubmit={(values, { setSubmitting }, errors) => {
-            console.log(values);
-
-            setTimeout(() => {
-              setSubmitting(false);
-            }, 2000);
-          }}
-        >
-          {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
-            <form>
-              <div className="input-wrapper code">
-                {errors.email && <p className="error">{errors.code}</p>}
-                <input
-                  type="text"
-                  name="code"
-                  placeholder="Coupon code"
-                  value={values.code}
-                  onChange={handleChange}
-                />
-              </div>
-              <button
-                type="submit"
-                className={`button submit ${isSubmitting ? "loading" : ""}`}
-                disabled={isSubmitting}
-                onClick={handleSubmit}
-              >
-                apply coupon
-              </button>
-            </form>
-          )}
-        </Formik>
+        <form>
+          {formik.errors.code && <p className="error">{formik.errors.code}</p>}
+          <div className="block">
+            <div className="input-wrapper code">
+              <input
+                type="text"
+                name="code"
+                placeholder="Coupon code"
+                value={formik.values.code}
+                onChange={formik.handleChange}
+              />
+            </div>
+            <button
+              type="submit"
+              className={`button submit ${
+                formik.isSubmitting ? "loading" : ""
+              }`}
+              disabled={formik.isSubmitting}
+              onClick={formik.handleSubmit}
+            >
+              apply coupon
+            </button>
+          </div>
+        </form>
       )}
     </Coupon>
   );

@@ -86,7 +86,8 @@ export default createGlobalStyle`
 
   .button:disabled{
     background:#ccc !important;
-    color:#fff;
+    color:#888;
+    font-weight:bold;
   }
 
  .input-wrapper {
@@ -94,19 +95,10 @@ export default createGlobalStyle`
  }
   .error {
     color: red;
-    font-size: 12px;
+    font-size: 13px;
     text-transform: capitalize;
   }
-  /* .error {
-    position: absolute;
-    top: -10px;
-    left: 10px;
-    background: #fff;
-    color: red;
-    z-index: 10;
-    font-size: 0.85rem;
-    text-transform: capitalize;
-  } */
+
   input {
     width: 100%;
     height: 40px;

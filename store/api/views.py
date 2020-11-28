@@ -14,6 +14,21 @@ import stripe
 stripe.api_key = os.getenv("STRIPE_KEY")
 
 
+# GUEST_INITIAL_CART = {"items": [], "total": 0, "quantity": 0}
+GUEST_INITIAL_CART = {"items": [], "total": 0, "quantity": 0, 'coupon': {
+    'amount': 0,
+    'code': ''
+}
+}
+
+
+def dump_guest_cart(cart):
+    cart = dict(cart)
+    cart['total'] -= cart['coupon']['amount']
+
+    return cart
+
+
 def findItem(collection, cb):
     for item in collection:
         if cb(item) == True:
@@ -142,7 +157,7 @@ class OrderListUpdate(APIView):
             return Response(CartSerializer(active_order).data, status=HTTP_200_OK)
         else:
             cart = request.session['cart'] if request.session.get(
-                'cart', None) else {"items": [], "total": 0, "quantity": 0}
+                'cart', None) else GUEST_INITIAL_CART
 
             item_id = len(cart['items']) + 1
 
@@ -160,7 +175,7 @@ class OrderListUpdate(APIView):
 
             cart['quantity'] += quantity
             request.session['cart'] = cart
-            return Response(cart, status=HTTP_200_OK)
+            return Response(dump_guest_cart(cart), status=HTTP_200_OK)
 
     def get(self, request, *args, **kwargs):
         status = request.query_params.get("status", None)
@@ -175,28 +190,37 @@ class OrderListUpdate(APIView):
             return Response(OrderSerializer(orders, many=True).data, status=HTTP_200_OK)
         else:
             cart = request.session['cart'] if request.session.get(
-                'cart', None) else {"items": [], "total": 0, "quantity": 0}
-            return Response(cart, status=HTTP_200_OK)
+                'cart', None) else GUEST_INITIAL_CART
+
+            return Response(dump_guest_cart(cart), status=HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
-        coupon_code = request.data.get('coupon', None)
-        if request.user.is_authenticated:
-            return Response({"message": "Coupon Applicable for registered users only"}, status=HTTP_400_BAD_REQUEST)
+        coupon_code = request.data.get('code', None)
         if not coupon_code:
             return Response({"message": "Invalid input"}, status=HTTP_400_BAD_REQUEST)
         coupon = Coupon.objects.all().filter(code__exact=coupon_code)
         if not coupon.exists():
-            return Response({'message': "invalid coupon"}, status=HTTP_404_NOT_FOUND)
+            return Response({'message': "invalid coupon"}, status=HTTP_400_BAD_REQUEST)
         coupon = coupon[0]
         if coupon.used:
-            return Response({'message': "expired coupon"}, status=HTTP_404_NOT_FOUND)
-        activeorder = Order.objects.get_or_create(
-            user=request.user, ordered=False)[0]
-        activeorder.coupon = coupon
-        coupon.used = True
-        coupon.save()
-        activeorder.save()
-        return Response({'message': "Coupon Applied"}, status=HTTP_200_OK)
+            return Response({'message': "expired coupon"}, status=HTTP_400_BAD_REQUEST)
+
+        if request.user.is_authenticated:
+            activeorder = Order.objects.get_or_create(
+                user=request.user, ordered=False)[0]
+            activeorder.coupon = coupon
+            coupon.used = True
+            coupon.save()
+            activeorder.save()
+            return Response(CartSerializer(activeorder).data, status=HTTP_200_OK)
+
+        else:
+            cart = request.session['cart'] if request.session.get(
+                'cart', None) else GUEST_INITIAL_CART
+            cart['coupon']['code'] = coupon.code
+            cart['coupon']['amount'] = coupon.amount
+            request.session['cart'] = cart
+            return Response(dump_guest_cart(cart), status=HTTP_200_OK)
 
 
 class TrackOrder(generics.RetrieveAPIView):
@@ -230,7 +254,7 @@ class DeleteUpdateOrderItem(APIView):
 
         else:
             cart = request.session['cart'] if request.session.get(
-                'cart', None) else {"items": [], "total": 0, "quantity": 0}
+                'cart', None) else GUEST_INITIAL_CART
             item = findItem(cart['items'], lambda item: item['id'] == pk)
             if not item:
                 return Response({"message": "Invalid CartItemId"}, status=HTTP_400_BAD_REQUEST)
@@ -239,7 +263,7 @@ class DeleteUpdateOrderItem(APIView):
             cart['quantity'] -= item['quantity']
             cart['items'].remove(item)
             request.session['cart'] = cart
-            return Response(cart, status=HTTP_200_OK)
+            return Response(dump_guest_cart(cart), status=HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         try:
@@ -271,7 +295,7 @@ class DeleteUpdateOrderItem(APIView):
             return Response(CartSerializer(active_order).data, status=HTTP_200_OK)
         else:
             cart = request.session['cart'] if request.session.get(
-                'cart', None) else {"items": [], "total": 0, "quantity": 0}
+                'cart', None) else GUEST_INITIAL_CART
             item = findItem(cart['items'], lambda item: item['id'] == pk)
             if not item:
                 return Response({"message": "Invalid CartItemId"}, status=HTTP_400_BAD_REQUEST)
@@ -291,7 +315,7 @@ class DeleteUpdateOrderItem(APIView):
             cart['quantity'] += quantity
             request.session['cart'] = cart
 
-            return Response(cart, status=HTTP_200_OK)
+            return Response(dump_guest_cart(cart), status=HTTP_200_OK)
 
 
 class ListCreatePayment(generics.ListCreateAPIView):

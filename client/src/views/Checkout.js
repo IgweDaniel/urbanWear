@@ -6,10 +6,25 @@ import { useSelector } from "react-redux";
 import { CheckBox, CartItem, AddressForm, Coupon } from "../components";
 import Page from "./Page";
 import { CURRENCY } from "../constants";
+import { useModal } from "../hooks";
+import { AiOutlineCreditCard } from "react-icons/ai";
+import { RiShoppingCartLine } from "react-icons/ri";
+import { Link } from "react-router-dom";
+
+const EmptyCheckout = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .content {
+    text-align: center;
+  }
+  .button {
+    margin: 0 auto;
+  }
+`;
 
 const Checkout = styled.div`
   margin: 150px auto;
-
   .addresses {
   }
   .address {
@@ -78,6 +93,7 @@ const Checkout = styled.div`
   .emph {
     font-weight: bold;
   }
+
   @media (min-width: 768px) {
     .input-group {
       justify-content: space-between;
@@ -103,7 +119,7 @@ const Checkout = styled.div`
     .summary {
       display: block;
       width: 35%;
-      border: 1px solid #000;
+      border: 1px solid #ccc;
       padding: 20px;
     }
     .summary .meta {
@@ -121,56 +137,7 @@ export default () => {
   const items = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.auth.user);
   const total = useSelector((state) => state.cart.total);
-
-  function validateAddress(address) {
-    const errors = {};
-    const fields = [
-      "name",
-      "street",
-      "apartment",
-      "zip_code",
-      "country",
-      "lastname",
-    ];
-
-    fields.forEach((field) =>
-      address[field] ? null : (errors[field] = `${field} is required`)
-    );
-    return errors;
-  }
-
-  function handlePurchase(values, { setSubmitting }, errors) {
-    console.log({ values });
-    setTimeout(() => {
-      setSubmitting(false);
-    }, 2000);
-  }
-
-  function validatePurchase(values) {
-    const errors = {};
-    const billingErrors = validateAddress(values.billing);
-    if (Object.keys(billingErrors).length !== 0) {
-      errors.billing = billingErrors;
-    }
-    if (values.createAccount) {
-      if (!values.email) {
-        errors.email = "email address required";
-      } else if (
-        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-      ) {
-        errors.email = "Invalid email address";
-      }
-      if (!values.password || values.password < 6) {
-        errors.password = "Password Invalid or required";
-      }
-    }
-    if (values.altShippingAddress) {
-      errors.shipping = validateAddress(values.shipping);
-    }
-
-    return errors;
-  }
-
+  const show = useModal();
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -200,6 +167,57 @@ export default () => {
     onSubmit: handlePurchase,
   });
 
+  function validateAddress(address) {
+    const errors = {};
+    const fields = [
+      "name",
+      "street",
+      "apartment",
+      "zip_code",
+      "country",
+      "lastname",
+    ];
+
+    fields.forEach((field) =>
+      address[field] ? null : (errors[field] = `${field} is required`)
+    );
+    return errors;
+  }
+
+  function handlePurchase(values, { setSubmitting }, errors) {
+    show({
+      type: "OPEN",
+      position: "center",
+      component: <CardForm {...values} />,
+    });
+    setSubmitting(false);
+  }
+
+  function validatePurchase(values) {
+    const errors = {};
+    const billingErrors = validateAddress(values.billing);
+    if (Object.keys(billingErrors).length !== 0) {
+      errors.billing = billingErrors;
+    }
+    if (values.createAccount) {
+      if (!values.email) {
+        errors.email = "email address required";
+      } else if (
+        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+      ) {
+        errors.email = "Invalid email address";
+      }
+      if (!values.password || values.password < 6) {
+        errors.password = "Password Invalid or required";
+      }
+    }
+    if (values.altShippingAddress) {
+      errors.shipping = validateAddress(values.shipping);
+    }
+
+    return errors;
+  }
+
   useEffect(() => {
     if (user) {
       formik.setValues({
@@ -222,127 +240,164 @@ export default () => {
 
   return (
     <Page>
-      <Checkout>
-        <Coupon />
-        <div className="content">
-          <form>
-            <div className="addresses">
-              <div className="address">
-                <h4 className="address__type">billing address</h4>
-                <AddressForm
-                  values={formik.values.billing}
-                  handleChange={formik.handleChange}
-                  type="billing"
-                  errors={formik.errors.billing}
-                />
-              </div>
+      {items.length === 0 ? (
+        <EmptyCheckout>
+          <div className="content">
+            <RiShoppingCartLine size={80} />
+            <h2>No items in Cart</h2>
+            <Link to="/shop" className="button">
+              back to shop
+            </Link>
+          </div>
+        </EmptyCheckout>
+      ) : (
+        <Checkout>
+          <Coupon />
+          <div className="content">
+            <form>
+              <div className="addresses">
+                <div className="address">
+                  <h4 className="address__type">billing address</h4>
+                  <AddressForm
+                    values={formik.values.billing}
+                    handleChange={formik.handleChange}
+                    type="billing"
+                    errors={formik.errors.billing}
+                  />
+                </div>
 
-              {!user && (
-                <div>
+                {!user && (
+                  <div>
+                    <CheckBox
+                      name="createAccount"
+                      checked={formik.values.createAccount}
+                      renderLabel={() => (
+                        <h4 className="address__type">create account</h4>
+                      )}
+                      onChange={formik.handleChange}
+                    />
+
+                    {formik.values.createAccount && (
+                      <div className="input-group ">
+                        <div className="input-wrapper">
+                          <label>email address</label>
+                          {formik.errors.email && (
+                            <p className="error">{formik.errors.email}</p>
+                          )}
+                          <input
+                            type="text"
+                            name={`email`}
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div className="input-wrapper">
+                          <label>password</label>
+                          {formik.errors.password && (
+                            <p className="error">{formik.errors.password}</p>
+                          )}
+                          <input
+                            type="password"
+                            name={`password`}
+                            value={formik.values.password}
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="address shipping">
                   <CheckBox
-                    name="createAccount"
-                    checked={formik.values.createAccount}
+                    name="altShippingAddress"
+                    checked={formik.values.altShippingAddress}
                     renderLabel={() => (
-                      <h4 className="address__type">create account</h4>
+                      <h4 className="address__type">
+                        use different shipping address
+                      </h4>
                     )}
                     onChange={formik.handleChange}
                   />
-
-                  {formik.values.createAccount && (
-                    <div className="input-group ">
-                      <div className="input-wrapper">
-                        <label>email address</label>
-                        {formik.errors.email && (
-                          <p className="error">{formik.errors.email}</p>
-                        )}
-                        <input
-                          type="text"
-                          name={`email`}
-                          value={formik.values.email}
-                          onChange={formik.handleChange}
-                        />
-                      </div>
-                      <div className="input-wrapper">
-                        <label>password</label>
-                        {formik.errors.password && (
-                          <p className="error">{formik.errors.password}</p>
-                        )}
-                        <input
-                          type="password"
-                          name={`password`}
-                          value={formik.values.password}
-                          onChange={formik.handleChange}
-                        />
-                      </div>
-                    </div>
+                  {formik.values.altShippingAddress && (
+                    <AddressForm
+                      values={formik.values.shipping}
+                      errors={formik.errors.shipping}
+                      handleChange={formik.handleChange}
+                      type="shipping"
+                    />
                   )}
-                </div>
-              )}
-
-              <div className="address shipping">
-                <CheckBox
-                  name="altShippingAddress"
-                  checked={formik.values.altShippingAddress}
-                  renderLabel={() => (
-                    <h4 className="address__type">
-                      use different shipping address
-                    </h4>
-                  )}
-                  onChange={formik.handleChange}
-                />
-                {formik.values.altShippingAddress && (
-                  <AddressForm
-                    values={formik.values.shipping}
-                    errors={formik.errors.shipping}
-                    handleChange={formik.handleChange}
-                    type="shipping"
-                  />
-                )}
-                <div className="input-wrapper">
-                  <label htmlFor="notes">order notes</label>
-                  <textarea
-                    className="notes"
-                    name="shipping.notes"
-                    value={formik.values.notes}
-                    onChange={formik.handleChange}
-                    id="notes"
-                  />
+                  <div className="input-wrapper">
+                    <label htmlFor="notes">order notes</label>
+                    <textarea
+                      className="notes"
+                      name="shipping.notes"
+                      value={formik.values.notes}
+                      onChange={formik.handleChange}
+                      id="notes"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              className={`button purchase ${
-                formik.isSubmitting ? "loading" : ""
-              }`}
-              disabled={formik.isSubmitting}
-              onClick={formik.handleSubmit}
-            >
-              place order
-            </button>
-          </form>
+              <button
+                type="submit"
+                className={`button purchase ${
+                  formik.isSubmitting ? "loading" : ""
+                }`}
+                disabled={formik.isSubmitting}
+                onClick={formik.handleSubmit}
+              >
+                place order
+              </button>
+            </form>
 
-          <div className="summary">
-            <div className="items">
-              {items.map((item, i) => (
-                <CartItem {...item} key={i} />
-              ))}
-            </div>
-            <div className="total">
-              <span className="emph">Total:</span>
-              <span>
-                {CURRENCY}
-                {total}
-              </span>
-            </div>
-            <div className="meta">
-              <p className="emph">Free Shipping included</p>
-              <p className="emph">Delivery within 20 working days</p>
+            <div className="summary">
+              <div className="items">
+                {items.map((item, i) => (
+                  <CartItem {...item} key={i} />
+                ))}
+              </div>
+              <div className="total">
+                <span className="emph">Total:</span>
+                <span>
+                  {CURRENCY}
+                  {total}
+                </span>
+              </div>
+              <div className="meta">
+                <p className="emph">Free Shipping included</p>
+                <p className="emph">Delivery within 20 working days</p>
+              </div>
             </div>
           </div>
-        </div>
-      </Checkout>
+        </Checkout>
+      )}
     </Page>
   );
 };
+
+const Card = styled.div`
+  width: calc(var(--vw) * 0.8);
+  max-width: 400px;
+  height: 200px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  .button.pay {
+    width: 80%;
+    margin: auto;
+    background: ${({ theme }) => theme.colors.success};
+  }
+`;
+
+function CardForm(props) {
+  console.log(props);
+  return (
+    <Card className="cardForm">
+      <button className="button pay">
+        <AiOutlineCreditCard size={20} /> Pay
+      </button>
+    </Card>
+  );
+}

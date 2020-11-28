@@ -37,14 +37,12 @@ const slides = [
     },
   },
   {
-    coverImg:
-      "https://images.pexels.com/photos/537466/pexels-photo-537466.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260",
+    coverImg: require("../assets/shoes-cover.jpg"),
     item: {
       name: "Shoes & Sneakers",
       link: "",
       price: 149.0,
-      img:
-        "https://colabrio.ams3.cdn.digitaloceanspaces.com/stockie_landing/demo7/2019/01/st__category__05-min.jpg",
+      img: require("../assets/shoes.jpg"),
     },
   },
 ];
