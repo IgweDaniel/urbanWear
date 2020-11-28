@@ -15,14 +15,18 @@ class ProductImageInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('user', "ordered", 'delivered', 'order_detail')
+    list_display = ("ordered", 'delivered', 'order_detail')
 
     inlines = [
         OrderItemInline
     ]
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(ordered=True)
+
     def order_detail(self, obj):
-        return f" Order for {obj.user.email}  worth ${obj.calc_total_price()}"
+        return f" PAID Order for {obj.billing_address.name } {obj.billing_address.lastname}  worth ${obj.calc_total_price()}" if obj.ordered else f" Order for  {obj.user.email} worth ${obj.calc_total_price()}"
 
 
 class ProductAdmin(admin.ModelAdmin):

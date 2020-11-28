@@ -6,7 +6,8 @@ import rootReducer from "./ducks";
 import { Provider } from "react-redux";
 import axios from "axios";
 import { logout } from "./ducks/auth";
-
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 const store = configureStore({
   reducer: rootReducer,
 });
@@ -39,9 +40,10 @@ axios.interceptors.response.use(
         store.dispatch(logout());
         localStorage.removeItem("refresh");
       }
-    } else {
-      store.dispatch(logout());
     }
+    //  else {
+    //   store.dispatch(logout());
+    // }
 
     return Promise.reject(error);
   }
@@ -60,11 +62,14 @@ axios.interceptors.request.use(
   }
 );
 
+const stripePromise = loadStripe("pk_test_PLv72kSx3E3Mo1UY70wgnS6U00uPnDDisq");
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <Elements stripe={stripePromise}>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </Elements>
   </React.StrictMode>,
   document.getElementById("root")
 );

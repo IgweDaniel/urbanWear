@@ -100,8 +100,13 @@ export default () => {
           type="Billing"
           handleUpdate={handleAddressUpdate}
           initialValues={{
-            name: user.username,
-            lastname: user.username,
+            name: "",
+            lastname: "",
+            street: "",
+            apartment: "",
+            zip_code: "",
+            country: "",
+            address_type: "B",
             ...user.address.billing,
           }}
           validate={handleValidation}
@@ -112,8 +117,13 @@ export default () => {
           type="Shipping"
           handleUpdate={handleAddressUpdate}
           initialValues={{
-            name: user.username,
-            lastname: user.username,
+            name: "",
+            lastname: "",
+            street: "",
+            apartment: "",
+            zip_code: "",
+            country: "",
+            address_type: "S",
             ...user.address.shipping,
           }}
           validate={handleValidation}

@@ -86,7 +86,9 @@ class Address(models.Model):
     )
 
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='addresses', null=False, blank=False)
+        User, on_delete=models.CASCADE, related_name='addresses', null=True, blank=True)
+    lastname = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     street = models.CharField(max_length=100)
     apartment = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=100)
@@ -98,7 +100,7 @@ class Address(models.Model):
         verbose_name_plural = "Addresses"
 
     def __str__(self):
-        return f"Address {self.street} for user {self.user.email} "
+        return f"Address {self.street} for user {self.name} {self.lastname} "
 
 
 class Payment(models.Model):
@@ -109,11 +111,12 @@ class Payment(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.email} paid {self.amount}"
+        return f"{self.stripe_charge_id} paid {self.amount}"
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='orders', blank=True, null=True)
     coupon = models.ForeignKey(
         Coupon, on_delete=models.SET_NULL, blank=True, null=True)
 
@@ -130,8 +133,10 @@ class Order(models.Model):
     delivered = models.BooleanField(default=False)
 
     def __str__(self):
+        # order__status = "PENDING delivery" if self.ordered else "ACTIVE"
+        # return f"{order__status} order for {self.user.email}  worth ${self.calc_total_price()}"
         order__status = "PENDING delivery" if self.ordered else "ACTIVE"
-        return f"{order__status} order for {self.user.email}  worth ${self.calc_total_price()}"
+        return f"{order__status} order for  worth ${self.calc_total_price()}"
 
     def calc_total_price(self):
         total = 0

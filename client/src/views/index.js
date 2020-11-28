@@ -4,6 +4,7 @@ import Shop from "./Shop";
 
 import Checkout from "./Checkout";
 import Account from "./Account";
+import PaymentComplete from "./PaymentComplete";
 
 import ProductDetail from "./ProductDetail";
 import _4o4 from "./4o4";
@@ -39,6 +40,10 @@ const routes = [
     path: "/account",
     authRequired: true,
     component: Account,
+  },
+  {
+    path: "/payment-complete",
+    component: PaymentComplete,
   },
   {
     path: "*",

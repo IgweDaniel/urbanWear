@@ -50,3 +50,23 @@ export async function applyCoupon(code) {
     return { error: error.response.data, data: null };
   }
 }
+export async function makePayment(
+  token,
+  billingAddress,
+  shippingAddress,
+  email,
+  password
+) {
+  try {
+    const { data } = await axios.post(`/payment/`, {
+      email: "",
+      password: "",
+      billing: billingAddress,
+      shipping: shippingAddress,
+      token: token,
+    });
+    return { error: null, data };
+  } catch (error) {
+    return { error: error.response.data, data: null };
+  }
+}

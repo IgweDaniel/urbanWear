@@ -6,10 +6,11 @@ import { useSelector } from "react-redux";
 import { CheckBox, CartItem, AddressForm, Coupon } from "../components";
 import Page from "./Page";
 import { CURRENCY } from "../constants";
-import { useModal } from "../hooks";
-import { AiOutlineCreditCard } from "react-icons/ai";
+
 import { RiShoppingCartLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import * as Api from "../api";
 
 const EmptyCheckout = styled.div`
   display: flex;
@@ -25,8 +26,7 @@ const EmptyCheckout = styled.div`
 
 const Checkout = styled.div`
   margin: 150px auto;
-  .addresses {
-  }
+
   .address {
     width: 100%;
   }
@@ -93,6 +93,18 @@ const Checkout = styled.div`
   .emph {
     font-weight: bold;
   }
+  .card {
+    font-family: "Catamaran", sans-serif;
+    width: 100%;
+    padding: 0 10px;
+  }
+  .user-card {
+    display: flex;
+    height: 40px;
+    border: 1px solid #ccc;
+    align-items: center;
+    justify-content: center;
+  }
 
   @media (min-width: 768px) {
     .input-group {
@@ -137,7 +149,10 @@ export default () => {
   const items = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.auth.user);
   const total = useSelector((state) => state.cart.total);
-  const show = useModal();
+  const history = useHistory();
+  const stripe = useStripe();
+  const elements = useElements();
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -184,13 +199,30 @@ export default () => {
     return errors;
   }
 
-  function handlePurchase(values, { setSubmitting }, errors) {
-    show({
-      type: "OPEN",
-      position: "center",
-      component: <CardForm {...values} />,
-    });
+  async function handlePurchase(values, { setSubmitting }, errors) {
+    if (!stripe || !elements) {
+      return;
+    }
+
+    const payload = await stripe.createToken(elements.getElement(CardElement));
+    const token = payload.token.id;
+    const { data, error } = await Api.makePayment(
+      token,
+      values.billing,
+      values.shipping
+    );
+
+    if (error) {
+      console.log(error);
+      return;
+    }
     setSubmitting(false);
+    history.push({
+      pathname: "/payment-complete",
+      state: {
+        payment: data,
+      },
+    });
   }
 
   function validatePurchase(values) {
@@ -339,7 +371,24 @@ export default () => {
                   </div>
                 </div>
               </div>
-
+              <div className="user-card">
+                <div className="card">
+                  <CardElement
+                    options={{
+                      hidePostalCode: true,
+                      style: {
+                        base: {
+                          color: "#000",
+                          fontFamily: "Catamaran",
+                          "::placeholder": {
+                            color: "#888",
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
               <button
                 type="submit"
                 className={`button purchase ${
@@ -376,28 +425,3 @@ export default () => {
     </Page>
   );
 };
-
-const Card = styled.div`
-  width: calc(var(--vw) * 0.8);
-  max-width: 400px;
-  height: 200px;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  .button.pay {
-    width: 80%;
-    margin: auto;
-    background: ${({ theme }) => theme.colors.success};
-  }
-`;
-
-function CardForm(props) {
-  console.log(props);
-  return (
-    <Card className="cardForm">
-      <button className="button pay">
-        <AiOutlineCreditCard size={20} /> Pay
-      </button>
-    </Card>
-  );
-}

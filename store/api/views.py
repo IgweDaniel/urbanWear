@@ -1,9 +1,10 @@
 
+import json
 import os
 from rest_framework import generics
 from django.db.models import Q
 from store.models import Category, Coupon, Payment, Product, ProductSize, Order, Address, OrderItem
-from .serializers import CategorySerializer, PaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer, UserSerializer
+from .serializers import CategorySerializer, PaymentSerializer, ProcessPaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,7 +15,6 @@ import stripe
 stripe.api_key = os.getenv("STRIPE_KEY")
 
 
-# GUEST_INITIAL_CART = {"items": [], "total": 0, "quantity": 0}
 GUEST_INITIAL_CART = {"items": [], "total": 0, "quantity": 0, 'coupon': {
     'amount': 0,
     'code': ''
@@ -35,24 +35,6 @@ def findItem(collection, cb):
             return item
     else:
         return None
-
-
-def get_address(value, user):
-    if value is None:
-        return Response({"message": "Address Required"}, status=HTTP_404_NOT_FOUND)
-    if type(value) is int:
-        address = Address.objects.all().filter(user=user, pk=value)
-        if not address.exists():
-            return Response({"message": "No adress with such <pk>"}, status=HTTP_404_NOT_FOUND)
-        address = address[0]
-        return address
-    if type(value) is dict:
-        serializer = AddressSerializer(data=value)
-        if not serializer.is_valid(raise_exception=True):
-            return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
-        address = Address.objects.create(
-            **serializer.validated_data, user=user)
-        return address
 
 
 class IsOwnerPermission(BasePermission):
@@ -320,56 +302,99 @@ class DeleteUpdateOrderItem(APIView):
 
 class ListCreatePayment(generics.ListCreateAPIView):
     serializer_class = PaymentSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = []
 
     def post(self, request, *args, **kwargs):
-        source = request.data.get("token", None)
-        if not source:
-            return Response({"message": "Card Token Required"}, status=HTTP_400_BAD_REQUEST)
-        active_order = Order.objects.get_or_create(
+        serializer = ProcessPaymentSerializer(data=request.data)
+        if not serializer.is_valid(raise_exception=True):
+            return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
+        data = serializer.validated_data
+        source = data.get("token")
+        email = data.get("email", None)
+        password = data.get("password", None)
+        billing_address = data.get("billing")
+        shipping_address = data.get("shipping")
+        active_order = dump_guest_cart(request.session['cart']) if not request.user.is_authenticated else Order.objects.get_or_create(
             user=request.user, ordered=False)[0]
-        items = active_order.items.all()
-        if not items.exists():
-            return Response({"message": "No items in Cart Cart"}, status=HTTP_400_BAD_REQUEST)
 
-        amount_to_pay = active_order.calc_total_price()
+        items = None
+        if request.user.is_authenticated:
+            items = active_order.items.all()
+            if not items.exists():
+                return Response({"message": "No items in Cart Cart"}, status=HTTP_400_BAD_REQUEST)
+        else:
+            items = active_order.get("items")
+            if len(items) < 1:
+                return Response({"message": "No items in Cart Cart"}, status=HTTP_400_BAD_REQUEST)
+
+        amount_to_pay = active_order.calc_total_price(
+        ) if request.user.is_authenticated else active_order.get('total')
+
         if amount_to_pay <= 0:
             return Response({"message": "Cart Total must be greater than $5"}, status=HTTP_400_BAD_REQUEST)
 
-        billing_address = request.data.get("address1", None)
-        shipping_address = request.data.get("address2", None)
-
-        """
-        Force address Type to shipping or billing as deemed fit
-        """
-        address = get_address(billing_address, request.user)
         try:
-            if request.user.stripe_customer_id != "" and request.user.stripe_customer_id is not None:
-                customer = stripe.Customer.retrieve(
-                    request.user.stripe_customer_id)
-            else:
-                customer = stripe.Customer.create(
-                    email=request.user.email,
-                )
-                request.user.stripe_customer_id = customer.id
-                request.user.save()
-            customer.sources.create(source=source)
 
-            charge = stripe.Charge.create(
-                amount=int(amount_to_pay) * 100,
-                currency='usd',
-                customer=request.user.stripe_customer_id,
-            )
-            payment = Payment.objects.create(
-                user=request.user,
-                amount=amount_to_pay,
-                stripe_charge_id=charge.id
-            )
+            if request.user.is_authenticated:
+                if request.user.stripe_customer_id != "" and request.user.stripe_customer_id is not None:
+                    customer = stripe.Customer.retrieve(
+                        request.user.stripe_customer_id)
+                else:
+                    customer = stripe.Customer.create(
+                        email=request.user.email,
+                    )
+                    request.user.stripe_customer_id = customer.id
+                    request.user.save()
+
+                customer.sources.create(source=source)
+
+                charge = stripe.Charge.create(
+                    amount=int(amount_to_pay) * 100,
+                    currency='usd',
+                    customer=request.user.stripe_customer_id,
+                )
+                payment = Payment.objects.create(
+                    user=request.user,
+                    amount=amount_to_pay,
+                    stripe_charge_id=charge.id
+                )
+                active_order.billing_address = Address.objects.create(
+                    **billing_address, user=request.user)
+
+                active_order.shipping_address = Address.objects.create(
+                    **shipping_address, user=request.user)
+            else:
+                charge = stripe.Charge.create(
+                    amount=int(amount_to_pay) * 100,
+                    currency='usd',
+                    source=source,
+                )
+                payment = Payment.objects.create(
+                    amount=amount_to_pay,
+                    stripe_charge_id=charge.id
+                )
+
+                active_order = Order.objects.create(
+                    billing_address=Address.objects.create(
+                        **billing_address),
+                    shipping_address=Address.objects.create(
+                        **shipping_address)
+                )
+
+                for item in items:
+                    OrderItem.objects.create(
+                        size=ProductSize.objects.filter(label=item['size'])[0],
+                        product=Product.objects.get(pk=item['product']['id']),
+                        quantity=item['quantity'],
+                        order=active_order
+                    )
+                request.session['cart'] = GUEST_INITIAL_CART
+
             active_order.payment = payment
-            active_order.billing_address = address
             active_order.ordered = True
             active_order.save()
 
+            return Response(OrderSerializer(active_order).data, status=HTTP_200_OK)
         except stripe.error.CardError as e:
             return Response({'message': e.error.message}, status=HTTP_400_BAD_REQUEST)
         except stripe.error.RateLimitError as e:
@@ -377,17 +402,15 @@ class ListCreatePayment(generics.ListCreateAPIView):
         except stripe.error.InvalidRequestError as e:
             return Response({'message': e.error.message}, status=HTTP_400_BAD_REQUEST)
         except stripe.error.AuthenticationError as e:
-
             return Response({'message': e.error.message}, status=HTTP_500_INTERNAL_SERVER_ERROR)
         except stripe.error.APIConnectionError as e:
-            return Response({'message': e.error.message}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'message': "Server Error (couldn't connect to stripe)"}, status=HTTP_500_INTERNAL_SERVER_ERROR)
         except stripe.error.StripeError as e:
             return Response({'message': e.error.message}, status=HTTP_400_BAD_REQUEST)
         except Exception as e:
             # Something else happened, completely unrelated to Stripe
             print(e)
             return Response({'message': "Server Error"}, status=HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response({'message': OrderSerializer(active_order).data}, status=HTTP_200_OK)
 
     def get_queryset(self):
         queryset = Payment.objects.all().filter(user=self.request.user)

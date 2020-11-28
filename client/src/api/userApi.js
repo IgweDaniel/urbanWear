@@ -24,6 +24,8 @@ export async function getUser() {
 export async function updateAddress(address) {
   try {
     const { data } = await axios.post("/addresses/", {
+      name: address["name"],
+      lastname: address["lastname"],
       street: address["street"],
       apartment: address["apartment"],
       zip_code: address["zip_code"],
@@ -34,5 +36,14 @@ export async function updateAddress(address) {
     return { error: null, data };
   } catch (error) {
     return { error, data: null };
+  }
+}
+
+export async function listOrders() {
+  try {
+    const { data } = await axios.get("/order/");
+    return { error: null, data };
+  } catch (error) {
+    return { error: error.response.data, data: null };
   }
 }

@@ -1,13 +1,15 @@
+
 from rest_framework import serializers
 from store.models import Category, Payment, Product, ProductSize, Address, Order, OrderItem, User
 
 
 class UserSerializer(serializers.ModelSerializer):
     address = serializers.SerializerMethodField()
+    orders = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'address', 'username']
+        fields = ['id', 'email', 'address', 'username', 'orders']
 
     def get_address(self, obj):
         billing, shipping = None, None
@@ -18,6 +20,11 @@ class UserSerializer(serializers.ModelSerializer):
                 billing = AddressSerializer(address).data
 
         return {"billing": billing, "shipping": shipping}
+
+    def get_orders(self, obj):
+        orders = obj.orders.all().filter(ordered=True)
+
+        return OrderSerializer(orders, many=True).data
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -63,7 +70,8 @@ class ProductSerializer(serializers.ModelSerializer):
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = ['street', 'apartment', 'zip_code', 'country', 'address_type']
+        fields = ['street', 'apartment', 'zip_code',
+                  'country', 'address_type', 'name', 'lastname']
 
 
 class OrderUpdateSerializer(serializers.Serializer):
@@ -105,6 +113,31 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     def get_size(self, obj):
         return obj.size.label
+
+
+class ProcessPaymentSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    email = serializers.EmailField(allow_blank=True)
+    password = serializers.CharField(
+        allow_blank=True)
+    billing = serializers.DictField(child=serializers.CharField())
+    shipping = serializers.DictField(child=serializers.CharField())
+
+    def validate_billing(self, data):
+        data['address_type'] = "B"
+        serializer = AddressSerializer(data=data)
+        if not serializer.is_valid(raise_exception=True):
+            raise serializers.ValidationError(
+                serializer.error_messages)
+        return data
+
+    def validate_shipping(self, data):
+        data['address_type'] = "S"
+        serializer = AddressSerializer(data=data)
+        if not serializer.is_valid(raise_exception=True):
+            raise serializers.ValidationError(
+                serializer.error_messages)
+        return data
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -156,7 +189,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['coupon', 'shipping_address', 'billing_address',
-                  'start_date', 'ordered_date', 'delivered', 'ordered', 'total', 'items', 'payment']
+                  'start_date', 'ordered_date', 'delivered', 'ordered', 'total', 'items', 'payment', 'id']
 
     def get_total(self, obj):
         return obj.calc_total_price()

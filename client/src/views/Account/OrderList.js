@@ -2,14 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { CURRENCY } from "../../constants";
 
-const orders = [
-  {
-    id: 234,
-    date: "2020-11-05T16:17:13.851Z",
-    status: "pending",
-    total: 200,
-  },
-];
+import { useSelector } from "react-redux";
+
 const OrderList = styled.div`
   .actions {
     display: flex;
@@ -30,6 +24,10 @@ const OrderList = styled.div`
   }
   tr {
     text-align: left;
+  }
+  .order-item {
+    margin: 20px;
+    padding: 20px 0;
   }
   @media only screen and (max-width: 760px),
     (min-device-width: 768px) and (max-device-width: 1024px) {
@@ -80,9 +78,11 @@ const OrderList = styled.div`
 `;
 
 export default () => {
+  const user = useSelector((state) => state.auth.user);
+
   return (
     <OrderList>
-      <table>
+      <table cellSpacing="15">
         <thead>
           <tr>
             <th>order</th>
@@ -93,11 +93,15 @@ export default () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
-            <tr key={order.id}>
+          {user.orders.map((order) => (
+            <tr key={order.id} className="order-item">
               <td data-label="order">{order.id}</td>
-              <td data-label="date">{new Date(order.date).toDateString()}</td>
-              <td data-label="status">{order.status}</td>
+              <td data-label="date">
+                {new Date(order.payment.timestamp).toDateString()}
+              </td>
+              <td data-label="status">
+                {order.delivered ? "DELIVERED" : "PENDING"}
+              </td>
               <td data-label="total">
                 {CURRENCY}
                 {order.total}
