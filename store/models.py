@@ -109,6 +109,8 @@ class Payment(models.Model):
                              on_delete=models.SET_NULL, blank=True, null=True)
     amount = models.FloatField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    # order = models.ForeignKey(
+    #     Order, on_delete=models.CASCADE, related_name='payment')
 
     def __str__(self):
         return f"{self.stripe_charge_id} paid {self.amount}"

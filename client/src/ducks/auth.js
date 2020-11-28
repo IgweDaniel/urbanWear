@@ -29,7 +29,7 @@ export const authenticateUser = (email, password) => async (dispatch) => {
   const { data, error } = await Api.LoginUser(email, password);
 
   if (error) {
-    console.log(error);
+    throw new Error(error.detail);
   }
   dispatch(login(data));
 };

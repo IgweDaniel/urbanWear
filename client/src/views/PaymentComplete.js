@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Redirect, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { fetchUserCart } from "../ducks/cart";
@@ -19,11 +19,15 @@ const PaymentComplete = styled.div`
 export default () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     dispatch(fetchUserCart());
-    dispatch(setUserData());
+    if (user) {
+      dispatch(setUserData());
+    }
     console.log(location.state);
+    // eslint-disable-next-line
   }, []);
   return (
     <Page>

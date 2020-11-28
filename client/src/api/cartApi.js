@@ -54,13 +54,13 @@ export async function makePayment(
   token,
   billingAddress,
   shippingAddress,
-  email,
-  password
+  email = "",
+  password = ""
 ) {
   try {
     const { data } = await axios.post(`/payment/`, {
-      email: "",
-      password: "",
+      email: email,
+      password: password,
       billing: billingAddress,
       shipping: shippingAddress,
       token: token,

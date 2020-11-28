@@ -3,7 +3,7 @@ import json
 import os
 from rest_framework import generics
 from django.db.models import Q
-from store.models import Category, Coupon, Payment, Product, ProductSize, Order, Address, OrderItem
+from store.models import Category, Coupon, Payment, Product, ProductSize, Order, Address, OrderItem, User
 from .serializers import CategorySerializer, PaymentSerializer, ProcessPaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.views import APIView
@@ -72,7 +72,6 @@ class ProductDetail(generics.RetrieveAPIView):
 
 
 class UserAddressCreation(generics.CreateAPIView):
-    # serializer_class = AddressSerializer
     permission_classes = [IsAuthenticated, ]
 
     def create(self, request, *args, **kwargs):
@@ -85,10 +84,6 @@ class UserAddressCreation(generics.CreateAPIView):
             default=True, address_type=address_type,
             user=self.request.user, defaults=data)
         return Response(UserSerializer(self.request.user).data, status=HTTP_200_OK)
-
-    # def get_queryset(self):
-    #     queryset = Address.objects.all().filter(user=self.request.user)
-    #     return queryset
 
 
 class UserAddress(generics.RetrieveUpdateDestroyAPIView):
@@ -314,8 +309,9 @@ class ListCreatePayment(generics.ListCreateAPIView):
         password = data.get("password", None)
         billing_address = data.get("billing")
         shipping_address = data.get("shipping")
-        active_order = dump_guest_cart(request.session['cart']) if not request.user.is_authenticated else Order.objects.get_or_create(
-            user=request.user, ordered=False)[0]
+
+        active_order = Order.objects.get_or_create(
+            user=request.user, ordered=False)[0] if request.user.is_authenticated else dump_guest_cart(request.session['cart'])
 
         items = None
         if request.user.is_authenticated:
@@ -334,53 +330,22 @@ class ListCreatePayment(generics.ListCreateAPIView):
             return Response({"message": "Cart Total must be greater than $5"}, status=HTTP_400_BAD_REQUEST)
 
         try:
+            charge = stripe.Charge.create(
+                amount=int(amount_to_pay) * 100,
+                currency='usd',
+                source=source,
+            )
 
+            user = None
             if request.user.is_authenticated:
-                if request.user.stripe_customer_id != "" and request.user.stripe_customer_id is not None:
-                    customer = stripe.Customer.retrieve(
-                        request.user.stripe_customer_id)
-                else:
-                    customer = stripe.Customer.create(
-                        email=request.user.email,
-                    )
-                    request.user.stripe_customer_id = customer.id
-                    request.user.save()
+                user = request.user
+            elif email and password:
+                user = User.objects.create_user(
+                    username=email, email=email, password=password)
 
-                customer.sources.create(source=source)
-
-                charge = stripe.Charge.create(
-                    amount=int(amount_to_pay) * 100,
-                    currency='usd',
-                    customer=request.user.stripe_customer_id,
-                )
-                payment = Payment.objects.create(
-                    user=request.user,
-                    amount=amount_to_pay,
-                    stripe_charge_id=charge.id
-                )
-                active_order.billing_address = Address.objects.create(
-                    **billing_address, user=request.user)
-
-                active_order.shipping_address = Address.objects.create(
-                    **shipping_address, user=request.user)
-            else:
-                charge = stripe.Charge.create(
-                    amount=int(amount_to_pay) * 100,
-                    currency='usd',
-                    source=source,
-                )
-                payment = Payment.objects.create(
-                    amount=amount_to_pay,
-                    stripe_charge_id=charge.id
-                )
-
-                active_order = Order.objects.create(
-                    billing_address=Address.objects.create(
-                        **billing_address),
-                    shipping_address=Address.objects.create(
-                        **shipping_address)
-                )
-
+            # create order and copy guest cart for unauthenticated user
+            if not request.user.is_authenticated:
+                active_order = Order.objects.create(user=user)
                 for item in items:
                     OrderItem.objects.create(
                         size=ProductSize.objects.filter(label=item['size'])[0],
@@ -390,11 +355,24 @@ class ListCreatePayment(generics.ListCreateAPIView):
                     )
                 request.session['cart'] = GUEST_INITIAL_CART
 
+            payment = Payment.objects.create(
+                user=user,
+                amount=amount_to_pay,
+                stripe_charge_id=charge.id
+            )
+
             active_order.payment = payment
+
+            active_order.billing_address = Address.objects.create(
+                **billing_address, user=user)
+
+            active_order.shipping_address = Address.objects.create(
+                **shipping_address, user=user)
+
             active_order.ordered = True
             active_order.save()
-
             return Response(OrderSerializer(active_order).data, status=HTTP_200_OK)
+
         except stripe.error.CardError as e:
             return Response({'message': e.error.message}, status=HTTP_400_BAD_REQUEST)
         except stripe.error.RateLimitError as e:

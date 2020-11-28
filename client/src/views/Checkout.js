@@ -161,21 +161,21 @@ export default () => {
       altShippingAddress: false,
 
       billing: {
-        name: "",
-        lastname: "",
-        street: "",
-        apartment: "",
-        zip_code: "",
-        country: "",
+        name: "anony",
+        lastname: "anony",
+        street: "anony",
+        apartment: "anony",
+        zip_code: "anony",
+        country: "anony",
       },
 
       shipping: {
-        name: "",
-        lastname: "",
-        street: "",
-        apartment: "",
-        zip_code: "",
-        country: "",
+        name: "anony",
+        lastname: "anony",
+        street: "anony",
+        apartment: "anony",
+        zip_code: "anony",
+        country: "anony",
       },
     },
     validate: validatePurchase,
@@ -203,26 +203,38 @@ export default () => {
     if (!stripe || !elements) {
       return;
     }
+    try {
+      const payload = await stripe.createToken(
+        elements.getElement(CardElement)
+      );
+      const token = payload.token.id;
 
-    const payload = await stripe.createToken(elements.getElement(CardElement));
-    const token = payload.token.id;
-    const { data, error } = await Api.makePayment(
-      token,
-      values.billing,
-      values.shipping
-    );
+      const { data, error } = await Api.makePayment(
+        token,
+        values.billing,
+        values.shipping,
+        values.email,
+        values.password
+      );
 
-    if (error) {
-      console.log(error);
-      return;
+      if (error) {
+        console.log(error);
+        if (error.email) {
+          formik.setErrors({ email: error.email[0] });
+        }
+        return;
+      }
+
+      setSubmitting(false);
+      history.push({
+        pathname: "/payment-complete",
+        state: {
+          payment: data,
+        },
+      });
+    } catch (error) {
+      console.log({ error });
     }
-    setSubmitting(false);
-    history.push({
-      pathname: "/payment-complete",
-      state: {
-        payment: data,
-      },
-    });
   }
 
   function validatePurchase(values) {
@@ -256,13 +268,9 @@ export default () => {
         altShippingAddress: false,
 
         billing: {
-          name: user.username,
-          lastname: user.username,
           ...user.address.billing,
         },
         shipping: {
-          name: user.username,
-          lastname: user.username,
           ...user.address.shipping,
         },
       });

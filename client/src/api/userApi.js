@@ -6,10 +6,9 @@ export async function LoginUser(email, password) {
       email,
       password,
     });
-
     return { error: null, data };
   } catch (error) {
-    return { error, data: null };
+    return { error: error.response.data, data: null };
   }
 }
 export async function getUser() {
