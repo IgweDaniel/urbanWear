@@ -10,10 +10,10 @@ migrations/
 
 /build
 build/
-run.sh
+
 /media
 media/
-tmp/
+
 client.html
 
 __pycache__/

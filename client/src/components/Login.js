@@ -81,8 +81,8 @@ export default ({ closeAuth }) => {
   const formik = useFormik({
     initialValues: {
       email: "daniel@gmail.com",
-      // password: "ltDjpe123",
-      password: "wrongpassword",
+      password: "ltDjpe123",
+      // password: "wrongpassword",
       keepSignedIn: false,
     },
     validate: handleValidation,

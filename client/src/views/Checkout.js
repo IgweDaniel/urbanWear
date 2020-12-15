@@ -16,11 +16,13 @@ const EmptyCheckout = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
   .content {
     text-align: center;
+    margin: 25px 0;
   }
   .button {
-    margin: 0 auto;
+    margin: 5px auto;
   }
 `;
 
@@ -33,9 +35,11 @@ const Checkout = styled.div`
   .address__type {
     font-size: 1.1rem;
     text-transform: capitalize;
-    margin: 10px 0;
+    margin: 5px 0;
   }
-
+  .credentials {
+    margin: 20px 0;
+  }
   .notes {
     width: 100%;
     border: 1px solid #ccc;
@@ -100,6 +104,7 @@ const Checkout = styled.div`
   }
   .user-card {
     display: flex;
+
     height: 40px;
     border: 1px solid #ccc;
     align-items: center;
@@ -145,6 +150,15 @@ const Checkout = styled.div`
   }
 `;
 
+const EmptyAddress = {
+  name: "",
+  lastname: "",
+  street: "",
+  apartment: "",
+  zip_code: "",
+  country: "",
+};
+
 export default () => {
   const items = useSelector((state) => state.cart.items);
   const user = useSelector((state) => state.auth.user);
@@ -159,24 +173,8 @@ export default () => {
       password: "",
       createAccount: false,
       altShippingAddress: false,
-
-      billing: {
-        name: "anony",
-        lastname: "anony",
-        street: "anony",
-        apartment: "anony",
-        zip_code: "anony",
-        country: "anony",
-      },
-
-      shipping: {
-        name: "anony",
-        lastname: "anony",
-        street: "anony",
-        apartment: "anony",
-        zip_code: "anony",
-        country: "anony",
-      },
+      billing: EmptyAddress,
+      shipping: EmptyAddress,
     },
     validate: validatePurchase,
     onSubmit: handlePurchase,
@@ -266,7 +264,6 @@ export default () => {
     if (user) {
       formik.setValues({
         altShippingAddress: false,
-
         billing: {
           ...user.address.billing,
         },
@@ -305,7 +302,6 @@ export default () => {
                     errors={formik.errors.billing}
                   />
                 </div>
-
                 {!user && (
                   <div>
                     <CheckBox
@@ -379,22 +375,26 @@ export default () => {
                   </div>
                 </div>
               </div>
-              <div className="user-card">
-                <div className="card">
-                  <CardElement
-                    options={{
-                      hidePostalCode: true,
-                      style: {
-                        base: {
-                          color: "#000",
-                          fontFamily: "Catamaran",
-                          "::placeholder": {
-                            color: "#888",
+
+              <div className="input-wrapper">
+                <label>card details</label>
+                <div className="user-card">
+                  <div className="card">
+                    <CardElement
+                      options={{
+                        hidePostalCode: true,
+                        style: {
+                          base: {
+                            color: "#000",
+                            fontFamily: "Catamaran",
+                            "::placeholder": {
+                              color: "#888",
+                            },
                           },
                         },
-                      },
-                    }}
-                  />
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
               <button
