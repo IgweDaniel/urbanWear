@@ -7,7 +7,7 @@ import { FiChevronDown } from "react-icons/fi";
 
 import { Link, useHistory } from "react-router-dom";
 import { Product, ProductFilter, Spinner, NotContent } from "../components";
-import { useFilter } from "../hooks";
+import { useFilter, useUpdateEffect, useOnScreen } from "../hooks";
 
 import * as Api from "../api";
 import { useSelector } from "react-redux";
@@ -98,6 +98,7 @@ const Shop = styled.div`
   .product-list-end {
     display: flex;
     justify-content: center;
+    /* align-items: center; */
     margin-bottom: 100px;
   }
   .list-end {
@@ -147,6 +148,9 @@ export default () => {
 
   const { size, category, min_price, max_price } = useFilter();
   const history = useHistory();
+  const display = useModal();
+  const loader = React.useRef(null);
+  const isOnScreen = useOnScreen(loader, "100px");
 
   const fetchProducts = async ({ pageParam = 0 }) => {
     const { data, error } = await Api.fetchProducts(
@@ -157,19 +161,20 @@ export default () => {
       pageParam
     );
     if (error) {
-      console.log({ error });
-      return;
+      throw Error(error);
     }
     return data;
   };
+
   const {
     data,
-    error,
+
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
     status,
+    isError,
+    isLoading,
     refetch,
   } = useInfiniteQuery(`products${category}`, fetchProducts, {
     getNextPageParam: (lastPage, pages) => {
@@ -190,11 +195,17 @@ export default () => {
     // eslint-disable-next-line
   }, [category, size, min_price, max_price]);
 
+  useUpdateEffect(() => {
+    if (isOnScreen && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [isOnScreen]);
   let content = (
     <NotContent>
       <Spinner top={60} />
     </NotContent>
   );
+
   if (status === "success") {
     let products = data.pages.map((page) => page.results).flat();
     content =
@@ -212,6 +223,7 @@ export default () => {
         </NotContent>
       );
   }
+
   if (status === "error")
     content = (
       <NotContent>
@@ -219,7 +231,6 @@ export default () => {
       </NotContent>
     );
 
-  const display = useModal();
   return (
     <Page>
       <Banner>
@@ -266,21 +277,14 @@ export default () => {
         </div>
 
         <div className="content">{content}</div>
-        <div className="product-list-end">
-          {hasNextPage ? (
-            <button
-              className="button"
-              onClick={() => {
-                console.log("clicked");
-                fetchNextPage();
-              }}
-            >
-              Load more
-            </button>
-          ) : (
-            <p className="list-end">No more Products</p>
-          )}
-        </div>
+
+        <div className="loader" ref={loader}></div>
+        {!isLoading && !isError && (
+          <div className="product-list-end" ref={loader}>
+            {isFetchingNextPage && <h3>fetching more!</h3>}
+            {!hasNextPage && <p className="list-end">No more Products</p>}
+          </div>
+        )}
       </Shop>
     </Page>
   );
