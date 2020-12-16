@@ -65,7 +65,17 @@ axios.interceptors.request.use(
 const stripePromise = loadStripe("pk_test_PLv72kSx3E3Mo1UY70wgnS6U00uPnDDisq");
 ReactDOM.render(
   <React.StrictMode>
-    <Elements stripe={stripePromise}>
+    <Elements
+      stripe={stripePromise}
+      options={{
+        fonts: [
+          {
+            cssSrc:
+              "https://fonts.googleapis.com/css2?family=Catamaran:wght@100;200;300;400;500;600;700;800&display=swap",
+          },
+        ],
+      }}
+    >
       <Provider store={store}>
         <App />
       </Provider>

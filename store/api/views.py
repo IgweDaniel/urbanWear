@@ -10,7 +10,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 import stripe
+from django.core.mail import send_mail
 
+from .pagination import ProductListPagination
 
 stripe.api_key = os.getenv("STRIPE_KEY")
 
@@ -51,9 +53,10 @@ class CategoryList(generics.ListAPIView):
 
 class ProductList(generics.ListAPIView):
     serializer_class = ProductSerializer
+    pagination_class = ProductListPagination
 
     def get_queryset(self):
-        queryset = Product.objects.all()
+        queryset = Product.objects.order_by('name')
         category = self.request.query_params.get('category', None)
         size = self.request.query_params.get('size', None)
 
@@ -62,6 +65,7 @@ class ProductList(generics.ListAPIView):
         if size is not None:
             queryset = queryset.filter(
                 sizes__in=ProductSize.objects.filter(label=size))
+
         return queryset
 
 
@@ -371,6 +375,14 @@ class ListCreatePayment(generics.ListCreateAPIView):
 
             active_order.ordered = True
             active_order.save()
+
+            # send_mail(
+            #     'Payment Reciept',
+            #     f'Payment succesful. total purchase {amount_to_pay} and order id {active_order.id}',
+            #     'UrbanWear',
+            #     [email],
+            #     fail_silently=False,
+            # )
             return Response(OrderSerializer(active_order).data, status=HTTP_200_OK)
 
         except stripe.error.CardError as e:

@@ -18,6 +18,7 @@ import {
   NotContent,
 } from "./components";
 import { useUpdateEffect } from "./hooks";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const Body = styled.div`
   overflow-y: auto;
@@ -25,6 +26,8 @@ const Body = styled.div`
   position: relative;
   width: 100%;
 `;
+
+const queryClient = new QueryClient();
 
 function App() {
   const dispatch = useDispatch();
@@ -72,36 +75,38 @@ function App() {
     <Router>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <ModalProvider>
-          {status === "loading" ? (
-            <NotContent>
-              <Spinner />
-            </NotContent>
-          ) : (
-            <Body onScroll={updateNavBar}>
-              <Header />
-              <Switch>
-                {routes.map(({ path, component, exact, authRequired }) =>
-                  authRequired ? (
-                    <PrivateRoute
-                      component={component}
-                      path={path}
-                      exact={exact}
-                      key={path.replace("/", "")}
-                    />
-                  ) : (
-                    <Route
-                      path={path}
-                      exact={exact}
-                      component={component}
-                      key={path.replace("/", "")}
-                    />
-                  )
-                )}
-              </Switch>
-            </Body>
-          )}
-        </ModalProvider>
+        <QueryClientProvider client={queryClient}>
+          <ModalProvider>
+            {status === "loading" ? (
+              <NotContent>
+                <Spinner />
+              </NotContent>
+            ) : (
+              <Body onScroll={updateNavBar}>
+                <Header />
+                <Switch>
+                  {routes.map(({ path, component, exact, authRequired }) =>
+                    authRequired ? (
+                      <PrivateRoute
+                        component={component}
+                        path={path}
+                        exact={exact}
+                        key={path.replace("/", "")}
+                      />
+                    ) : (
+                      <Route
+                        path={path}
+                        exact={exact}
+                        component={component}
+                        key={path.replace("/", "")}
+                      />
+                    )
+                  )}
+                </Switch>
+              </Body>
+            )}
+          </ModalProvider>
+        </QueryClientProvider>
       </ThemeProvider>
     </Router>
   );

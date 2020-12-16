@@ -1,4 +1,5 @@
 import axios from "axios";
+import { PRODUCT_LIMIT } from "../constants";
 
 export async function fetchProductsCategories() {
   try {
@@ -8,10 +9,14 @@ export async function fetchProductsCategories() {
     return { error, data: null };
   }
 }
-export async function fetchProducts(size, category) {
-  let query = "?";
-  if (size) query += `size=${size}`;
+
+export async function fetchProducts(filter, page) {
+  const { size, category } = filter;
+  const resultLimit = PRODUCT_LIMIT;
+  let query = `?offset=${page * resultLimit}&limit=${PRODUCT_LIMIT}`;
+  if (size) query += `&size=${size}`;
   if (category) query += `&category=${category}`;
+
   try {
     const { data } = await axios.get("/products" + query);
     return { error: null, data };

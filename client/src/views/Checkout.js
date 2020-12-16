@@ -55,7 +55,7 @@ const Checkout = styled.div`
 
   .input-group {
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     flex-direction: column;
   }
   .input-group .input-wrapper {
@@ -102,9 +102,9 @@ const Checkout = styled.div`
     width: 100%;
     padding: 0 10px;
   }
+
   .user-card {
     display: flex;
-
     height: 40px;
     border: 1px solid #ccc;
     align-items: center;
@@ -171,6 +171,7 @@ export default () => {
     initialValues: {
       email: "",
       password: "",
+      confirmPassword: "",
       createAccount: false,
       altShippingAddress: false,
       billing: EmptyAddress,
@@ -201,6 +202,10 @@ export default () => {
     if (!stripe || !elements) {
       return;
     }
+    const shipping = values.altShippingAddress
+      ? values.shipping
+      : values.billing;
+
     try {
       const payload = await stripe.createToken(
         elements.getElement(CardElement)
@@ -210,7 +215,7 @@ export default () => {
       const { data, error } = await Api.makePayment(
         token,
         values.billing,
-        values.shipping,
+        shipping,
         values.email,
         values.password
       );
@@ -241,20 +246,25 @@ export default () => {
     if (Object.keys(billingErrors).length !== 0) {
       errors.billing = billingErrors;
     }
+    if (!values.email) {
+      errors.email = "email address required";
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+      errors.email = "Invalid email address";
+    }
+
     if (values.createAccount) {
-      if (!values.email) {
-        errors.email = "email address required";
-      } else if (
-        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-      ) {
-        errors.email = "Invalid email address";
-      }
       if (!values.password || values.password < 6) {
         errors.password = "Password Invalid or required";
       }
+      if (values.password !== values.confirmPassword) {
+        errors.confirmPassword = "Password do not match";
+      }
     }
     if (values.altShippingAddress) {
-      errors.shipping = validateAddress(values.shipping);
+      const shippingErrors = validateAddress(values.shipping);
+      if (Object.keys(shippingErrors).length !== 0) {
+        errors.shipping = shippingErrors;
+      }
     }
 
     return errors;
@@ -301,6 +311,19 @@ export default () => {
                     type="billing"
                     errors={formik.errors.billing}
                   />
+                  <div className="input-wrapper">
+                    <label>email address</label>
+
+                    <input
+                      type="text"
+                      name={`email`}
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                    />
+                    {formik.errors.email && (
+                      <p className="error">{formik.errors.email}</p>
+                    )}
+                  </div>
                 </div>
                 {!user && (
                   <div>
@@ -314,30 +337,34 @@ export default () => {
                     />
 
                     {formik.values.createAccount && (
-                      <div className="input-group ">
-                        <div className="input-wrapper">
-                          <label>email address</label>
-                          {formik.errors.email && (
-                            <p className="error">{formik.errors.email}</p>
-                          )}
-                          <input
-                            type="text"
-                            name={`email`}
-                            value={formik.values.email}
-                            onChange={formik.handleChange}
-                          />
-                        </div>
+                      <div className="input-group">
                         <div className="input-wrapper">
                           <label>password</label>
-                          {formik.errors.password && (
-                            <p className="error">{formik.errors.password}</p>
-                          )}
+
                           <input
-                            type="password"
+                            type="text"
                             name={`password`}
                             value={formik.values.password}
                             onChange={formik.handleChange}
                           />
+                          {formik.errors.password && (
+                            <p className="error">{formik.errors.password}</p>
+                          )}
+                        </div>
+                        <div className="input-wrapper">
+                          <label>confirm password</label>
+
+                          <input
+                            type="text"
+                            name={`confirmPassword`}
+                            value={formik.values.confirmPassword}
+                            onChange={formik.handleChange}
+                          />
+                          {formik.errors.confirmPassword && (
+                            <p className="error">
+                              {formik.errors.confirmPassword}
+                            </p>
+                          )}
                         </div>
                       </div>
                     )}
@@ -381,14 +408,17 @@ export default () => {
                 <div className="user-card">
                   <div className="card">
                     <CardElement
+                      className="eee"
                       options={{
                         hidePostalCode: true,
                         style: {
                           base: {
                             color: "#000",
-                            fontFamily: "Catamaran",
                             "::placeholder": {
                               color: "#888",
+                              textTransform: "uppercase",
+                              fontVariant: "small-caps",
+                              fontSize: "0.85rem",
                             },
                           },
                         },

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import Page from "./Page";
 import { ReactComponent as HangerIcon } from "../assets/svg/hanger.svg";
@@ -7,12 +7,14 @@ import { FiChevronDown } from "react-icons/fi";
 
 import { Link, useHistory } from "react-router-dom";
 import { Product, ProductFilter, Spinner, NotContent } from "../components";
-import { useFilter, useUpdateEffect } from "../hooks";
+import { useFilter } from "../hooks";
 
 import * as Api from "../api";
 import { useSelector } from "react-redux";
 import useModal from "../hooks/useModal";
-import { useRef } from "react";
+
+import { useInfiniteQuery } from "react-query";
+import { PRODUCT_LIMIT } from "../constants";
 
 const Banner = styled.div`
   display: flex;
@@ -93,6 +95,16 @@ const Shop = styled.div`
     display: flex;
     justify-content: center;
   }
+  .product-list-end {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 100px;
+  }
+  .list-end {
+    text-transform: uppercase;
+    font-variant: small-caps;
+    font-weight: bold;
+  }
   @media (min-width: 768px) {
     .meta .filter {
       width: 100px;
@@ -131,66 +143,69 @@ const ICON_SIZE = 75;
  * HANDLE SCROLL RESTORATION FOR PRODUCT PAGE
  */
 export default () => {
-  const mounted = useRef(false);
   const categories = useSelector((state) => state.global.categories);
-  const [products, setProducts] = useState([]);
-  const [status, setStatus] = useState("loading");
+
   const { size, category, min_price, max_price } = useFilter();
   const history = useHistory();
 
-  async function getProducts() {
+  const fetchProducts = async ({ pageParam = 0 }) => {
     const { data, error } = await Api.fetchProducts(
-      size === "all" ? null : size,
-      category === "all" ? null : category
+      {
+        sze: size === "all" ? null : size,
+        category: category === "all" ? null : category,
+      },
+      pageParam
     );
-
     if (error) {
-      console.log(error);
-      setStatus("error");
+      console.log({ error });
+      return;
     }
-    if (mounted.current) {
-      setProducts(data);
-    }
-  }
+    return data;
+  };
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+    refetch,
+  } = useInfiniteQuery(`products${category}`, fetchProducts, {
+    getNextPageParam: (lastPage, pages) => {
+      return pages.length * PRODUCT_LIMIT >= lastPage.count
+        ? false
+        : pages.length;
+    },
+  });
 
   useEffect(() => {
-    mounted.current = true;
     const validCategory = categories.find(
       (item) => item.name === category || category === "all"
     );
     if (!validCategory) {
       history.push("/404");
     }
-    setStatus("loading");
-    getProducts();
-
-    return () => {
-      mounted.current = false;
-    };
+    refetch();
     // eslint-disable-next-line
   }, [category, size, min_price, max_price]);
-
-  useUpdateEffect(() => {
-    if (products === null) {
-      setStatus("error");
-    } else {
-      setStatus("done");
-    }
-  }, [products]);
 
   let content = (
     <NotContent>
       <Spinner top={60} />
     </NotContent>
   );
-  if (status === "done") {
+  if (status === "success") {
+    let products = data.pages.map((page) => page.results).flat();
     content =
-      products.length > 0 ? (
-        <ProductList>
-          {products.map((product) => (
-            <Product {...product} key={product.id} />
-          ))}
-        </ProductList>
+      data.pages.length > 0 ? (
+        <>
+          <ProductList>
+            {products.map((product) => (
+              <Product {...product} key={product.id} />
+            ))}
+          </ProductList>
+        </>
       ) : (
         <NotContent>
           <h3>No Products Mathching this filters</h3>
@@ -223,6 +238,7 @@ export default () => {
           <h1 className="currentcategory">{category}</h1>
         )}
       </Banner>
+
       <Shop>
         <div className="meta">
           <button
@@ -250,6 +266,21 @@ export default () => {
         </div>
 
         <div className="content">{content}</div>
+        <div className="product-list-end">
+          {hasNextPage ? (
+            <button
+              className="button"
+              onClick={() => {
+                console.log("clicked");
+                fetchNextPage();
+              }}
+            >
+              Load more
+            </button>
+          ) : (
+            <p className="list-end">No more Products</p>
+          )}
+        </div>
       </Shop>
     </Page>
   );

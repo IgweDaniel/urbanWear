@@ -3,3 +3,5 @@ export const MAX_PRICE = 20;
 export const SIZES = ["XL", "XXL", "L", "S", "XS", "M", "XXS"];
 
 export const CURRENCY = "£";
+
+export const PRODUCT_LIMIT = 8;

@@ -117,16 +117,13 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class ProcessPaymentSerializer(serializers.Serializer):
     token = serializers.CharField()
-    email = serializers.EmailField(allow_blank=True)
+    email = serializers.EmailField()
     password = serializers.CharField(
         allow_blank=True)
     billing = serializers.DictField(child=serializers.CharField())
     shipping = serializers.DictField(child=serializers.CharField())
 
     def validate_email(self, data):
-        # if self.context['request'].user.is_authenticated:
-        #     raise serializers.ValidationError(
-        #         "Can't create account while loggged in")
         user = User.objects.all().filter(email=data)
         if user.exists():
             raise serializers.ValidationError(
