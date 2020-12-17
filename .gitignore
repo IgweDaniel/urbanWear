@@ -8,8 +8,7 @@ migrations/
 
 /node_modules
 
-/build
-build/
+
 
 /media
 media/
