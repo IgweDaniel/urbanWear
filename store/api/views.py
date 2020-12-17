@@ -56,7 +56,7 @@ class ProductList(generics.ListAPIView):
     pagination_class = ProductListPagination
 
     def get_queryset(self):
-        queryset = Product.objects.order_by('name')
+        queryset = Product.objects.all()
         category = self.request.query_params.get('category', None)
         size = self.request.query_params.get('size', None)
 
@@ -299,7 +299,7 @@ class DeleteUpdateOrderItem(APIView):
             return Response(dump_guest_cart(cart), status=HTTP_200_OK)
 
 
-class ListCreatePayment(generics.ListCreateAPIView):
+class ListCreatePayment(generics.CreateAPIView):
     serializer_class = PaymentSerializer
     permission_classes = []
 
@@ -402,7 +402,7 @@ class ListCreatePayment(generics.ListCreateAPIView):
             print(e)
             return Response({'message': "Server Error"}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def get_queryset(self):
-        queryset = Payment.objects.all().filter(user=self.request.user)
-        return queryset
+    # def get_queryset(self):
+    #     queryset = Payment.objects.all().filter(user=self.request.user)
+    #     return queryset
 #  return Response({'message':"Just TESTING"}, status=HTTP_200_OK)

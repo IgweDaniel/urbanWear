@@ -119,15 +119,18 @@ class ProcessPaymentSerializer(serializers.Serializer):
     token = serializers.CharField()
     email = serializers.EmailField()
     password = serializers.CharField(
-        allow_blank=True)
+        allow_blank=True, required=False)
     billing = serializers.DictField(child=serializers.CharField())
     shipping = serializers.DictField(child=serializers.CharField())
 
     def validate_email(self, data):
-        user = User.objects.all().filter(email=data)
-        if user.exists():
-            raise serializers.ValidationError(
-                "Email already Exists")
+        has_password = self.initial_data.get("password")
+
+        if has_password:
+            user = User.objects.all().filter(email=data)
+            if user.exists():
+                raise serializers.ValidationError(
+                    "Email already Exists")
 
         return data
 

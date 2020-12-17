@@ -169,7 +169,7 @@ DJOSER = {
     'PERMISSIONS': {
         'username_reset': ['rest_framework.permissions.IsAdminUser'],
         'username_reset_confirm': ['rest_framework.permissions.IsAdminUser'],
-        'set_username': ['rest_framework.permissions.IsAdminUser'],
+        # 'set_username': ['rest_framework.permissions.IsAdminUser'],
     },
 }
 
