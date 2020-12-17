@@ -8,11 +8,19 @@ import axios from "axios";
 import { logout } from "./ducks/auth";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import { CSSPlugin, gsap } from "gsap";
+
+gsap.registerPlugin(CSSPlugin);
+
 const store = configureStore({
   reducer: rootReducer,
 });
 
-axios.defaults.baseURL = "/api";
+if (process.env.NODE_ENV == "production") {
+  axios.defaults.baseURL = "http://localhost:8000/api";
+} else {
+  axios.defaults.baseURL = "/api";
+}
 axios.defaults.withCredentials = true;
 
 axios.interceptors.response.use(
@@ -20,7 +28,7 @@ axios.interceptors.response.use(
     return response;
   },
   async function (error) {
-    console.log(error.response.data);
+    // console.log(error.response.data);
     const invalidToken =
       error.response.statusText === "Unauthorized" &&
       error.response.data.code === "token_not_valid";
@@ -41,9 +49,6 @@ axios.interceptors.response.use(
         localStorage.removeItem("refresh");
       }
     }
-    //  else {
-    //   store.dispatch(logout());
-    // }
 
     return Promise.reject(error);
   }

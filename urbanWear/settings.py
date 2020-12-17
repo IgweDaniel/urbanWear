@@ -30,7 +30,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['http://localhost:3000', '127.0.0.1',
+                 'localhost', 'http://localhost:8000']
 
 
 # Application definition
@@ -42,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'whitenoise.runserver_nostatic',
+    # 'whitenoise.runserver_nostatic'
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
@@ -66,7 +69,6 @@ ROOT_URLCONF = 'urbanWear.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'DIRS': [],
         'DIRS': [os.path.join(BASE_DIR, 'client/build')],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -135,8 +137,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'client/build', 'static')
-STATICFILES_DIRS = []
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'client/build', 'static')
+]
 
 AUTH_USER_MODEL = 'store.User'
 
@@ -155,8 +161,6 @@ from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=14),
-    # 'ACCESS_TOKEN_LIFETIME': timedelta(seconds=2),
-    # 'REFRESH_TOKEN_LIFETIME': timedelta(seconds=5),
     'ROTATE_REFRESH_TOKENS': True
 }
 

@@ -211,6 +211,7 @@ export default () => {
 
   if (status === "success") {
     let products = data.pages.map((page) => page.results).flat();
+
     content =
       products.length > 0 ? (
         <ProductList>

@@ -18,7 +18,7 @@ export async function fetchProducts(filter, page) {
   if (category) query += `&category=${category}`;
 
   try {
-    const { data } = await axios.get("/products" + query);
+    const { data } = await axios.get("/products/" + query);
     return { error: null, data };
   } catch (error) {
     return { error, data: null };
@@ -27,7 +27,7 @@ export async function fetchProducts(filter, page) {
 
 export async function fetchFullProduct(slug) {
   try {
-    const { data } = await axios.get(`/products/${slug}`);
+    const { data } = await axios.get(`/products/${slug}/`);
 
     return { error: null, data };
   } catch (error) {

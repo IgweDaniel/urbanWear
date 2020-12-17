@@ -13,7 +13,8 @@ export async function LoginUser(email, password) {
 }
 export async function getUser() {
   try {
-    const { data } = await axios.get("/users/me");
+    const { data } = await axios.get("/users/me/");
+
     return { error: null, data };
   } catch (error) {
     return { error, data: null };

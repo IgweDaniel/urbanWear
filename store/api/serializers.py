@@ -51,9 +51,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_images(self, obj):
         images = []
-        domain = "http://localhost:8000"
         for image in obj.images.all():
-            images.append(domain + image.image.url)
+            images.append(image.image.url)
         return images
 
     def get_sizes(self, obj):
@@ -63,7 +62,6 @@ class ProductSerializer(serializers.ModelSerializer):
         return sizes
 
     def get_category(self, obj):
-        # print(self.get_extra_kwargs())
         return obj.category.name
 
 
