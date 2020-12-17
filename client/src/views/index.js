@@ -1,13 +1,12 @@
 import Cart from "./Cart";
 import Home from "./Home";
 import Shop from "./Shop";
-
 import Checkout from "./Checkout";
 import Account from "./Account";
 import PaymentComplete from "./PaymentComplete";
 
 import ProductDetail from "./ProductDetail";
-import _4o4 from "./4o4";
+import PageNotFound from "./PageNotFound";
 
 const routes = [
   {
@@ -23,11 +22,7 @@ const routes = [
     path: "/cart",
     component: Cart,
   },
-  {
-    path: "/shop/",
-    component: Shop,
-    exact: true,
-  },
+
   {
     path: "/shop/:category",
     component: Shop,
@@ -48,7 +43,7 @@ const routes = [
   {
     path: "*",
     exact: true,
-    component: _4o4,
+    component: PageNotFound,
   },
 ];
 

@@ -60,7 +60,13 @@ export default () => {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/shop" activeClassName="link-active">
+            <NavLink
+              to="/shop/all"
+              isActive={(match, location) =>
+                location.pathname.includes("/shop")
+              }
+              activeClassName="link-active"
+            >
               Shop
             </NavLink>
           </li>

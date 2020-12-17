@@ -155,7 +155,7 @@ export default () => {
   const fetchProducts = async ({ pageParam = 0 }) => {
     const { data, error } = await Api.fetchProducts(
       {
-        sze: size === "all" ? null : size,
+        size: size === "all" ? null : size,
         category: category === "all" ? null : category,
       },
       pageParam
@@ -176,7 +176,7 @@ export default () => {
     isError,
     isLoading,
     refetch,
-  } = useInfiniteQuery(`products${category}`, fetchProducts, {
+  } = useInfiniteQuery(`products-${category}-${size}`, fetchProducts, {
     getNextPageParam: (lastPage, pages) => {
       return pages.length * PRODUCT_LIMIT >= lastPage.count
         ? false
@@ -188,10 +188,13 @@ export default () => {
     const validCategory = categories.find(
       (item) => item.name === category || category === "all"
     );
+
     if (!validCategory) {
       history.push("/404");
+    } else {
+      refetch();
     }
-    refetch();
+
     // eslint-disable-next-line
   }, [category, size, min_price, max_price]);
 
@@ -209,14 +212,12 @@ export default () => {
   if (status === "success") {
     let products = data.pages.map((page) => page.results).flat();
     content =
-      data.pages.length > 0 ? (
-        <>
-          <ProductList>
-            {products.map((product) => (
-              <Product {...product} key={product.id} />
-            ))}
-          </ProductList>
-        </>
+      products.length > 0 ? (
+        <ProductList>
+          {products.map((product) => (
+            <Product {...product} key={product.id} />
+          ))}
+        </ProductList>
       ) : (
         <NotContent>
           <h3>No Products Mathching this filters</h3>
@@ -281,8 +282,11 @@ export default () => {
         <div className="loader" ref={loader}></div>
         {!isLoading && !isError && (
           <div className="product-list-end" ref={loader}>
-            {isFetchingNextPage && <h3>fetching more!</h3>}
-            {!hasNextPage && <p className="list-end">No more Products</p>}
+            {isFetchingNextPage && <Spinner />}
+            {/* {isFetchingNextPage && <h3>fetching more!</h3>} */}
+            {!hasNextPage && data.pages[0].count !== 0 && (
+              <p className="list-end">No more Products</p>
+            )}
           </div>
         )}
       </Shop>

@@ -45,7 +45,7 @@ const useFilter = () => {
       delete params["max_price"];
     }
     history.push({
-      pathname: `/shop${category === "all" ? "" : `/${category}`}`,
+      pathname: `/shop/${category}`,
       search: "?" + new URLSearchParams(params).toString(),
     });
   }

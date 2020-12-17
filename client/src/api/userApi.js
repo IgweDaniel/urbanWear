@@ -46,3 +46,29 @@ export async function listOrders() {
     return { error: error.response.data, data: null };
   }
 }
+
+export async function updatePassword({ password, newPassword }) {
+  try {
+    const { data } = await axios.post("/users/set_password/", {
+      current_password: password,
+      new_password: newPassword,
+    });
+
+    return { error: null, data };
+  } catch (error) {
+    return { error: error.response.data, data: null };
+  }
+}
+
+export async function updateEmail({ email, password }) {
+  try {
+    const { data } = await axios.post("/users/set_email/", {
+      new_email: email,
+      current_password: password,
+    });
+
+    return { error: null, data };
+  } catch (error) {
+    return { error: error.response.data, data: null };
+  }
+}

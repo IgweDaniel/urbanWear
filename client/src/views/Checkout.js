@@ -274,6 +274,7 @@ export default () => {
     if (user) {
       formik.setValues({
         altShippingAddress: false,
+        email: user.email,
         billing: {
           ...user.address.billing,
         },
@@ -342,7 +343,7 @@ export default () => {
                           <label>password</label>
 
                           <input
-                            type="text"
+                            type="password"
                             name={`password`}
                             value={formik.values.password}
                             onChange={formik.handleChange}
@@ -355,7 +356,7 @@ export default () => {
                           <label>confirm password</label>
 
                           <input
-                            type="text"
+                            type="password"
                             name={`confirmPassword`}
                             value={formik.values.confirmPassword}
                             onChange={formik.handleChange}

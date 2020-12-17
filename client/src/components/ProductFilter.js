@@ -109,7 +109,7 @@ export default () => {
           <ul>
             <li className="category">
               <Link
-                to={`/shop`}
+                to={`/shop/all`}
                 className={`category ${
                   activeCategory === "all" ? "active" : ""
                 }`}

@@ -114,13 +114,13 @@ const Header = styled.header`
 `;
 
 const ICON_SIZE = 20;
-export default ({ openCart, showAuthForm, toggleSideBar }) => {
+export default () => {
   const history = useHistory();
 
   const user = useSelector((state) => state.auth.user);
   const qty = useSelector((state) => state.cart.qty);
   const display = useModal();
-  // console.log(history.location);
+
   function handleAction(action) {
     display({
       type: action,
@@ -152,7 +152,13 @@ export default ({ openCart, showAuthForm, toggleSideBar }) => {
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/shop" activeClassName="link-active">
+                <NavLink
+                  isActive={(match, location) =>
+                    location.pathname.includes("/shop")
+                  }
+                  to="/shop/all"
+                  activeClassName="link-active"
+                >
                   Shop
                 </NavLink>
               </li>
@@ -173,7 +179,6 @@ export default ({ openCart, showAuthForm, toggleSideBar }) => {
                 <button
                   onClick={() => {
                     if (!user) {
-                      // showAuthForm();
                       handleAction("LOGIN");
                     } else {
                       history.push({

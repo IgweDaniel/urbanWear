@@ -80,9 +80,8 @@ export default ({ closeAuth }) => {
   const display = useModal();
   const formik = useFormik({
     initialValues: {
-      email: "daniel@gmail.com",
-      password: "ltDjpe123",
-      // password: "wrongpassword",
+      email: "",
+      password: "",
       keepSignedIn: false,
     },
     validate: handleValidation,
