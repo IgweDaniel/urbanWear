@@ -22,6 +22,13 @@ class Command(BaseCommand):
         with open(BASE_DIR / file) as f:
             data = json.load(f)
 
+        for size in data['sizes']:
+            ProductSize.objects.create(
+                label=size
+            )
+
+        self.stdout.write("All Sizes have been added")
+
         for category in data['categories']:
             Category.objects.create(
                 name=category

@@ -141,7 +141,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'client/build', 'static')
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'client/build', 'static')
+    os.path.join(BASE_DIR, 'client/build', 'static'),
+    os.path.join(BASE_DIR, 'client/build')
 ]
 
 AUTH_USER_MODEL = 'store.User'

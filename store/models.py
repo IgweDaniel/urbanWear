@@ -15,31 +15,22 @@ class User(AbstractUser):
         return f"{self.email} "
 
 
+class ProductSize(models.Model):
+    label = models.CharField(max_length=20, unique=True)
+
+    def __str__(self):
+        return f"{self.label}"
+
+
 class Category(models.Model):
     name = models.CharField(max_length=30)
-    image = models.ImageField()
+    # image = models.ImageField()
 
     class Meta:
         verbose_name_plural = "Categories"
 
     def __str__(self):
         return f"{self.name}"
-
-
-class ProductSize(models.Model):
-    SIZE_CHOICES = (
-        ('XXS', 'ExtraExtraSmall'),
-        ('XS', 'ExtraSmall'),
-        ('S', 'Small'),
-        ('M', 'Medium'),
-        ('L', 'Large'),
-        ('XL', 'ExtraLarge'),
-        ('XXL', 'ExtraExtraLarge'),
-    )
-    label = models.CharField(choices=SIZE_CHOICES, max_length=20)
-
-    def __str__(self):
-        return f"{self.label}"
 
 
 class Product(models.Model):
@@ -109,8 +100,6 @@ class Payment(models.Model):
                              on_delete=models.SET_NULL, blank=True, null=True)
     amount = models.FloatField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    # order = models.ForeignKey(
-    #     Order, on_delete=models.CASCADE, related_name='payment')
 
     def __str__(self):
         return f"{self.stripe_charge_id} paid {self.amount}"
@@ -135,8 +124,6 @@ class Order(models.Model):
     delivered = models.BooleanField(default=False)
 
     def __str__(self):
-        # order__status = "PENDING delivery" if self.ordered else "ACTIVE"
-        # return f"{order__status} order for {self.user.email}  worth ${self.calc_total_price()}"
         order__status = "PENDING delivery" if self.ordered else "ACTIVE"
         return f"{order__status} order for  worth ${self.calc_total_price()}"
 
@@ -162,4 +149,4 @@ class OrderItem(models.Model):
         return self.product.final_price() * self.quantity
 
     def __str__(self):
-        return f"{self.quantity} [{self.size.get_label_display()}]  {self.product.name} ({self.product.category.name})-${self.sub_total()}"
+        return f"{self.quantity} {self.size.label}  {self.product.name} ({self.product.category.name})-${self.sub_total()}"

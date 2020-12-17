@@ -16,7 +16,7 @@ const store = configureStore({
   reducer: rootReducer,
 });
 
-if (process.env.NODE_ENV == "production") {
+if (process.env.NODE_ENV === "production") {
   axios.defaults.baseURL = "http://localhost:8000/api";
 } else {
   axios.defaults.baseURL = "/api";

@@ -323,7 +323,15 @@ class ListCreatePayment(generics.CreateAPIView):
             if not items.exists():
                 return Response({"message": "No items in Cart Cart"}, status=HTTP_400_BAD_REQUEST)
         else:
-            items = active_order.get("items")
+            serializer = OrderItemSerializer(
+                data=active_order.get("items"), many=True)
+
+            if not serializer.is_valid(raise_exception=True):
+                request.session['cart'] = GUEST_INITIAL_CART
+                return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
+
+            items = serializer.validated_data
+
             if len(items) < 1:
                 return Response({"message": "No items in Cart Cart"}, status=HTTP_400_BAD_REQUEST)
 
@@ -350,15 +358,17 @@ class ListCreatePayment(generics.CreateAPIView):
             # create order and copy guest cart for unauthenticated user
             if not request.user.is_authenticated:
                 active_order = Order.objects.create(user=user)
+
                 for item in items:
+                    print(item.get("product"))
                     OrderItem.objects.create(
-                        size=ProductSize.objects.filter(label=item['size'])[0],
-                        product=Product.objects.get(pk=item['product']['id']),
-                        quantity=item['quantity'],
+                        size=ProductSize.objects.filter(
+                            label=item.get('size'))[0],
+                        product=item.get("product"),
+                        quantity=item.get('quantity'),
                         order=active_order
                     )
-                request.session['cart'] = GUEST_INITIAL_CART
-
+                    request.session['cart'] = GUEST_INITIAL_CART
             payment = Payment.objects.create(
                 user=user,
                 amount=amount_to_pay,
@@ -392,8 +402,10 @@ class ListCreatePayment(generics.CreateAPIView):
         except stripe.error.InvalidRequestError as e:
             return Response({'message': e.error.message}, status=HTTP_400_BAD_REQUEST)
         except stripe.error.AuthenticationError as e:
+            print(e.error.message)
             return Response({'message': e.error.message}, status=HTTP_500_INTERNAL_SERVER_ERROR)
         except stripe.error.APIConnectionError as e:
+            print(e.error.message)
             return Response({'message': "Server Error (couldn't connect to stripe)"}, status=HTTP_500_INTERNAL_SERVER_ERROR)
         except stripe.error.StripeError as e:
             return Response({'message': e.error.message}, status=HTTP_400_BAD_REQUEST)
@@ -401,8 +413,3 @@ class ListCreatePayment(generics.CreateAPIView):
             # Something else happened, completely unrelated to Stripe
             print(e)
             return Response({'message': "Server Error"}, status=HTTP_500_INTERNAL_SERVER_ERROR)
-
-    # def get_queryset(self):
-    #     queryset = Payment.objects.all().filter(user=self.request.user)
-    #     return queryset
-#  return Response({'message':"Just TESTING"}, status=HTTP_200_OK)

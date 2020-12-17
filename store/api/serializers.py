@@ -94,8 +94,13 @@ class OrderUpdateSerializer(serializers.Serializer):
 
 class OrderItemSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
-    product = serializers.SerializerMethodField()
-    size = serializers.SerializerMethodField()
+
+    size = serializers.SerializerMethodField(read_only=True)
+    size = serializers.CharField(write_only=True)
+
+    product = serializers.SerializerMethodField(read_only=True)
+    product = serializers.DictField(write_only=True)
+
     read_only_fields = ['total']
 
     class Meta:
@@ -103,10 +108,19 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['size', 'product',
                   'quantity', 'size', 'total', 'id']
 
+    def validate_product(self, data):
+        try:
+            product = Product.objects.get(pk=data['id'])
+            return product
+        except Product.DoesNotExist:
+            raise serializers.ValidationError(
+                "Invalid Product")
+
     def get_total(self, obj):
         return obj.sub_total()
 
     def get_product(self, obj):
+
         return ProductSerializer(obj.product).data
 
     def get_size(self, obj):
@@ -207,4 +221,5 @@ class OrderSerializer(serializers.ModelSerializer):
         return obj.coupon.amount if obj.coupon else None
 
     def get_items(self, obj):
+        print(obj)
         return OrderItemSerializer(obj.items.all(), many=True).data
