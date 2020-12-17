@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'whitenoise.runserver_nostatic'
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -149,8 +148,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'client/build')
 ]
 
-AUTH_USER_MODEL = 'store.User'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
+AUTH_USER_MODEL = 'store.User'
 # Rest Framework stuff
 
 REST_FRAMEWORK = {
