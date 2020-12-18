@@ -8,18 +8,16 @@ migrations/
 
 /node_modules
 
-/build
-build/
+/uploads
 
 /media
-media/
 
 client.html
 
 __pycache__/
 /__pycache__
 
-
+/staticfiles
 /node_modules
 /node_modules/
 /.pnp
