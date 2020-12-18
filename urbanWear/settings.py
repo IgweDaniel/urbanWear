@@ -177,7 +177,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # STATIC_ROOT = os.path.join(BASE_DIR, 'client/build', 'static')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'client/build')
+    os.path.join(BASE_DIR, 'client/build'),
+    os.path.join(BASE_DIR, 'client/build/static/itchy'),
 ]
 
 MEDIA_URL = '/media/'
