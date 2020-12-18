@@ -4,7 +4,7 @@ import json
 from store.models import Product, ProductImage, Category, ProductSize, Category
 from django.core.files.base import ContentFile
 
-
+from django.db import IntegrityError
 from django.conf import settings
 
 BASE_DIR = settings.BASE_DIR
@@ -18,21 +18,30 @@ class Command(BaseCommand):
                             help='Indicates file to grab JSON seed data')
 
     def handle(self, *args, **kwargs):
+
         file = kwargs['file']
         with open(BASE_DIR / file) as f:
             data = json.load(f)
 
         for size in data['sizes']:
-            ProductSize.objects.create(
-                label=size
-            )
+            try:
+                ProductSize.objects.create(
+                    label=size
+                )
+            except IntegrityError:
+                self.stdout.write(f"{size} already in db")
+                continue
 
         self.stdout.write("All Sizes have been added")
 
         for category in data['categories']:
-            Category.objects.create(
-                name=category
-            )
+            try:
+                Category.objects.create(
+                    name=category
+                )
+            except IntegrityError:
+                self.stdout.write(f"{category} already in db")
+                continue
 
         self.stdout.write("All Categories have been added")
 
@@ -49,11 +58,15 @@ class Command(BaseCommand):
                 if not size.exists():
                     continue
                 sizes.append(size[0])
-            new_product = Product.objects.create(
-                name=product['name'], price=10,
-                description=product['desc'],
-                slug=product['name'].replace(" ", "-"),
-                category=category)
+
+            try:
+                new_product = Product.objects.create(
+                    name=product['name'], price=10,
+                    description=product['desc'],
+                    slug=product['name'].replace(" ", "-"),
+                    category=category)
+            except Exception:
+                continue
 
             new_product.sizes.set(sizes)
             for product_image in product['images']:
@@ -64,6 +77,8 @@ class Command(BaseCommand):
                     )
 
                     data = f.read()
-                    image.image.save(filename, ContentFile(data))
+                    image.image.save(
+
+                        filename, ContentFile(data))
 
         self.stdout.write("All ProductItems have been added")

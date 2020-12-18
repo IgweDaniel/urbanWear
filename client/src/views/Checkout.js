@@ -293,7 +293,7 @@ export default () => {
           <div className="content">
             <RiShoppingCartLine size={80} />
             <h2>No items in Cart</h2>
-            <Link to="/shop" className="button">
+            <Link to="/shop/all" className="button">
               back to shop
             </Link>
           </div>

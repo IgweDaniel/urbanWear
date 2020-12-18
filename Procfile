@@ -1,2 +1,2 @@
-release: python manage.py migrate
-web: gunicorn backend.wsgi --log-file -
+release: chmod u+x release_tasks.sh && ./release_tasks.sh
+web: gunicorn urbanWear.wsgi --log-file -

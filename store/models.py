@@ -23,7 +23,7 @@ class ProductSize(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
     # image = models.ImageField()
 
     class Meta:
@@ -37,7 +37,8 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField(default=10)
     discount = models.FloatField(default=0)
-    slug = models.SlugField()
+
+    slug = models.SlugField(unique=True)
     description = models.TextField()
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name='products')
