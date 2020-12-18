@@ -33,9 +33,12 @@ class Command(BaseCommand):
         self.stdout.write("All Sizes have been added")
 
         for category in data['categories']:
-            Category.objects.create(
-                name=category
-            )
+            try:
+                Category.objects.create(
+                    name=category
+                )
+            except Exception:
+                continue
 
         self.stdout.write("All Categories have been added")
 
@@ -52,11 +55,15 @@ class Command(BaseCommand):
                 if not size.exists():
                     continue
                 sizes.append(size[0])
-            new_product = Product.objects.create(
-                name=product['name'], price=10,
-                description=product['desc'],
-                slug=product['name'].replace(" ", "-"),
-                category=category)
+
+            try:
+                new_product = Product.objects.create(
+                    name=product['name'], price=10,
+                    description=product['desc'],
+                    slug=product['name'].replace(" ", "-"),
+                    category=category)
+            except Exception:
+                continue
 
             new_product.sizes.set(sizes)
             for product_image in product['images']:
