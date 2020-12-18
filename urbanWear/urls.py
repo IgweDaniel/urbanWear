@@ -10,11 +10,9 @@ from django.urls import path, re_path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('store.api.urls')),
-
-
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += [re_path('.*',
+urlpatterns += [re_path('^.*',
                         TemplateView.as_view(template_name='index.html')), ]
