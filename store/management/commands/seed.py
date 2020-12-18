@@ -86,6 +86,8 @@ class Command(BaseCommand):
                     )
 
                     data = f.read()
-                    image.image.save(filename, ContentFile(data))
+                    image.image.save(
+
+                        filename, ContentFile(data))
 
         self.stdout.write("All ProductItems have been added")
