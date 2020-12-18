@@ -147,7 +147,8 @@ export default (props) => {
 
   const [status, setStatus] = useState("done");
   const items = useSelector((state) => state.cart.items);
-  const inCart = items.find((item) => item.product.id === id);
+  const inCart =
+    items.length > 0 && items.find((item) => item.product.id === id);
 
   const hasOptions = !["bottoms", "foot wear", "accessories"].includes(
     category

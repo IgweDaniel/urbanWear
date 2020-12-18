@@ -17,7 +17,10 @@ from .pagination import ProductListPagination
 stripe.api_key = os.getenv("STRIPE_KEY")
 
 
-GUEST_INITIAL_CART = {"items": [], "total": 0, "quantity": 0, 'coupon': {
+GUEST_INITIAL_CART = {"items": [
+
+
+], "total": 0, "quantity": 0, 'coupon': {
     'amount': 0,
     'code': ''
 }
@@ -323,15 +326,7 @@ class ListCreatePayment(generics.CreateAPIView):
             if not items.exists():
                 return Response({"message": "No items in Cart Cart"}, status=HTTP_400_BAD_REQUEST)
         else:
-            serializer = OrderItemSerializer(
-                data=active_order.get("items"), many=True)
-
-            if not serializer.is_valid(raise_exception=True):
-                request.session['cart'] = GUEST_INITIAL_CART
-                return Response(serializer.error_messages, status=HTTP_400_BAD_REQUEST)
-
-            items = serializer.validated_data
-
+            items = active_order.get("items")
             if len(items) < 1:
                 return Response({"message": "No items in Cart Cart"}, status=HTTP_400_BAD_REQUEST)
 
@@ -360,15 +355,16 @@ class ListCreatePayment(generics.CreateAPIView):
                 active_order = Order.objects.create(user=user)
 
                 for item in items:
-                    print(item.get("product"))
+
                     OrderItem.objects.create(
                         size=ProductSize.objects.filter(
                             label=item.get('size'))[0],
-                        product=item.get("product"),
+                        product=Product.objects.get(pk=item['product']['id']),
                         quantity=item.get('quantity'),
                         order=active_order
                     )
                     request.session['cart'] = GUEST_INITIAL_CART
+
             payment = Payment.objects.create(
                 user=user,
                 amount=amount_to_pay,
@@ -386,13 +382,6 @@ class ListCreatePayment(generics.CreateAPIView):
             active_order.ordered = True
             active_order.save()
 
-            # send_mail(
-            #     'Payment Reciept',
-            #     f'Payment succesful. total purchase {amount_to_pay} and order id {active_order.id}',
-            #     'UrbanWear',
-            #     [email],
-            #     fail_silently=False,
-            # )
             return Response(OrderSerializer(active_order).data, status=HTTP_200_OK)
 
         except stripe.error.CardError as e:
@@ -413,3 +402,13 @@ class ListCreatePayment(generics.CreateAPIView):
             # Something else happened, completely unrelated to Stripe
             print(e)
             return Response({'message': "Server Error"}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# return Response({'message': "Just testing"}, status=HTTP_200_OK)
+     # send_mail(
+            #     'Payment Reciept',
+            #     f'Payment succesful. total purchase {amount_to_pay} and order id {active_order.id}',
+            #     'UrbanWear',
+            #     [email],
+            #     fail_silently=False,
+            # )
