@@ -34,7 +34,7 @@ DEBUG = True
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['http://localhost:3000', '127.0.0.1',
-                 'localhost', 'http://localhost:8000']
+                 'localhost', 'http://localhost:8000', 'urbanwear.herokuapp.com']
 
 
 # Application definition
