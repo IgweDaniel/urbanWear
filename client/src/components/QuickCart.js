@@ -116,12 +116,12 @@ export default () => {
             <BagAlt height={40} width={40} />
             <h4>CART IS EMPTY</h4>
             <p>Check out all the available products and buy some in the shop</p>
-            <Link to="/shop">
+            <Link to="/shop/all">
               <button
                 className="button"
                 onClick={() => {
                   closeQuickCart();
-                  history.push("/shop");
+                  // history.push("/shop/all/");
                 }}
               >
                 Go shopping

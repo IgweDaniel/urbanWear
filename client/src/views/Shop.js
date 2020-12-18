@@ -189,7 +189,7 @@ export default () => {
       (item) => item.name === category || category === "all"
     );
 
-    if (!validCategory) {
+    if (category && !validCategory) {
       history.push("/404");
     } else {
       refetch();

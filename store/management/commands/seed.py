@@ -18,16 +18,7 @@ class Command(BaseCommand):
                             help='Indicates file to grab JSON seed data')
 
     def handle(self, *args, **kwargs):
-        # with open(BASE_DIR / "tmp" / "High-Waist-Denim-Shorts-1.jpg", 'rb') as f:
-        #     product = Product.objects.all()[0]
-        #     image = ProductImage.objects.create(
-        #         product=product,
-        #     )
 
-        #     data = f.read()
-        #     image.image.save("High-Waist-Denim-Shorts-1.jpg",
-        #                      ContentFile(data))
-        # return
         file = kwargs['file']
         with open(BASE_DIR / file) as f:
             data = json.load(f)
