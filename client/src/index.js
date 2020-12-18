@@ -17,9 +17,9 @@ const store = configureStore({
 });
 
 if (process.env.NODE_ENV === "production") {
-  axios.defaults.baseURL = "http://localhost:8000/api";
-} else {
   axios.defaults.baseURL = "/api";
+} else {
+  axios.defaults.baseURL = "http://localhost:8000/api";
 }
 axios.defaults.withCredentials = true;
 
