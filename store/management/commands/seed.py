@@ -4,7 +4,7 @@ import json
 from store.models import Product, ProductImage, Category, ProductSize, Category
 from django.core.files.base import ContentFile
 
-
+from django.db import IntegrityError
 from django.conf import settings
 
 BASE_DIR = settings.BASE_DIR
@@ -27,7 +27,8 @@ class Command(BaseCommand):
                 ProductSize.objects.create(
                     label=size
                 )
-            except Exception:
+            except IntegrityError:
+                self.stdout.write(f"{size} already in db")
                 continue
 
         self.stdout.write("All Sizes have been added")
@@ -37,7 +38,8 @@ class Command(BaseCommand):
                 Category.objects.create(
                     name=category
                 )
-            except Exception:
+            except IntegrityError:
+                self.stdout.write(f"{category} already in db")
                 continue
 
         self.stdout.write("All Categories have been added")
