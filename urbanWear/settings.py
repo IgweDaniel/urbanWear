@@ -172,7 +172,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
 
 STATIC_URL = '/static/'
 
