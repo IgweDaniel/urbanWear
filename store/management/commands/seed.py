@@ -23,9 +23,12 @@ class Command(BaseCommand):
             data = json.load(f)
 
         for size in data['sizes']:
-            ProductSize.objects.create(
-                label=size
-            )
+            try:
+                ProductSize.objects.create(
+                    label=size
+                )
+            except Exception:
+                continue
 
         self.stdout.write("All Sizes have been added")
 
