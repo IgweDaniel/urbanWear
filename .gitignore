@@ -30,8 +30,8 @@ __pycache__/
 coverage/
 
 # production
-/build
-/data.json
+
+
 
 # misc
 .DS_Store

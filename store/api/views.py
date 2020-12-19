@@ -352,6 +352,7 @@ class ListCreatePayment(generics.CreateAPIView):
             )
 
             user = None
+            is_creating_account = False
             if request.user.is_authenticated:
                 user = request.user
             elif email and password:
@@ -382,10 +383,10 @@ class ListCreatePayment(generics.CreateAPIView):
             active_order.payment = payment
 
             active_order.billing_address = Address.objects.create(
-                **billing_address, user=user)
+                **billing_address, user=user, default=is_creating_account)
 
             active_order.shipping_address = Address.objects.create(
-                **shipping_address, user=user)
+                **shipping_address, user=user, default=is_creating_account)
 
             active_order.ordered = True
             active_order.save()
