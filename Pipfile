@@ -66,6 +66,7 @@ django-cors-headers = "==3.6.0"
 Pillow = "==8.0.1"
 PyJWT = "==1.7.1"
 SQLAlchemy = "==1.3.17"
+django-storages = "*"
 
 [requires]
 python_version = "3.8"
