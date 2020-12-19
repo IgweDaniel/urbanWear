@@ -31,10 +31,10 @@ const queryClient = new QueryClient();
 
 function App() {
   const dispatch = useDispatch();
+
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
-  const items = useSelector((state) => state.cart.items);
-
+  const categories = useSelector((state) => state.global.categories);
   const [status, setStatus] = useState("loading");
 
   function updateBrowserDimensions() {
@@ -61,7 +61,7 @@ function App() {
 
   useUpdateEffect(() => {
     setStatus("done");
-  }, [items]);
+  }, [categories]);
 
   useEffect(() => {
     updateBrowserDimensions();

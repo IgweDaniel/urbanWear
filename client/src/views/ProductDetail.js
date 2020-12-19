@@ -366,17 +366,26 @@ export default () => {
             <div className="productdetail__content">
               <h1 className="product__name">{product.name}</h1>
               <p className="product__price">
-                {product.discount && (
+                {product.discount_price && (
                   <span className="actual-price">
                     was {CURRENCY}
-                    <span className="figure">{product.price}</span>
+                    <span className="figure">{product.price.toFixed(2)}</span>
                   </span>
                 )}
-                <span className="final-price">
-                  {product.discount ? "Now " : "Buy for "}
-                  {CURRENCY}
-                  <span className="figure">{product.final_price}</span>
-                </span>
+
+                {product.discount_price ? (
+                  <span className="final-price">
+                    Now {CURRENCY}
+                    <span className="figure">
+                      {product.discount_price.toFixed(2)}
+                    </span>
+                  </span>
+                ) : (
+                  <span className="final-price">
+                    Buy for {CURRENCY}
+                    <span className="figure">{product.price.toFixed(2)}</span>
+                  </span>
+                )}
               </p>
               <ul className="product__sizes">
                 {SIZES.map((size, i) => (

@@ -2,7 +2,7 @@
 import json
 import os
 from rest_framework import generics
-from django.db.models import Q
+from django.db.models import Q, F
 from store.models import Category, Coupon, Payment, Product, ProductSize, Order, Address, OrderItem, User
 from .serializers import CategorySerializer, PaymentSerializer, ProcessPaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
@@ -59,15 +59,23 @@ class ProductList(generics.ListAPIView):
     pagination_class = ProductListPagination
 
     def get_queryset(self):
-        queryset = Product.objects.all()
+        # queryset = Product.objects.all()
+        queryset = Product.objects.annotate(
+            discount_price=F('price') - F('price') * F('discount'))
+
         category = self.request.query_params.get('category', None)
         size = self.request.query_params.get('size', None)
+        min_price = self.request.query_params.get('min_price', None)
+        max_price = self.request.query_params.get('max_price', None)
 
         if category is not None:
             queryset = queryset.filter(category__name=category)
         if size is not None:
             queryset = queryset.filter(
                 sizes__in=ProductSize.objects.filter(label=size))
+        if min_price and max_price:
+            queryset = queryset.filter(
+                discount_price__range=(min_price, max_price))
 
         return queryset
 

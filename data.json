@@ -20,12 +20,12 @@
       ],
       "price": 20,
       "discount": null,
-      "final_price": 20,
+      
       "category": "hoodies",
       "name": "Colour Block Hoodie With Front Print",
       "sizes": ["XL", "XS", "XXS"],
-      "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''",
-      "inCart": false
+      "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
+      
     },
     {
       "id": 2,
@@ -35,10 +35,10 @@
       ],
       "price": 10,
       "discount": 0.5,
-      "final_price": 5,
+      
       "category": "bottoms",
       "name": "Ripped Skinny Fit Jeans",
-      "inCart": false,
+      
       "sizes": ["XL", "XXL", "XS", "L", "M"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -50,10 +50,10 @@
       ],
       "price": 5,
       "discount": 0.5,
-      "final_price": 2.5,
+      
       "category": "bottoms",
       "name": "High Waist Denim Shorts",
-      "inCart": false,
+      
       "sizes": ["XL", "XXL", "XS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -62,22 +62,22 @@
       "images": ["cargo-chino-2.jpg", "cargo-chino-1.jpg"],
       "price": 10,
       "discount": 0,
-      "final_price": 10,
+      
       "category": "bottoms",
       "name": "Cargo Chino",
-      "inCart": false,
+      
       "sizes": ["XL", "M", "XS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
     {
       "id": 5,
       "images": ["finger-up-crop-1.jpg", "finger-up-crop-2.jpg"],
-      "price": 10,
-      "discount": 0,
-      "final_price": 10,
+      "price": 20,
+      "discount": 0.3,
+      
       "category": "shirts",
       "name": "finger up crop",
-      "inCart": false,
+      
       "sizes": ["XL", "L", "XS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -85,23 +85,23 @@
       "id": 6,
       "images": ["High-Top-Sneakers-1.jpg", "High-Top-Sneakers-2.jpg"],
       "price": 5,
-      "discount": 0.5,
-      "final_price": 2.5,
+      "discount": 0,
+      
       "category": "foot wear",
       "name": "High Top Sneakers",
-      "inCart": false,
+      
       "sizes": ["XL", "XXL", "XS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
     {
       "id": 7,
       "images": ["The-White-Stripes-1.jpg", "The-White-Stripes-2.jpg"],
-      "price": 5,
-      "discount": 0.5,
-      "final_price": 2.5,
+      "price": 15,
+      "discount": 0.1,
+      
       "category": "tops",
       "name": "The White Stripes",
-      "inCart": false,
+      
       "sizes": ["XL", "L", "M"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -111,12 +111,12 @@
         "Two-Tone-Gabardine-And-Pique-Jacket-1.jpg",
         "Two-Tone-Gabardine-And-Pique-Jacket-2.jpg"
       ],
-      "price": 5,
-      "discount": 0.5,
-      "final_price": 2.5,
+      "price": 20,
+      "discount": 0.9,
+      
       "category": "jackets",
       "name": "Two-Tone Gabardine And Piqué Jacket",
-      "inCart": false,
+      
       "sizes": ["XL", "S", "XSS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -127,12 +127,12 @@
         "Oversized-W-Sweater-2.jpg",
         "Oversized-W-Sweater-3.jpg"
       ],
-      "price": 5,
-      "discount": 0.5,
-      "final_price": 2.5,
+      "price": 20,
+      "discount": 0.6,
+      
       "category": "sweaters",
       "name": "Oversized W Sweater",
-      "inCart": false,
+      
       "sizes": ["XL", "XXL", "XS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -143,24 +143,24 @@
         "Sadie-Sink-Cropped-Hoodie-2.jpg",
         "Sadie-Sink-Cropped-Hoodie-3.jpg"
       ],
-      "price": 5,
+      "price": 17,
       "discount": 0.5,
-      "final_price": 2.5,
+      
       "category": "hoodies",
       "name": "Sadie Sink Cropped Hoodie",
-      "inCart": false,
+      
       "sizes": ["XL", "XXL", "XS","L","M"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
     {
       "id": 11,
       "images": ["Monochrome-Sneakers-2.jpg", "Monochrome-Sneakers-1.jpg"],
-      "price": 5,
-      "discount": 0.5,
-      "final_price": 2.5,
+      "price": 20,
+      "discount": 0.9,
+      
       "category": "foot wear",
       "name": "Monochrome Sneakers",
-      "inCart": false,
+      
       "sizes": [ "XL"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -174,22 +174,22 @@
       ],
       "price": 5,
       "discount": 0.5,
-      "final_price": 2.5,
+      
       "category": "jackets",
       "name": "Removable Faux Fur Lining",
-      "inCart": false,
+      
       "sizes": ["M"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
     {
       "id": 13,
       "images": ["Push-up-Trousers-1.jpg", "Push-up-Trousers-2.jpg"],
-      "price": 5,
+      "price": 15,
       "discount": 0.5,
-      "final_price": 2.5,
+      
       "category": "bottoms",
       "name": "Push-up Trousers",
-      "inCart": false,
+      
       "sizes": ["XL", "XXL", "XS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -202,10 +202,10 @@
       ],
       "price": 5,
       "discount": 0.5,
-      "final_price": 2.5,
+      
       "category": "sweaters",
       "name": "Faux Fur Sweater",
-      "inCart": false,
+      
       "sizes": ["XL", "XS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -215,12 +215,12 @@
         "Navy-blue-coach-jacket-with-neon-detail-2.jpg",
         "Navy-blue-coach-jacket-with-neon-detail-1.jpg"
       ],
-      "price": 5,
-      "discount": 0.5,
-      "final_price": 2.5,
+      "price": 20,
+      "discount": 0.3,
+      
       "category": "jackets",
       "name": "Navy blue coach jacket with neon detail",
-      "inCart": false,
+      
       "sizes": ["XL", "L", "XXS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -231,12 +231,12 @@
         "Ribbed-Hoodie-2.jpg",
         "Ribbed-Hoodie-3.jpg"
       ],
-      "price": 5,
-      "discount": 0.5,
-      "final_price": 2.5,
+      "price": 10,
+      "discount": 0.2,
+      
       "category": "hoodies",
       "name": "Ribbed Hoodie",
-      "inCart": false,
+      
       "sizes": ["XL", "XXL", "XS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -249,10 +249,10 @@
       ],
       "price": 5,
       "discount": 0.5,
-      "final_price": 2.5,
+      
       "category": "foot wear",
       "name": "Men’s Thong Sandal",
-      "inCart": false,
+      
       "sizes": ["XL", "M", "XS"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     },
@@ -263,12 +263,12 @@
         "Side-Pockets-Backpack-2.jpg",
         "Side-Pockets-Backpack-3.jpg"
       ],
-      "price": 5,
-      "discount": 0.5,
-      "final_price": 2.5,
+      "price": 10,
+      "discount": 0,
+      
       "category": "accessories",
       "name": "Side Pockets Backpack",
-      "inCart": false,
+      
       "sizes": ["XL", "XXL", "XS","S"],
       "desc": "Remember, it’s a hammer. But this isn’t just any hammer This hammer features a 'vibration absorbing grip to improve user comfort' and is a light 14oz 'for a fast swing and reduced fatigue.''"
     }

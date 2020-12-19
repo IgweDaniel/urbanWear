@@ -97,6 +97,7 @@ export default () => {
   } = useFilter();
 
   const [price, setPrice] = useState([min_price, max_price]);
+
   useUpdateEffect(() => {
     setPrice([min_price, max_price]);
   }, [min_price, max_price]);
@@ -134,7 +135,6 @@ export default () => {
             <h3 className="subtext">filter by price</h3>
             <Range
               max={20}
-              allowCross={false}
               trackStyle={[{ backgroundColor: "#000" }]}
               handleStyle={[{ borderColor: "#000" }, { borderColor: "#000" }]}
               onChange={(price) => setPrice(price)}

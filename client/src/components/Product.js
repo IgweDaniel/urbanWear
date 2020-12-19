@@ -133,13 +133,13 @@ export default (props) => {
     id,
     images,
     price,
-    discount,
-    final_price,
+    discount_price,
     category,
     name,
     sizes,
     slug,
   } = props;
+
   const product_images =
     images.length < 2 ? images.push(images[0]) : images.slice(0, 2);
 
@@ -198,15 +198,15 @@ export default (props) => {
           <Link to={productlink}> {name}</Link>
         </p>
         <p className="product__price">
-          {discount && (
+          {discount_price && (
             <span className="actual__price">
               {CURRENCY}
-              {price}.00
+              {price.toFixed(2)}
             </span>
           )}
           <span className="discount__price">
             {CURRENCY}
-            {discount ? final_price : price}.00
+            {discount_price ? discount_price.toFixed(2) : price.toFixed(2)}
           </span>
         </p>
       </div>

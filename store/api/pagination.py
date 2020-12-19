@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 
 class ProductListPagination(LimitOffsetPagination):
-    default_limit = 2
+    # default_limit = 2
 
     def get_paginated_response(self, data):
         return Response({

@@ -157,6 +157,8 @@ export default () => {
       {
         size: size === "all" ? null : size,
         category: category === "all" ? null : category,
+        min_price,
+        max_price,
       },
       pageParam
     );
@@ -176,23 +178,28 @@ export default () => {
     isError,
     isLoading,
     refetch,
-  } = useInfiniteQuery(`products-${category}-${size}`, fetchProducts, {
-    getNextPageParam: (lastPage, pages) => {
-      return pages.length * PRODUCT_LIMIT >= lastPage.count
-        ? false
-        : pages.length;
-    },
-  });
+  } = useInfiniteQuery(
+    `products-${category}-${size}-${min_price}-${max_price}`,
+    fetchProducts,
+    {
+      getNextPageParam: (lastPage, pages) => {
+        return pages.length * PRODUCT_LIMIT >= lastPage.count
+          ? false
+          : pages.length;
+      },
+    }
+  );
 
   useEffect(() => {
-    const validCategory = categories.find(
-      (item) => item.name === category || category === "all"
-    );
-
-    if (category && !validCategory) {
-      history.push("/404");
-    } else {
-      refetch();
+    if (category) {
+      const validCategory = categories.find(
+        (item) => item.name === category || category === "all"
+      );
+      if (!validCategory) {
+        history.push("/404");
+      } else {
+        refetch();
+      }
     }
 
     // eslint-disable-next-line
@@ -203,6 +210,7 @@ export default () => {
       fetchNextPage();
     }
   }, [isOnScreen]);
+
   let content = (
     <NotContent>
       <Spinner top={60} />

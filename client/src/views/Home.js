@@ -48,6 +48,7 @@ const slides = [
 ];
 
 slides.reverse();
+
 const Home = styled.div`
   --height: 100vh;
   height: var(--height);
@@ -72,12 +73,6 @@ const Home = styled.div`
     align-items: center;
     justify-content: center;
     height: 100%;
-    transform: scale(0.95);
-    transition: transform 0.5s ease-in-out;
-  }
-
-  section.active .content {
-    transform: scale(1);
   }
 
   section .content .cover,
@@ -128,6 +123,13 @@ const Home = styled.div`
   }
 
   @media (min-width: 1024px) {
+    section .content {
+      transition: transform 0.5s ease-in-out;
+      transform: scale(0.95);
+    }
+    section.active .content {
+      transform: scale(1);
+    }
     overflow: hidden;
     &:before {
       display: none;
@@ -218,10 +220,11 @@ export default () => {
 
   useEffect(() => {
     slideElements.current = containerRef.current?.querySelectorAll("section");
-    window.addEventListener("mousewheel", handleMouseWheel, {
-      passive: true,
-      capture: true,
-    });
+    // window.addEventListener("mousewheel", handleMouseWheel, {
+    //   passive: true,
+    //   capture: true,
+    // });
+    window.addEventListener("mousewheel", handleMouseWheel);
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
