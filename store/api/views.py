@@ -356,8 +356,10 @@ class ListCreatePayment(generics.CreateAPIView):
             if request.user.is_authenticated:
                 user = request.user
             elif email and password:
+
                 user = User.objects.create_user(
                     username=email, email=email, password=password)
+                is_creating_account = True
 
             # create order and copy guest cart for unauthenticated user
             if not request.user.is_authenticated:
