@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-import django_heroku
+
 import dj_database_url
 
 
@@ -28,9 +28,9 @@ load_dotenv(dotenv_path=env_path)
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-
+# production
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False if os.getenv("ENVIRONMENT") == "production" else True
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['http://localhost:3000', '127.0.0.1',
@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -188,13 +190,12 @@ STATICFILES_DIRS = [
 ]
 
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# /media
 
-# STATICFILES_FINDERS = [
-#     'django.contrib.staticfiles.finders.FileSystemFinder',
-#     # 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-# ]
+
+if not DEBUG:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
