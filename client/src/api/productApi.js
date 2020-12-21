@@ -11,11 +11,11 @@ export async function fetchProductsCategories() {
 }
 
 export async function fetchProducts(filter, page) {
-  const { size, category, min_price, max_price } = filter;
+  const { size, category, min_price, max_price, order_by } = filter;
   const resultLimit = PRODUCT_LIMIT;
   let query = `?offset=${
     page * resultLimit
-  }&limit=${PRODUCT_LIMIT}&min_price=${min_price}&max_price=${max_price}`;
+  }&limit=${PRODUCT_LIMIT}&min_price=${min_price}&max_price=${max_price}&order_by=${order_by}`;
 
   if (size) query += `&size=${size}`;
   if (category) query += `&category=${category}`;

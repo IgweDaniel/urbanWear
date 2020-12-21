@@ -15,10 +15,16 @@ export default createGlobalStyle`
   
   body {
       font-family: 'Catamaran', sans-serif;
-      height:100vh;
+      height:var(--vh);
       overflow:hidden;
     }
-  
+    html{
+      overflow:hidden;
+   
+    }
+  #root{
+    height:100%
+  }
   li {
       list-style:none
     }
@@ -46,7 +52,9 @@ export default createGlobalStyle`
       text-transform:inherit;
       font-size:inherit;
     }
-  
+    .button-muted{
+      user-select:none
+    }
   .button{  
       height:38px;
       display:flex;

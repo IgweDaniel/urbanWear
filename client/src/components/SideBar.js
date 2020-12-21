@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { TiTimes } from "react-icons/ti";
 import useModal from "../hooks/useModal";
 
 const SideBar = styled.div`
   height: var(--vh);
-  width: calc(var(--vw) * 0.9);
+  width: calc(var(--vw) * 0.8);
   max-width: 400px;
   background: #fff;
 
@@ -42,6 +42,10 @@ const SideBar = styled.div`
 
 export default () => {
   const display = useModal();
+
+  function closeModal() {
+    display({ type: "CLOSE" });
+  }
   return (
     <SideBar>
       <button
@@ -54,12 +58,12 @@ export default () => {
       </button>
       <div className="content">
         <ul className="links">
-          <li>
+          <li onClick={closeModal}>
             <NavLink to="/" activeClassName="link-active" exact>
               Home
             </NavLink>
           </li>
-          <li>
+          <li onClick={closeModal}>
             <NavLink
               to="/shop/all"
               isActive={(match, location) =>
@@ -70,16 +74,22 @@ export default () => {
               Shop
             </NavLink>
           </li>
-          <li>
+          <li onClick={closeModal}>
             <NavLink to="/pages" activeClassName="link-active">
               Pages
             </NavLink>
           </li>
         </ul>
         <ul className="other-links">
-          <li>Order Tracking</li>
-          <li>My Account</li>
-          <li>Return Policy</li>
+          <li onClick={closeModal}>
+            <Link to="/order-tracking">Order Tracking</Link>
+          </li>
+          <li onClick={closeModal}>
+            <Link to="/order-tracking">FAQ</Link>
+          </li>
+          <li onClick={closeModal}>
+            <Link to="/order-tracking"> Return Policy</Link>
+          </li>
         </ul>
       </div>
     </SideBar>

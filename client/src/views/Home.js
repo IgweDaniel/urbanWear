@@ -4,43 +4,37 @@ import styled from "styled-components";
 
 const slides = [
   {
-    coverImg:
-      "https://images.topman.com/i/TopMan/TM56U43ABLK_M_1.jpg?$w700$&fmt=webp&qlt=80",
+    coverImg: require("../assets/bag-cover.webp"),
     item: {
       name: "Bags & Accessories",
-      link: "",
+      link: "/shop/accessories",
       price: 49.99,
-      img:
-        "https://images.topman.com/i/TopMan/TM56U43ABLK_F_1.jpg?$w500$&fmt=webp&qlt=80",
+      img: require("../assets/bag.webp"),
     },
   },
   {
-    coverImg:
-      "https://images.topman.com/i/TopMan/TM83D95UMUL_M_1.jpg?$w700$&fmt=webp&qlt=800",
+    coverImg: require("../assets/shirts-cover.webp"),
     item: {
       name: "Shirts",
-      link: "",
+      link: "/shop/shirts",
       price: 149.0,
-      img:
-        "https://images.topman.com/i/TopMan/TM83D95UMUL_F_1.jpg?$w500$&fmt=webp&qlt=80",
+      img: require("../assets/shirts.webp"),
     },
   },
   {
-    coverImg:
-      "https://images.topman.com/i/TopMan/TM64T12URST_D_1.jpg?$w700$&fmt=webp&qlt=80",
+    coverImg: require("../assets/jackets-cover.webp"),
     item: {
       name: "Coats & Jackets",
-      link: "",
+      link: "/shop/jackets",
       price: 40.0,
-      img:
-        "https://images.topman.com/i/TopMan/TM64T12URST_F_1.jpg?$w500$&fmt=webp&qlt=80",
+      img: require("../assets/jackets.webp"),
     },
   },
   {
     coverImg: require("../assets/shoes-cover.jpg"),
     item: {
       name: "Shoes & Sneakers",
-      link: "",
+      link: "/shop/foot wear",
       price: 149.0,
       img: require("../assets/shoes.jpg"),
     },
@@ -50,10 +44,12 @@ const slides = [
 slides.reverse();
 
 const Home = styled.div`
-  --height: 100vh;
-  height: var(--height);
+  --height: 100%;
+  height: var(--vh);
+
   &:before {
     display: block;
+    background: red;
     content: "";
     height: 70px;
     background: #fff;
@@ -63,10 +59,9 @@ const Home = styled.div`
     top: 0;
   }
   .slider {
-    /* transition: transform 0.8s ease-in-out; */
   }
   section {
-    height: var(--height);
+    height: var(--vh);
   }
   section .content {
     display: flex;
@@ -123,6 +118,7 @@ const Home = styled.div`
   }
 
   @media (min-width: 1024px) {
+    /* overflow: hidden; */
     section .content {
       transition: transform 0.5s ease-in-out;
       transform: scale(0.95);
@@ -130,12 +126,12 @@ const Home = styled.div`
     section.active .content {
       transform: scale(1);
     }
-    overflow: hidden;
     &:before {
       display: none;
     }
     .slider {
-      height: 100%;
+      overflow: hidden;
+      /* height: 100%; */
       transition: transform 0.8s ease-in-out;
     }
 
@@ -201,7 +197,9 @@ export default () => {
     }
     isAnimating.current = true;
     if (containerRef.current) {
-      containerRef.current.style.transform = `translateY(-${toIdx * 100}%)`;
+      containerRef.current.style.transform = `translateY(-${
+        toIdx * window.innerHeight
+      }px)`;
     }
   }
 
@@ -258,7 +256,7 @@ export default () => {
                   <img src={slide.item.img} alt={slide.item.name} />
                   <div className="item__details">
                     <h2 className="name">{slide.item.name}</h2>
-                    <p className="price">${slide.item.price}</p>
+                    <p className="price">as low as ${slide.item.price}</p>
                     <Link to={slide.item.link} className="button-link">
                       view Category
                     </Link>

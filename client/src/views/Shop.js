@@ -1,12 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Page from "./Page";
 import { ReactComponent as HangerIcon } from "../assets/svg/hanger.svg";
 import { ReactComponent as FilterIcon } from "../assets/svg/filter.svg";
-import { FiChevronDown } from "react-icons/fi";
 
 import { Link, useHistory } from "react-router-dom";
-import { Product, ProductFilter, Spinner, NotContent } from "../components";
+import {
+  Product,
+  ProductFilter,
+  Spinner,
+  NotContent,
+  Dropdown,
+} from "../components";
 import { useFilter, useUpdateEffect, useOnScreen } from "../hooks";
 
 import * as Api from "../api";
@@ -64,11 +69,10 @@ const Shop = styled.div`
   .meta .filter,
   .meta .sort {
     flex: 1;
-
     display: flex;
     font-weight: bold;
-    text-transform: uppercase;
     font-size: 0.95rem;
+    text-transform: uppercase;
   }
   .meta .filter {
     justify-content: flex-start;
@@ -88,8 +92,7 @@ const Shop = styled.div`
     justify-content: flex-end;
     align-items: center;
   }
-  .meta .sort span {
-  }
+
   .content {
     width: 100%;
     display: flex;
@@ -140,9 +143,24 @@ const ProductList = styled.div`
 `;
 
 const ICON_SIZE = 75;
+const options = [
+  {
+    label: "SORT BY LASTEST",
+    value: "date",
+  },
+  {
+    label: "SORT BY PRICE: HIGH TO LOW",
+    value: "price-desc",
+  },
+  {
+    label: "SORT BY PRICE: LOW TO HIGH",
+    value: "price",
+  },
+];
 /**
  * HANDLE SCROLL RESTORATION FOR PRODUCT PAGE
  */
+
 export default () => {
   const categories = useSelector((state) => state.global.categories);
 
@@ -151,6 +169,7 @@ export default () => {
   const display = useModal();
   const loader = React.useRef(null);
   const isOnScreen = useOnScreen(loader, "100px");
+  const [selected, setSelected] = useState(options[0]);
 
   const fetchProducts = async ({ pageParam = 0 }) => {
     const { data, error } = await Api.fetchProducts(
@@ -159,6 +178,7 @@ export default () => {
         category: category === "all" ? null : category,
         min_price,
         max_price,
+        order_by: selected.value,
       },
       pageParam
     );
@@ -203,7 +223,7 @@ export default () => {
     }
 
     // eslint-disable-next-line
-  }, [category, size, min_price, max_price]);
+  }, [category, size, min_price, max_price, selected]);
 
   useUpdateEffect(() => {
     if (isOnScreen && hasNextPage) {
@@ -279,10 +299,11 @@ export default () => {
           </button>
           <div className="results-info">SHOWING 1–20 OF 96 RESULTS</div>
           <div className="sort">
-            <span>SORT BY LASTEST</span>
-            <span className="icon">
-              <FiChevronDown size={20} />
-            </span>
+            <Dropdown
+              options={options}
+              value={selected}
+              onSelect={(option) => setSelected(option)}
+            />
           </div>
         </div>
 

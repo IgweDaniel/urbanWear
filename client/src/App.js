@@ -22,7 +22,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 
 const Body = styled.div`
   overflow-y: auto;
-  height: 100vh;
+  height: 100%;
   position: relative;
   width: 100%;
 `;
