@@ -41,7 +41,7 @@ const slides = [
   },
 ];
 
-slides.reverse();
+// slides.reverse();
 
 const Home = styled.div`
   --height: 100%;

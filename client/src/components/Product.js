@@ -140,8 +140,9 @@ export default (props) => {
     slug,
   } = props;
 
+  console.log(images);
   const product_images =
-    images.length < 2 ? images.push(images[0]) : images.slice(0, 2);
+    images.length < 2 ? [images[0], images[0]] : images.slice(0, 2);
 
   const productlink = `/product/${slug}`;
 
