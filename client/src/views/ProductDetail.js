@@ -221,9 +221,15 @@ const ViewBox = styled.div`
   width: calc(var(--vw) * 0.9);
   max-width: 500px;
   position: relative;
+  img {
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+  }
   .close {
     position: absolute;
-    background: #fff;
+    background: #000;
     display: block;
     --size: 40px;
     height: var(--size);
@@ -231,9 +237,10 @@ const ViewBox = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    top: 10px;
-    right: 10px;
+    top: 0px;
+    right: 0px;
     z-index: 100;
+    color: #fff;
   }
 `;
 
@@ -326,22 +333,10 @@ export default () => {
           <button className="close" onClick={toggleViewBox}>
             <TiTimes size={20} />
           </button>
-          <ProductCarousel
-            renderThumbs={false}
-            initialIndex={viewBox.startIndex}
-          >
-            {product.images.map((image, i) => (
-              <Image
-                thumb={image}
-                key={i}
-                onMouseMove={zoom}
-                onTouchStart={zoom}
-                url={image.replace("700", "1300")}
-              >
-                <img src={image} key={i} alt={`${product.name}-${i}`} />
-              </Image>
-            ))}
-          </ProductCarousel>
+          <img
+            src={product.images[viewBox.startIndex - 1]}
+            alt={`${product.name}`}
+          />
         </ViewBox>
       </Modal>
       <Page>

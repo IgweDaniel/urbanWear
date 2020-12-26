@@ -68,13 +68,14 @@ const Shop = styled.div`
 
   .meta .filter,
   .meta .sort {
-    flex: 1;
+    /* flex: 1; */
     display: flex;
     font-weight: bold;
     font-size: 0.95rem;
     text-transform: uppercase;
   }
   .meta .filter {
+    width: 100px;
     justify-content: flex-start;
   }
   .meta .filter .icon {
@@ -110,6 +111,10 @@ const Shop = styled.div`
     font-weight: bold;
   }
   @media (min-width: 768px) {
+    .meta .filter,
+    .meta .sort {
+      flex: 1;
+    }
     .meta .filter {
       width: 100px;
     }
@@ -149,11 +154,11 @@ const options = [
     value: "date",
   },
   {
-    label: "SORT BY PRICE: HIGH TO LOW",
+    label: "SORT PRICE: HIGH TO LOW",
     value: "price-desc",
   },
   {
-    label: "SORT BY PRICE: LOW TO HIGH",
+    label: "SORT PRICE: LOW TO HIGH",
     value: "price",
   },
 ];
@@ -164,7 +169,7 @@ const options = [
 export default () => {
   const categories = useSelector((state) => state.global.categories);
 
-  const { size, category, min_price, max_price } = useFilter();
+  const { size, category, min_price, max_price, q } = useFilter();
   const history = useHistory();
   const display = useModal();
   const loader = React.useRef(null);
@@ -179,6 +184,7 @@ export default () => {
         min_price,
         max_price,
         order_by: selected.value,
+        q,
       },
       pageParam
     );
@@ -199,7 +205,7 @@ export default () => {
     isLoading,
     refetch,
   } = useInfiniteQuery(
-    `products-${category}-${size}-${min_price}-${max_price}`,
+    `products-${category}-${size}-${min_price}-${max_price}-${q}`,
     fetchProducts,
     {
       getNextPageParam: (lastPage, pages) => {
@@ -223,7 +229,7 @@ export default () => {
     }
 
     // eslint-disable-next-line
-  }, [category, size, min_price, max_price, selected]);
+  }, [category, size, min_price, max_price, selected, q]);
 
   useUpdateEffect(() => {
     if (isOnScreen && hasNextPage) {
@@ -231,6 +237,8 @@ export default () => {
     }
   }, [isOnScreen]);
 
+  let productCount,
+    totalProductCount = null;
   let content = (
     <NotContent>
       <Spinner top={60} />
@@ -239,7 +247,8 @@ export default () => {
 
   if (status === "success") {
     let products = data.pages.map((page) => page.results).flat();
-
+    productCount = products.length;
+    totalProductCount = data.pages[0].count;
     content =
       products.length > 0 ? (
         <ProductList>
@@ -264,7 +273,9 @@ export default () => {
   return (
     <Page>
       <Banner>
-        {category === "all" ? (
+        {q ? (
+          <h1>Search results: ''{q}''</h1>
+        ) : category === "all" ? (
           <>
             <HangerIcon height={ICON_SIZE} width={ICON_SIZE} />
             <ul className="category-links">
@@ -297,7 +308,13 @@ export default () => {
             </span>
             <span className="icon-label">filter</span>
           </button>
-          <div className="results-info">SHOWING 1–20 OF 96 RESULTS</div>
+          {totalProductCount > 0 && totalProductCount > 0 ? (
+            <div className="results-info">
+              SHOWING 1–{productCount} OF {totalProductCount} RESULTS
+            </div>
+          ) : (
+            <div className="results-info">SHOWING 0 RESULTS</div>
+          )}
           <div className="sort">
             <Dropdown
               options={options}

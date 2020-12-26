@@ -7,11 +7,21 @@ const Dropdown = styled.div`
   cursor: pointer;
   display: flex;
   justify-content: flex-end;
+  /* width: 100%; */
+  width: fit-content;
+  .button-muted span {
+    display: flex;
+    height: 100%;
+    /* background: red; */
+    align-items: center;
+  }
 
-  width: 100%;
   .selected {
     display: flex;
     align-items: flex-start;
+  }
+  .selected .label {
+    text-align: center;
   }
   .options {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -21,6 +31,7 @@ const Dropdown = styled.div`
     position: absolute;
     z-index: 400;
     background: #fff;
+    width: 200px;
   }
   .option.active {
     background: #eee;
@@ -35,7 +46,10 @@ const Dropdown = styled.div`
   .icon {
     align-items: flex-start;
   }
-  span {
+  @media (min-width: 768px) {
+    .options {
+      width: 250px;
+    }
   }
 `;
 
@@ -70,7 +84,7 @@ export default ({ options, value, onSelect }) => {
         className="button-muted value selected"
         onClick={() => setShowListOptions(!showListOptions)}
       >
-        <span>{value.label}</span>
+        <span className="label">{value.label}</span>
         <span className="icon">
           <FiChevronDown size={20} />
         </span>

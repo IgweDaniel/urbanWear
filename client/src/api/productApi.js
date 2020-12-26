@@ -11,7 +11,7 @@ export async function fetchProductsCategories() {
 }
 
 export async function fetchProducts(filter, page) {
-  const { size, category, min_price, max_price, order_by } = filter;
+  const { size, category, min_price, max_price, order_by, q } = filter;
   const resultLimit = PRODUCT_LIMIT;
   let query = `?offset=${
     page * resultLimit
@@ -19,7 +19,7 @@ export async function fetchProducts(filter, page) {
 
   if (size) query += `&size=${size}`;
   if (category) query += `&category=${category}`;
-
+  if (q) query += `&q=${q}`;
   try {
     const { data } = await axios.get("/products/" + query);
     return { error: null, data };

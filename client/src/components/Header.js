@@ -7,6 +7,7 @@ import { FiSearch } from "react-icons/fi";
 import { GoThreeBars } from "react-icons/go";
 import { useSelector } from "react-redux";
 import useModal from "../hooks/useModal";
+import SearchBox from "./SearchBox";
 
 const Header = styled.header`
   position: fixed;
@@ -126,6 +127,14 @@ export default () => {
       type: action,
     });
   }
+
+  function showSearch() {
+    display({
+      type: "OPEN",
+      component: <SearchBox />,
+      position: "top",
+    });
+  }
   return (
     <>
       <Header>
@@ -171,7 +180,7 @@ export default () => {
 
             <ul className="actions">
               <li>
-                <button>
+                <button onClick={showSearch}>
                   <FiSearch size={ICON_SIZE} />
                 </button>
               </li>

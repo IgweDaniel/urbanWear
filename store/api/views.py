@@ -68,7 +68,10 @@ class ProductList(generics.ListAPIView):
         size = self.request.query_params.get('size', None)
         min_price = self.request.query_params.get('min_price', None)
         max_price = self.request.query_params.get('max_price', None)
-
+        query = self.request.query_params.get('q', None)
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query) | Q(category__name__icontains=query))
         if order_by == "price-desc":
             queryset = queryset.order_by("-discount_price")
         elif order_by == "price":

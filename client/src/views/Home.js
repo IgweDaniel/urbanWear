@@ -8,7 +8,7 @@ const slides = [
     item: {
       name: "Bags & Accessories",
       link: "/shop/accessories",
-      price: 49.99,
+
       img: require("../assets/bag.webp"),
     },
   },
@@ -17,7 +17,7 @@ const slides = [
     item: {
       name: "Shirts",
       link: "/shop/shirts",
-      price: 149.0,
+
       img: require("../assets/shirts.webp"),
     },
   },
@@ -26,7 +26,7 @@ const slides = [
     item: {
       name: "Coats & Jackets",
       link: "/shop/jackets",
-      price: 40.0,
+
       img: require("../assets/jackets.webp"),
     },
   },
@@ -35,7 +35,7 @@ const slides = [
     item: {
       name: "Shoes & Sneakers",
       link: "/shop/foot wear",
-      price: 149.0,
+
       img: require("../assets/shoes.jpg"),
     },
   },
@@ -95,15 +95,13 @@ const Home = styled.div`
     transition: transform 0.5s ease-in-out;
   }
 
-  section .content .item .contentitem__details {
+  section .content .item .content .item__details {
     position: absolute;
   }
   section .content .item .name {
     font-size: 2rem;
   }
-  section .content .item .price {
-    font-size: 1.5rem;
-  }
+
   section .content .item img {
     height: 100%;
     width: 100%;
@@ -218,10 +216,6 @@ export default () => {
 
   useEffect(() => {
     slideElements.current = containerRef.current?.querySelectorAll("section");
-    // window.addEventListener("mousewheel", handleMouseWheel, {
-    //   passive: true,
-    //   capture: true,
-    // });
     window.addEventListener("mousewheel", handleMouseWheel);
     window.addEventListener("resize", handleResize);
     return () => {
@@ -256,7 +250,6 @@ export default () => {
                   <img src={slide.item.img} alt={slide.item.name} />
                   <div className="item__details">
                     <h2 className="name">{slide.item.name}</h2>
-                    <p className="price">as low as ${slide.item.price}</p>
                     <Link to={slide.item.link} className="button-link">
                       view Category
                     </Link>

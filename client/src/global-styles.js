@@ -117,7 +117,7 @@ export default createGlobalStyle`
     position: relative;
   }
 
-  input::placeholder {
+  .input-wrapper input::placeholder {
     font-family: "Catamaran", sans-serif;
     text-transform: capitalize;
   }

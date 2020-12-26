@@ -28,9 +28,6 @@ const Product = styled.div`
     transform-style: preserve-3d;
   }
 
-  .product__images:hover {
-    transform: rotateY(-180deg);
-  }
   .product__images .product__image {
     position: absolute;
     top: 0;
@@ -116,6 +113,9 @@ const Product = styled.div`
     }
   }
   @media (min-width: 969px) {
+    .product__images:hover {
+      transform: rotateY(-180deg);
+    }
     .product__images {
       height: 250px;
     }
@@ -140,7 +140,6 @@ export default (props) => {
     slug,
   } = props;
 
-  console.log(images);
   const product_images =
     images.length < 2 ? [images[0], images[0]] : images.slice(0, 2);
 

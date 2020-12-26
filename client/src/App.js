@@ -84,6 +84,7 @@ function App() {
             ) : (
               <Body onScroll={updateNavBar}>
                 <Header />
+
                 <Switch>
                   {routes.map(({ path, component, exact, authRequired }) =>
                     authRequired ? (

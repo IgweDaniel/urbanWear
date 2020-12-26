@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import { Range } from "rc-slider";
@@ -29,6 +29,9 @@ const ProductFilter = styled.div`
   .categories ul {
     text-transform: uppercase;
     font-variant: small-caps;
+  }
+  .categories ul li {
+    cursor: pointer;
   }
   .price__inner,
   .sizes ul,
@@ -86,6 +89,7 @@ const ProductFilter = styled.div`
 `;
 
 export default () => {
+  const history = useHistory();
   const categories = useSelector((state) => state.global.categories);
   const {
     updateFilterSize,
@@ -94,6 +98,8 @@ export default () => {
     size: activeSize,
     min_price,
     max_price,
+    q,
+    updateCategory,
   } = useFilter();
 
   const [price, setPrice] = useState([min_price, max_price]);
@@ -102,21 +108,32 @@ export default () => {
     setPrice([min_price, max_price]);
   }, [min_price, max_price]);
 
+  function categoryNavigaton(category) {
+    if (q) {
+      updateCategory(category);
+    } else {
+      history.push({
+        pathname: `/shop/${category}`,
+      });
+    }
+  }
+
   return (
     <ProductFilter>
       <div className="content">
         <div className="categories">
           <h3 className="subtext">categories</h3>
           <ul>
-            <li className="category">
-              <Link
+            <li className="category" onClick={() => categoryNavigaton("all")}>
+              {/* <Link
                 to={`/shop/all`}
                 className={`category ${
                   activeCategory === "all" ? "active" : ""
                 }`}
               >
                 all
-              </Link>
+              </Link> */}
+              all
             </li>
             {categories.map((category) => (
               <li
@@ -124,8 +141,10 @@ export default () => {
                 className={`category ${
                   activeCategory === category.name ? "active" : ""
                 }`}
+                onClick={() => categoryNavigaton(category.name)}
               >
-                <Link to={`/shop/${category.name}`}>{category.name}</Link>
+                {category.name}
+                {/* <Link to={`/shop/${category.name}`}>{category.name}</Link> */}
               </li>
             ))}
           </ul>

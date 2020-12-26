@@ -8,7 +8,17 @@ const Modal = styled.div`
   height: 100%;
   width: 100%;
   display: none;
-  align-items: center;
+  /* align-items: center; */
+  align-items: ${({ position }) => {
+    switch (position) {
+      case "top":
+        return "flex-start";
+      case "bottom":
+        return "flex-end";
+      default:
+        return "center";
+    }
+  }};
   justify-content: ${({ position }) => {
     switch (position) {
       case "left":
@@ -47,8 +57,9 @@ export default ({ isOpen, close, position = "center", children }) => {
     coords.current = [{ x: -200 }, { x: 0 }];
   } else if (position === "right") {
     coords.current = [{ x: 200 }, { x: 0 }];
+  } else if (position === "top") {
+    coords.current = [{ y: -200 }, { y: 0 }];
   }
-
   useEffect(() => {
     tl.current
       .to(modal.current, { display: "flex", duration: 0 })
