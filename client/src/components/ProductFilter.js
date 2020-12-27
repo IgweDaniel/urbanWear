@@ -62,6 +62,7 @@ const ProductFilter = styled.div`
     /* border: 1px solid #000; */
     background: #000;
     color: #fff;
+    user-select: none;
   }
   .sizes .size button {
     display: flex;
@@ -124,7 +125,10 @@ export default () => {
         <div className="categories">
           <h3 className="subtext">categories</h3>
           <ul>
-            <li className="category" onClick={() => categoryNavigaton("all")}>
+            <li
+              className={`category ${activeCategory === "all" ? "active" : ""}`}
+              onClick={() => categoryNavigaton("all")}
+            >
               {/* <Link
                 to={`/shop/all`}
                 className={`category ${
