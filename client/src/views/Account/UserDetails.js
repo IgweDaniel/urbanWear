@@ -16,7 +16,7 @@ const UserDetails = styled.div`
   .update-password,
   .update-email {
     margin: 20px 0;
-    width: 160px;
+    width: fit-content;
   }
   .password-form {
     width: 100%;
