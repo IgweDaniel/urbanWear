@@ -19,22 +19,15 @@ const useFilter = () => {
     min_price = query.get("min_price") || MIN_PRICE,
     max_price = query.get("max_price") || MAX_PRICE,
     q = query.get("q");
-  let searchParams = {};
+  let searchParams = { q, size, min_price, max_price };
 
-  const updateFilterSize = (size) => {
-    searchParams = {
-      size,
-      min_price,
-      max_price,
-    };
+  const updateFilterSize = (newSize) => {
+    searchParams["size"] = newSize;
     updateLocation(category, searchParams);
   };
   const updateFilterPrice = (price) => {
-    searchParams = {
-      size,
-      min_price: price[0],
-      max_price: price[1],
-    };
+    searchParams["min_price"] = price[0];
+    searchParams["max_price"] = price[1];
     updateLocation(category, searchParams);
   };
 
@@ -46,18 +39,16 @@ const useFilter = () => {
       delete params["min_price"];
       delete params["max_price"];
     }
+    if (q == null) {
+      delete params["q"];
+    }
     history.push({
       pathname: `/shop/${category}`,
-      search: "?" + new URLSearchParams({ q, ...params }).toString(),
+      search: "?" + new URLSearchParams({ ...params }).toString(),
     });
   }
 
   function updateCategory(category) {
-    searchParams = {
-      size,
-      min_price,
-      max_price,
-    };
     updateLocation(category, searchParams);
   }
 

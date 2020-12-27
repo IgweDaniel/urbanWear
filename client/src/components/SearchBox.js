@@ -36,7 +36,7 @@ const SearchBox = styled.div`
     /* padding: 10px 0; */
   }
   .search-form input {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     padding: 0;
     border: none;
     outline: none;
@@ -59,7 +59,7 @@ const SearchBox = styled.div`
   @media (min-width: 768px) {
     padding: 50px 40px;
     .search-form input {
-      font-size: 1.7rem;
+      font-size: 1.5rem;
     }
   }
 `;
