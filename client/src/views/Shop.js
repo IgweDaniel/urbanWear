@@ -32,6 +32,9 @@ const Banner = styled.div`
     text-transform: capitalize;
     font-size: 2.7rem;
   }
+  .search-query {
+    text-align: center;
+  }
 
   .category-links {
     margin-top: 10px;
@@ -286,7 +289,7 @@ export default () => {
     <Page>
       <Banner>
         {q ? (
-          <h1>Search results: ''{q}''</h1>
+          <h1 className="search-query">Search results: ''{q}''</h1>
         ) : category === "all" ? (
           <>
             <HangerIcon height={ICON_SIZE} width={ICON_SIZE} />

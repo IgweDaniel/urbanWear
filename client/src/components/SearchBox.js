@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { TiTimes } from "react-icons/ti";
 
 import { RiSearchFill } from "react-icons/ri";
-import { useModal } from "../hooks";
+import { useFilter, useModal } from "../hooks";
 
 const SearchBox = styled.div`
   width: var(--vw);
@@ -50,7 +50,7 @@ const SearchBox = styled.div`
   }
   .search-form input,
   .search-form .icon {
-    font-weight: bold;
+    font-weight: 600;
     height: 40px;
   }
   .search-form .icon {
@@ -65,7 +65,8 @@ const SearchBox = styled.div`
 `;
 
 export default () => {
-  const [term, setTerm] = useState("");
+  const { q = "" } = useFilter();
+  const [term, setTerm] = useState(q);
   const history = useHistory();
   const display = useModal();
 
@@ -76,11 +77,13 @@ export default () => {
   }
 
   function search() {
-    history.push({
-      pathname: `/shop/all`,
-      search: `?q=${term}`,
-    });
-    closeSearch();
+    if (term.trim() !== "") {
+      history.push({
+        pathname: `/shop/all`,
+        search: `?q=${term}`,
+      });
+      closeSearch();
+    }
   }
   return (
     <SearchBox>
@@ -98,6 +101,7 @@ export default () => {
         }}
       >
         <input
+          autoFocus={true}
           placeholder="search products..."
           type="text"
           value={term}
