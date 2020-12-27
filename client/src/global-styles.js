@@ -115,6 +115,7 @@ export default createGlobalStyle`
     border: 1px solid #ccc;
     border-radius: none;
     position: relative;
+    box-shadow:none;
   }
 
   .input-wrapper input::placeholder {

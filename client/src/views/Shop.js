@@ -12,7 +12,7 @@ import {
   NotContent,
   Dropdown,
 } from "../components";
-import { useFilter, useUpdateEffect, useOnScreen } from "../hooks";
+import { useFilter, useOnScreen } from "../hooks";
 
 import * as Api from "../api";
 import { useSelector } from "react-redux";
@@ -92,12 +92,17 @@ const Shop = styled.div`
     display: flex;
     justify-content: flex-end;
     align-items: center;
+
+    white-space: nowrap;
   }
 
   .content {
     width: 100%;
     display: flex;
     justify-content: center;
+  }
+  .load-more {
+    margin: 0 auto;
   }
   .product-list-end {
     display: flex;
@@ -110,6 +115,7 @@ const Shop = styled.div`
     font-variant: small-caps;
     font-weight: bold;
   }
+
   @media (min-width: 768px) {
     .meta .filter,
     .meta .sort {
@@ -231,10 +237,16 @@ export default () => {
     // eslint-disable-next-line
   }, [category, size, min_price, max_price, selected, q]);
 
-  useUpdateEffect(() => {
-    if (isOnScreen && hasNextPage) {
+  function LoadMore() {
+    if (hasNextPage) {
       fetchNextPage();
     }
+  }
+  useEffect(() => {
+    if (isOnScreen) {
+      LoadMore();
+    }
+    // eslint-disable-next-line
   }, [isOnScreen]);
 
   let productCount,
@@ -258,7 +270,7 @@ export default () => {
         </ProductList>
       ) : (
         <NotContent>
-          <h3>No Products Mathching this filters</h3>
+          <h3> No products were found matching your selection</h3>
         </NotContent>
       );
   }
@@ -325,12 +337,20 @@ export default () => {
         </div>
 
         <div className="content">{content}</div>
-
-        <div className="loader" ref={loader}></div>
+        {"IntersectionObserver" in window ? (
+          <div className="loader" ref={loader}></div>
+        ) : (
+          !isFetchingNextPage &&
+          hasNextPage && (
+            <button className="button load-more" onClick={LoadMore}>
+              load more
+            </button>
+          )
+        )}
         {!isLoading && !isError && (
-          <div className="product-list-end" ref={loader}>
+          <div className="product-list-end">
             {isFetchingNextPage && <Spinner />}
-            {/* {isFetchingNextPage && <h3>fetching more!</h3>} */}
+
             {!hasNextPage && data.pages[0].count !== 0 && (
               <p className="list-end">No more Products</p>
             )}

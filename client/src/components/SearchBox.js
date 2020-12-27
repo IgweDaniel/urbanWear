@@ -3,13 +3,14 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import { TiTimes } from "react-icons/ti";
-import { FiSearch } from "react-icons/fi";
+
+import { RiSearchFill } from "react-icons/ri";
 import { useModal } from "../hooks";
 
 const SearchBox = styled.div`
   width: var(--vw);
   background: #fff;
-  padding: 40px;
+  padding: 35px 20px;
   /* display: none; */
   .meta {
     display: flex;
@@ -31,20 +32,35 @@ const SearchBox = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 10px;
-    padding: 10px 0;
-    border-bottom: 2px solid #ccc;
+    margin-top: 20px;
+    /* padding: 10px 0; */
   }
   .search-form input {
+    font-size: 1.5rem;
     padding: 0;
     border: none;
     outline: none;
+    border-bottom: 2px solid #eee;
   }
-
+  input::placeholder {
+    color: #ccc;
+  }
+  .button {
+    /* background: #888; */
+  }
   .search-form input,
   .search-form .icon {
-    font-size: 2rem;
     font-weight: bold;
+    height: 40px;
+  }
+  .search-form .icon {
+    font-size: 1.1rem;
+  }
+  @media (min-width: 768px) {
+    padding: 50px 40px;
+    .search-form input {
+      font-size: 1.7rem;
+    }
   }
 `;
 
@@ -74,15 +90,22 @@ export default () => {
           <TiTimes size={20} />
         </button>
       </div>
-      <form className="search-form">
+      <form
+        className="search-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          search();
+        }}
+      >
         <input
+          placeholder="search products..."
           type="text"
           value={term}
           onChange={(e) => setTerm(e.target.value)}
         />
 
-        <button className="icon" onClick={search}>
-          <FiSearch color="#888" />
+        <button className="button icon">
+          <RiSearchFill color="#fff" />
         </button>
       </form>
     </SearchBox>
