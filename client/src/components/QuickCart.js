@@ -121,7 +121,7 @@ export default () => {
                 className="button"
                 onClick={() => {
                   closeQuickCart();
-                  // history.push("/shop");
+                  history.push("/shop/all");
                 }}
               >
                 Go shopping

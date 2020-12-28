@@ -106,8 +106,8 @@ export default ({ id, product, quantity, size }) => {
   const [editMode, setEditMode] = useState(false);
   const [itemQty, setItemQty] = useState(quantity);
   const [itemSize, setItemSize] = useState(size);
+  const productlink = `/product/${product.slug}`;
 
-  const productlink = `/product/${product.name.replaceAll(" ", "-")}`;
   async function handleItemDelete(e) {
     const { data, error } = await Api.deleteCartItem(id);
     if (error) {
@@ -150,7 +150,6 @@ export default ({ id, product, quantity, size }) => {
               </button>
               <button className="delete" onClick={handleItemDelete}>
                 <MdDelete size={ICON_SIZE} />
-                {/* <BinIcon height={ICON_SIZE} width={ICON_SIZE} /> */}
               </button>
             </div>
           )}
