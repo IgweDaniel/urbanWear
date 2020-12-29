@@ -163,11 +163,11 @@ const options = [
     value: "date",
   },
   {
-    label: "SORT PRICE: HIGH TO LOW",
+    label: "SORT BY PRICE: HIGH-LOW",
     value: "price-desc",
   },
   {
-    label: "SORT PRICE: LOW TO HIGH",
+    label: "SORT BY PRICE: LOW-HIGH",
     value: "price",
   },
 ];
@@ -214,7 +214,7 @@ export default () => {
     isLoading,
     refetch,
   } = useInfiniteQuery(
-    `products-${category}-${size}-${min_price}-${max_price}-${q}`,
+    `products-${category}-${size}-${min_price}-${max_price}-${q}-${selected.value}`,
     fetchProducts,
     {
       getNextPageParam: (lastPage, pages) => {

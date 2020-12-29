@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import * as Api from "../api";
+import { createNotification } from "./global";
 export const fetchUserCart = createAsyncThunk(
   "cart/fetchUserCart",
   async (_, { rejectWithValue }) => {
@@ -62,14 +63,27 @@ const cartSlice = createSlice({
   },
 });
 
-export const addCartItem = (size, productId, quantity = 1) => async (
+export const addCartItem = (size, productId, quantity = 1, name) => async (
   dispatch
 ) => {
   const { data, error } = await Api.addToCart(size, productId, quantity);
   if (error) {
     console.log(error);
+    dispatch(
+      createNotification({
+        type: "error",
+        message: `Error updating cart`,
+      })
+    );
+    return;
   }
   dispatch(updateCart(data));
+  dispatch(
+    createNotification({
+      type: "success",
+      message: `Product "${name}" added to cart`,
+    })
+  );
 };
 
 export const { addItem, removeItem, clearCart, updateCart } = cartSlice.actions;

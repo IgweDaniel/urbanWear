@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import * as Api from "../api";
 import { updateCart } from "../ducks/cart";
 import { useDispatch } from "react-redux";
-// import Select from "react-dropdown-select";
+import { Spinner } from ".";
 
 const ItemInfo = styled.div`
   min-height: 150px;
@@ -75,7 +75,6 @@ const UpdateItem = styled.div`
     justify-content: space-between;
   }
   .actions button {
-    display: block;
     width: 40%;
     height: 35px;
     text-transform: uppercase;
@@ -107,20 +106,29 @@ export default ({ id, product, quantity, size }) => {
   const [itemQty, setItemQty] = useState(quantity);
   const [itemSize, setItemSize] = useState(size);
   const productlink = `/product/${product.slug}`;
+  const [updateStatus, setUpdateStatus] = useState("done");
+  const [deleteStatus, setDeleteStatus] = useState("done");
 
   async function handleItemDelete(e) {
+    setDeleteStatus("loading");
     const { data, error } = await Api.deleteCartItem(id);
+    setDeleteStatus("done");
     if (error) {
       console.log(error.response.data);
+      return;
     }
     dispatch(updateCart(data));
   }
   async function handleItemUpdate() {
+    setUpdateStatus("loading");
     const { data, error } = await Api.updateCartItem(id, itemSize, itemQty);
+    setUpdateStatus("done");
     if (error) {
       console.log(error.response.data);
+      return;
     }
     dispatch(updateCart(data));
+
     setEditMode(false);
   }
 
@@ -148,9 +156,13 @@ export default ({ id, product, quantity, size }) => {
               <button className="edit" onClick={() => setEditMode(true)}>
                 <MdEdit size={ICON_SIZE} />
               </button>
-              <button className="delete" onClick={handleItemDelete}>
-                <MdDelete size={ICON_SIZE} />
-              </button>
+              {deleteStatus === "loading" ? (
+                <Spinner variant="action" size={18} />
+              ) : (
+                <button className="delete" onClick={handleItemDelete}>
+                  <MdDelete size={ICON_SIZE} />
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -189,7 +201,13 @@ export default ({ id, product, quantity, size }) => {
             <button className="cancel" onClick={() => setEditMode(false)}>
               cancel
             </button>
-            <button className="save" onClick={handleItemUpdate}>
+            <button
+              className={`save button ${
+                updateStatus === "loading" ? "loading" : ""
+              }`}
+              onClick={handleItemUpdate}
+              disabled={updateStatus === "loading"}
+            >
               save
             </button>
           </div>

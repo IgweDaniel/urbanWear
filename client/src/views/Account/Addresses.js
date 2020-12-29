@@ -4,6 +4,7 @@ import { Formik } from "formik";
 import * as Api from "../../api";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../ducks/auth";
+import { createNotification } from "../../ducks/global";
 
 const Addresses = styled.div`
   display: flex;
@@ -69,8 +70,20 @@ export default () => {
     const { data, error } = await Api.updateAddress(values);
     if (error) {
       console.log(error);
+      dispatch(
+        createNotification({
+          type: "error",
+          message: `Error Updating Address`,
+        })
+      );
     }
     dispatch(setUser(data));
+    dispatch(
+      createNotification({
+        type: "success",
+        message: `Address updated`,
+      })
+    );
   }
 
   async function handleValidation(values) {

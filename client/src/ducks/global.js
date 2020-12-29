@@ -16,8 +16,25 @@ const globalSlice = createSlice({
   name: "global",
   initialState: {
     categories: [],
+    notifications: [],
   },
-  reducers: {},
+  reducers: {
+    createNotification(state, { payload }) {
+      const id = `${new Date()} ${state.notifications.length + 1}`;
+      state.notifications.unshift({ ...payload, id });
+    },
+    cleanNotification(state) {
+      if (state.notifications.length > 0) {
+        state.notifications.pop();
+      }
+    },
+
+    deleteNotification(state, { payload }) {
+      state.notifications = state.notifications.filter(
+        (notification) => notification.id !== payload.id
+      );
+    },
+  },
   extraReducers: {
     [fetchCategories.fulfilled]: (state, { payload }) => {
       if (!payload) return;
@@ -26,6 +43,10 @@ const globalSlice = createSlice({
   },
 });
 
-// export const {  } = globalSlice.actions;
+export const {
+  createNotification,
+  deleteNotification,
+  cleanNotification,
+} = globalSlice.actions;
 
 export default globalSlice.reducer;

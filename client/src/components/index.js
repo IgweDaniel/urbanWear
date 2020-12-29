@@ -17,10 +17,11 @@ import ModalProvider from "./ModalProvider";
 import EmailUpdate from "./EmailUpdate";
 import CartItem from "./CartItem";
 import Dropdown from "./Dropdown";
-
+import Notifications from "./Notifications";
 import Tabs from "./Tabs";
+
 export {
-  //  To remove up above
+  Notifications,
   ProductFilter,
   Modal,
   Dropdown,

@@ -14,8 +14,9 @@ import {
   Header,
   PrivateRoute,
   ModalProvider,
-  Spinner,
-  NotContent,
+  // Spinner,
+  // NotContent,
+  Notifications,
 } from "./components";
 import { useUpdateEffect } from "./hooks";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -25,6 +26,20 @@ const Body = styled.div`
   height: 100%;
   position: relative;
   width: 100%;
+`;
+
+const AppLoading = styled.div`
+  height: var(--vh);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-variant: small-caps;
+  text-align: center;
+  img {
+    height: 60px;
+    width: 60px;
+  }
 `;
 
 const queryClient = new QueryClient();
@@ -78,11 +93,16 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <ModalProvider>
             {status === "loading" ? (
-              <NotContent>
-                <Spinner />
-              </NotContent>
+              <AppLoading>
+                {/* <Spinner /> */}
+                <div>
+                  <img src={require("./assets/logo.webp")} alt="logo" />
+                  <h4>urban wear</h4>
+                </div>
+              </AppLoading>
             ) : (
               <Body onScroll={updateNavBar}>
+                <Notifications />
                 <Header />
 
                 <Switch>

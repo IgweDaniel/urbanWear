@@ -292,11 +292,13 @@ export default () => {
       return;
     }
     setButtonStatus("loading");
-    dispatch(addCartItem(chosenSize, product.id, qty)).then(() => {
-      setButtonStatus("done");
-      setQty(1);
-      setChosenSize(null);
-    });
+    dispatch(addCartItem(chosenSize, product.id, qty, product.name)).then(
+      () => {
+        setButtonStatus("done");
+        setQty(1);
+        setChosenSize(null);
+      }
+    );
   }
 
   function zoom(e) {

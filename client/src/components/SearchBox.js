@@ -18,7 +18,7 @@ const SearchBox = styled.div`
     /* justify-content: center; */
     text-transform: uppercase;
     font-variant: small-caps;
-    color: #888;
+    /* color: #888; */
   }
   .meta h3,
   .meta .close {
@@ -32,7 +32,7 @@ const SearchBox = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 15px;
     /* padding: 10px 0; */
   }
   .search-form input {
@@ -40,17 +40,18 @@ const SearchBox = styled.div`
     padding: 0;
     border: none;
     outline: none;
-    border-bottom: 2px solid #eee;
+    /* border-bottom: 2px solid #eee; */
+    border-bottom: 1px solid #888;
   }
   input::placeholder {
-    color: #ccc;
+    /* color: #ccc; */
   }
   .button {
     /* background: #888; */
   }
   .search-form input,
   .search-form .icon {
-    font-weight: 600;
+    /* font-weight: 600; */
     height: 40px;
   }
   .search-form .icon {
@@ -65,8 +66,9 @@ const SearchBox = styled.div`
 `;
 
 export default () => {
-  const { q = "" } = useFilter();
-  const [term, setTerm] = useState(q);
+  const { q } = useFilter();
+
+  const [term, setTerm] = useState(q || "");
   const history = useHistory();
   const display = useModal();
 

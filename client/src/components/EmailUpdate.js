@@ -3,6 +3,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Api from "../api";
 import { setUserData } from "../ducks/auth";
+import { createNotification } from "../ducks/global";
 
 const EmailUpdate = () => {
   const user = useSelector((state) => state.auth.user);
@@ -44,6 +45,12 @@ const EmailUpdate = () => {
       }
     } else {
       dispatch(setUserData());
+      dispatch(
+        createNotification({
+          type: "success",
+          message: `Email updated`,
+        })
+      );
     }
   }
 
@@ -79,7 +86,7 @@ const EmailUpdate = () => {
         className={`button update-email ${
           formik.isSubmitting ? "loading" : ""
         }`}
-        disabled={formik.isSubmitting}
+        disabled={formik.isSubmitting || user.email === formik.values.email}
         onClick={formik.handleSubmit}
       >
         update Email

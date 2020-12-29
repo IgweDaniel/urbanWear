@@ -1,12 +1,17 @@
 import { useFormik } from "formik";
 import React from "react";
+import { useDispatch } from "react-redux";
 
 import styled from "styled-components";
 
 import * as Api from "../../api";
 import { EmailUpdate } from "../../components";
+import { createNotification } from "../../ducks/global";
 
 const UserDetails = styled.div`
+  .input-wrapper {
+    margin-bottom: 10px;
+  }
   .input-wrapper label {
     text-transform: uppercase;
     font-variant: small-caps;
@@ -42,6 +47,8 @@ export default () => {
     onSubmit: updatePassword,
   });
 
+  const dispatch = useDispatch();
+
   async function updatePassword(values, { setSubmitting }) {
     const { error } = await Api.updatePassword({
       ...values,
@@ -50,11 +57,23 @@ export default () => {
       if (error.current_password) {
         formik.setErrors({ password: "Invalid Password" });
       }
+      dispatch(
+        createNotification({
+          type: "error",
+          message: `Error updating Password`,
+        })
+      );
       return;
     }
-
-    console.log("success");
+    formik.resetForm();
+    dispatch(
+      createNotification({
+        type: "success",
+        message: `Password updated`,
+      })
+    );
   }
+
   function validatePasswords(values) {
     const errors = {};
     if (!values.password) {
