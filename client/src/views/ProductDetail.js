@@ -292,7 +292,7 @@ export default () => {
       return;
     }
     setButtonStatus("loading");
-    dispatch(addCartItem(chosenSize, product.id, qty, product.name)).then(
+    dispatch(addCartItem(chosenSize, product.id, product.name, qty)).then(
       () => {
         setButtonStatus("done");
         setQty(1);

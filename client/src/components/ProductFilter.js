@@ -7,7 +7,7 @@ import "rc-slider/assets/index.css";
 
 import { useFilter, useUpdateEffect } from "../hooks";
 
-import { SIZES } from "../constants";
+import { CURRENCY, MAX_PRICE, MIN_PRICE, SIZES } from "../constants";
 import { useSelector } from "react-redux";
 
 const ProductFilter = styled.div`
@@ -157,7 +157,8 @@ export default () => {
           <div className="price__inner">
             <h3 className="subtext">filter by price</h3>
             <Range
-              max={20}
+              max={MAX_PRICE}
+              min={MIN_PRICE}
               trackStyle={[{ backgroundColor: "#000" }]}
               handleStyle={[{ borderColor: "#000" }, { borderColor: "#000" }]}
               onChange={(price) => setPrice(price)}
@@ -166,7 +167,8 @@ export default () => {
             />
 
             <div className="value">
-              ${price[0]}-{price[1]}
+              {CURRENCY}
+              {price[0]}-{price[1]}
             </div>
           </div>
         </div>

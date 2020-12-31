@@ -45,6 +45,7 @@ const SearchBox = styled.div`
   }
   input::placeholder {
     /* color: #ccc; */
+    /* text-transform: capitalize; */
   }
   .button {
     /* background: #888; */
@@ -60,7 +61,7 @@ const SearchBox = styled.div`
   @media (min-width: 768px) {
     padding: 50px 40px;
     .search-form input {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
     }
   }
 `;
@@ -105,6 +106,7 @@ export default () => {
         <input
           autoFocus={true}
           placeholder="search products..."
+          // placeholder="enter your search term..."
           type="text"
           value={term}
           onChange={(e) => setTerm(e.target.value)}

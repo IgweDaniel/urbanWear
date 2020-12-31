@@ -4,7 +4,7 @@ import os
 from rest_framework import generics
 from django.db.models import Q, F
 from store.models import Category, Coupon, Payment, Product, ProductSize, Order, Address, OrderItem, User
-from .serializers import CategorySerializer, PaymentSerializer, ProcessPaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer, UserSerializer
+from .serializers import AnonymousCartSerializer, CategorySerializer, PaymentSerializer, ProcessPaymentSerializer, ProductSerializer, AddressSerializer, OrderSerializer, OrderItemSerializer, OrderUpdateSerializer, CartSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -17,21 +17,13 @@ from .pagination import ProductListPagination
 stripe.api_key = os.getenv("STRIPE_KEY")
 
 
-GUEST_INITIAL_CART = {"items": [
-
-
-], "total": 0, "quantity": 0, 'coupon': {
-    'amount': 0,
-    'code': ''
+GUEST_INITIAL_CART = {
+    "items": [],
+    'coupon': {
+        'amount': 0,
+        'code': ''
+    }
 }
-}
-
-
-def dump_guest_cart(cart):
-    cart = dict(cart)
-    cart['total'] -= cart['coupon']['amount']
-
-    return cart
 
 
 def findItem(collection, cb):
@@ -70,15 +62,23 @@ class ProductList(generics.ListAPIView):
         max_price = self.request.query_params.get('max_price', None)
         query = self.request.query_params.get('q', None)
         if query:
+
+            # terms = query.split(" ")
+            # reg = r''
+            # for i in range(len(terms)):
+            #     reg += terms[i]
+            #     if not i + 1 == len(terms):
+            #         reg += "|"
+            # queryset = queryset.filter(
+            #     Q(name__iregex=reg))
             queryset = queryset.filter(
                 Q(name__icontains=query) | Q(category__name__icontains=query))
+
         if order_by == "price-desc":
             queryset = queryset.order_by("-discount_price")
         elif order_by == "price":
             queryset = queryset.order_by("discount_price")
-        else:
-            # queryset = queryset.order_by("price")
-            pass
+
         if category is not None:
             queryset = queryset.filter(category__name=category)
         if size is not None:
@@ -169,16 +169,14 @@ class OrderListUpdate(APIView):
 
             if item:
                 item['quantity'] += quantity
-                cart['total'] += quantity * item['product']['price']
+
             else:
                 cart['items'].append(
                     {"product": ProductSerializer(
                         product).data, "size": size.label, "quantity": quantity, "id": item_id})
-                cart['total'] += quantity * product.price
 
-            cart['quantity'] += quantity
             request.session['cart'] = cart
-            return Response(dump_guest_cart(cart), status=HTTP_200_OK)
+            return Response(AnonymousCartSerializer(cart).data, status=HTTP_200_OK)
 
     def get(self, request, *args, **kwargs):
         status = request.query_params.get("status", None)
@@ -195,7 +193,7 @@ class OrderListUpdate(APIView):
             cart = request.session['cart'] if request.session.get(
                 'cart', None) else GUEST_INITIAL_CART
 
-            return Response(dump_guest_cart(cart), status=HTTP_200_OK)
+            return Response(AnonymousCartSerializer(cart).data, status=HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
         coupon_code = request.data.get('code', None)
@@ -223,7 +221,7 @@ class OrderListUpdate(APIView):
             cart['coupon']['code'] = coupon.code
             cart['coupon']['amount'] = coupon.amount
             request.session['cart'] = cart
-            return Response(dump_guest_cart(cart), status=HTTP_200_OK)
+            return Response(AnonymousCartSerializer(cart).data, status=HTTP_200_OK)
 
 
 class TrackOrder(generics.RetrieveAPIView):
@@ -262,11 +260,9 @@ class DeleteUpdateOrderItem(APIView):
             if not item:
                 return Response({"message": "Invalid CartItemId"}, status=HTTP_400_BAD_REQUEST)
 
-            cart['total'] -= item['quantity'] * item['product']['price']
-            cart['quantity'] -= item['quantity']
             cart['items'].remove(item)
             request.session['cart'] = cart
-            return Response(dump_guest_cart(cart), status=HTTP_200_OK)
+            return Response(AnonymousCartSerializer(cart).data, status=HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         try:
@@ -308,17 +304,12 @@ class DeleteUpdateOrderItem(APIView):
             if not has_size:
                 return Response({"message": "Invalid product size"}, status=HTTP_400_BAD_REQUEST)
 
-            old_quantity = item['quantity']
-
-            cart['total'] -= old_quantity * item['product']['price']
-            cart['quantity'] -= old_quantity
             item['quantity'] = quantity
             item['size'] = size
-            cart['total'] += quantity * item['product']['price']
-            cart['quantity'] += quantity
+
             request.session['cart'] = cart
 
-            return Response(dump_guest_cart(cart), status=HTTP_200_OK)
+            return Response(AnonymousCartSerializer(cart).data, status=HTTP_200_OK)
 
 
 class ListCreatePayment(generics.CreateAPIView):
@@ -337,7 +328,7 @@ class ListCreatePayment(generics.CreateAPIView):
         shipping_address = data.get("shipping")
 
         active_order = Order.objects.get_or_create(
-            user=request.user, ordered=False)[0] if request.user.is_authenticated else dump_guest_cart(request.session['cart'])
+            user=request.user, ordered=False)[0] if request.user.is_authenticated else AnonymousCartSerializer(request.session['cart']).data
 
         items = None
         if request.user.is_authenticated:

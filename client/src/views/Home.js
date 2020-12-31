@@ -43,6 +43,8 @@ const slides = [
 
 // slides.reverse();
 
+// TODO:  Add mouse wheel indicator for home page
+
 const Home = styled.div`
   --height: 100%;
   height: var(--vh);

@@ -30,7 +30,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', "price", 'category', 'actual_price')
+    list_display = ('id', 'name', "price", 'category', 'actual_price')
 
     def category(self, obj):
         return obj.category.name

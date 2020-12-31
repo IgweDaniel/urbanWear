@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { cleanNotification, deleteNotification } from "../ducks/global";
+import { deleteNotification } from "../ducks/global";
 
-const Notifications = styled.div`
+const NotificationList = styled.div`
   max-height: var(--vh);
   overflow-y: auto;
   position: fixed;
@@ -33,46 +33,53 @@ const Notifications = styled.div`
     max-width: 300px;
   }
   .notification.error {
-    background: red;
+    background: darkred;
   }
   .notification.success {
     background: ${({ theme }) => theme.colors.primary};
   }
-  /* @media (min-width: 768px) {
-    right: 10px;
-    transform: none;
+  @media (min-width: 768px) {
+    right: 20px;
+    /* transform: none; */
 
-    .notification {
+    /* .notification {
       width: fit-content;
       max-width: 300px;
-    }
-  } */
+    } */
+  }
 `;
+
+const Notification = ({ message, id, type = "success" }) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      dispatch(deleteNotification({ id }));
+    }, 3000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [dispatch, id]);
+
+  return (
+    <div
+      key={id}
+      className={`notification ${type}`}
+      onClick={() => dispatch(deleteNotification({ id }))}
+    >
+      <p>{message}</p>
+    </div>
+  );
+};
 
 export default () => {
   const notifications = useSelector((state) => state.global.notifications);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      dispatch(cleanNotification());
-    }, 3000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [dispatch]);
 
   return (
-    <Notifications>
-      {notifications.map(({ message, id, type = "success" }) => (
-        <div
-          key={id}
-          className={`notification ${type}`}
-          onClick={() => dispatch(deleteNotification({ id }))}
-        >
-          <p>{message}</p>
-        </div>
+    <NotificationList>
+      {notifications.map((notification) => (
+        <Notification key={notification.id} {...notification} />
       ))}
-    </Notifications>
+    </NotificationList>
   );
 };

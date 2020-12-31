@@ -23,11 +23,6 @@ const globalSlice = createSlice({
       const id = `${new Date()} ${state.notifications.length + 1}`;
       state.notifications.unshift({ ...payload, id });
     },
-    cleanNotification(state) {
-      if (state.notifications.length > 0) {
-        state.notifications.pop();
-      }
-    },
 
     deleteNotification(state, { payload }) {
       state.notifications = state.notifications.filter(
@@ -43,10 +38,6 @@ const globalSlice = createSlice({
   },
 });
 
-export const {
-  createNotification,
-  deleteNotification,
-  cleanNotification,
-} = globalSlice.actions;
+export const { createNotification, deleteNotification } = globalSlice.actions;
 
 export default globalSlice.reducer;

@@ -132,6 +132,9 @@ export default ({ id, product, quantity, size }) => {
     setEditMode(false);
   }
 
+  const actual_price = product.discount_price
+    ? product.discount_price
+    : product.price;
   return (
     <CartItem>
       <ItemInfo>
@@ -143,12 +146,12 @@ export default ({ id, product, quantity, size }) => {
           <p className="quantitysize">
             {quantity} size {size}
           </p>
-          <p className="price">£{product.price} </p>
+          <p className="price">£{actual_price.toFixed(2)}</p>
           <p className="total">
             Total:
             <span className="value">
               {CURRENCY}
-              {product.price * quantity}{" "}
+              {actual_price * quantity}
             </span>
           </p>
           {!editMode && (

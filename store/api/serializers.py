@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from store.models import Category, Payment, Product, ProductSize, Address, Order, OrderItem, User
+from functools import reduce
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -185,6 +186,35 @@ class CartSerializer(serializers.ModelSerializer):
         return {
             'amount': obj.coupon.amount if obj.coupon else 0,
             'code': obj.coupon.code if obj.coupon else ""
+        }
+
+
+class AnonymousCartSerializer(serializers.Serializer):
+    total = serializers.SerializerMethodField()
+    items = serializers.SerializerMethodField()
+    quantity = serializers.SerializerMethodField()
+    coupon = serializers.SerializerMethodField()
+
+    def get_items(self, obj):
+        return obj.get("items")
+
+    def update_total(self, acc, item):
+        actual_price = item.get("product").get('discount_price') or 0
+        return acc + item.get("quantity") * actual_price
+
+    def get_total(self, obj):
+        items = obj.get("items")
+        total = reduce(self.update_total, items, 0)
+        return total - obj["coupon"]['amount']
+
+    def get_quantity(self, obj):
+        items = obj.get("items")
+        return reduce(lambda acc, item: acc + item.get("quantity"), items, 0)
+
+    def get_coupon(self, obj):
+        return {
+            'amount': obj["coupon"]["amount"],
+            'code': obj["coupon"]["code"]
         }
 
 

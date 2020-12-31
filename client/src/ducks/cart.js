@@ -30,10 +30,7 @@ const cartSlice = createSlice({
       state.qty += quantity;
       state.total += quantity * product.final_price;
     },
-    removeItem(state, action) {
-      // eslint-disable-next-line
-      const { id } = action.payload;
-    },
+
     clearCart(state, action) {
       state.items = [];
       state.qty = 0;
@@ -63,7 +60,7 @@ const cartSlice = createSlice({
   },
 });
 
-export const addCartItem = (size, productId, quantity = 1, name) => async (
+export const addCartItem = (size, productId, name, quantity = 1) => async (
   dispatch
 ) => {
   const { data, error } = await Api.addToCart(size, productId, quantity);
@@ -86,6 +83,6 @@ export const addCartItem = (size, productId, quantity = 1, name) => async (
   );
 };
 
-export const { addItem, removeItem, clearCart, updateCart } = cartSlice.actions;
+export const { addItem, clearCart, updateCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

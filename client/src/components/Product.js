@@ -155,7 +155,7 @@ export default (props) => {
 
   function addToCart() {
     setStatus("loading");
-    dispatch(addCartItem(sizes[0], id)).then(() => setStatus("done"));
+    dispatch(addCartItem(sizes[0], id, name)).then(() => setStatus("done"));
   }
 
   return (
@@ -201,12 +201,12 @@ export default (props) => {
           {discount_price && (
             <span className="actual__price">
               {CURRENCY}
-              {price.toFixed(2)}
+              {price.toFixed(1)}
             </span>
           )}
           <span className="discount__price">
             {CURRENCY}
-            {discount_price ? discount_price.toFixed(2) : price.toFixed(2)}
+            {discount_price ? discount_price.toFixed(1) : price.toFixed(2)}
           </span>
         </p>
       </div>
