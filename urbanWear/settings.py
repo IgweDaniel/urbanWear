@@ -30,14 +30,19 @@ load_dotenv(dotenv_path=env_path)
 SECRET_KEY = os.getenv("SECRET_KEY")
 # production
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False if os.getenv("ENVIRONMENT") == "production" else True
+# DEBUG = 'RENDER' not in os.environ
+DEBUG = 'RENDER' not in os.environ
+
+# DEBUG = False if os.getenv("ENVIRONMENT") == "production" else True
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['http://localhost:3000', '127.0.0.1',
-                 'localhost', 'http://localhost:8000', 'urbanwear.herokuapp.com']
+                 'localhost', 'http://localhost:8000']
 
-
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 # Application definition
+DEFAULT_AUTO_FIELD='django.db.models.AutoField' 
 
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
@@ -192,10 +197,11 @@ STATICFILES_DIRS = [
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
+MEDIA_URL = '/media/'  # or any prefix you choose
 if not DEBUG:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 else:
-    MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
-    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+
