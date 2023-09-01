@@ -41,7 +41,7 @@ This is a full-stack e-commerce application built using Django and React. It all
 ## Installation
 
 1. Clone the repository: `git clone https://github.com/IgweDaniel/urbanWear.git`
-2. Navigate to the project directory: `cd your-repo`
+2. Navigate to the project directory: `cd <cloned-folder-name>`
 3. Install Python dependencies using Poetry: `poetry install`
 4. Install Node.js dependencies for the React frontend: `cd client && npm install`
 
@@ -54,7 +54,7 @@ This is a full-stack e-commerce application built using Django and React. It all
    - Run Django migrations: `python manage.py migrate`
    
 2. Seed the Database (Optional):
-   - If you want to populate the database with default products and sizes, run the seed function: `python manage.py seed_db`
+   - If you want to populate the database with default products and sizes, run the seed function: `python manage.py seed data.json`
 
 3. Media Storage Configuration:
    - The project supports two media storage options based on the `DEBUG` environment variable:
