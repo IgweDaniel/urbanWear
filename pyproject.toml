@@ -19,6 +19,10 @@ django-storages = "^1.13.2"
 gunicorn = "^21.2.0"
 dj-database-url = "^2.1.0"
 psycopg2-binary = "^2.9.7"
+whitenoise = "^6.5.0"
+django-cors-headers = "^4.2.0"
+djoser = "^2.2.0"
+stripe = "^6.2.0"
 
 
 [build-system]
