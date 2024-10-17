@@ -31,9 +31,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # production
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = 'RENDER' not in os.environ
-DEBUG = 'RENDER' not in os.environ
+# DEBUG = 'RENDER' not in os.environ
 
-# DEBUG = False if os.getenv("ENVIRONMENT") == "production" else True
+DEBUG = False if os.getenv("ENVIRONMENT") == "production" else True
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['http://localhost:3000', '127.0.0.1',
