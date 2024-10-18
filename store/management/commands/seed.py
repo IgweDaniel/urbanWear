@@ -76,7 +76,7 @@ class Command(BaseCommand):
                     image = ProductImage.objects.create(
                         product=new_product,
                     )
-
+                    print(filename)
                     data = f.read()
                     image.image.save(
 
