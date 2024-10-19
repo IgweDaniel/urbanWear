@@ -6,10 +6,11 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install poetry 
 
 # Install Poetry in the build stage
-RUN pip install poetry 
+# RUN pip install poetry 
 
 # Set the working directory
 WORKDIR /app
@@ -18,7 +19,8 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock /app/
 
 # Install dependencies via Poetry
-RUN poetry config virtualenvs.path venv && poetry install
+RUN poetry config virtualenvs.path venv \ 
+    && poetry install
 # RUN poetry config virtualenvs.create false && poetry install --no-dev --no-root
 
 # Copy application code
@@ -28,10 +30,13 @@ COPY . .
 FROM python:3.11-slim
 RUN apt-get update && apt-get install -y \
     libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && rm /bin/sh && ln -s /bin/bash /bin/sh \ 
+    && pip install poetry
 
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh && pip install poetry 
-# RUN 
+# RUN rm /bin/sh && ln -s /bin/bash /bin/sh \ 
+#     && pip install poetry 
+# # RUN 
 
 # Set the working directory
 WORKDIR /app
